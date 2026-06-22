@@ -44,10 +44,10 @@ $(PARTS): %: $(PREVDIR)/%.png $(EXPDIR)/%.stl $(EXPDIR)/%.3mf
 $(PREVDIR)/%.png: $(SCAD) | $(PREVDIR)
 	$(OSCAD) -o $@ $(COLOR) $(ISO) -D 'render_part="$*"' $(SCAD)
 
-# widener: lower, side-on angle so the flat mouth section + grip tabs show
+# widener: looking down into the mouth so the profile + internal helical tabs show
 $(PREVDIR)/widener.png: $(SCAD) | $(PREVDIR)
-	$(OSCAD) -o $@ $(COLOR) --imgsize=750,600 \
-	    --camera=0,0,0,82,0,25,0 --viewall --autocenter -D 'render_part="widener"' $(SCAD)
+	$(OSCAD) -o $@ $(COLOR) --imgsize=750,650 \
+	    --camera=0,0,0,52,0,20,0 --viewall --autocenter -D 'render_part="widener"' $(SCAD)
 
 # section: orthographic, centred on the clamp stack (overrides generic rule)
 $(PREVDIR)/section.png: $(SCAD) | $(PREVDIR)

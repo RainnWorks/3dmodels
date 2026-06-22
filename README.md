@@ -13,9 +13,9 @@ either side.
   tube, threaded both ends. Drops through the hole from outside; the barrel is a
   deliberate loose fit in the bore.
 - **Cap** — flanged, closed-top accessory. Winter seal / blanking plate.
-- **Widener** — flanged accessory that flares fast to a straight mouth with grip
-  tabs; the AC hose slips over the mouth and the tabs retain it. The "inlet" the
-  duct connects to.
+- **Widener** — flanged accessory that flares fast to a straight mouth the AC
+  hose **inserts into**; internal helical tabs grip the hose's spiral (twist to
+  engage), like a coarse interrupted thread. The "inlet" the duct connects to.
 
 The accessories carry their own clamp flange, so screwing one down traps the door
 between the body flange (outside) and the accessory flange (inside) — the
