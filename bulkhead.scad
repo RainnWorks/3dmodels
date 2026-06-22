@@ -13,6 +13,8 @@
 //      flange (outside) and the accessory flange (inside). The accessory IS the
 //      clamp -- no separate nut.
 //        - CAP      = flanged, closed top.  Winter seal / blanking plate.
+//        - NET      = flanged, bug-mesh top.  Passive vent: airflow in/out but
+//                     keeps insects out. Mesh sits clear above the barrel tip.
 //        - WIDENER  = flanged, flares out to a mouth the AC hose INSERTS INTO;
 //                     internal helical tabs grip the hose's spiral (twist on).
 //    * Same accessories fit the outboard collar too, so EITHER face of the door
@@ -57,7 +59,7 @@ include <BOSL2/threading.scad>
 // -----------------------------------------------------------------------------
 //  PARAMETER BLOCK  -- everything dimension-driving lives here
 // -----------------------------------------------------------------------------
-render_part = "body";  // "body"|"cap"|"widener"|"assembly"|"section"|"test"
+render_part = "body";  // "body"|"cap"|"net"|"widener"|"assembly"|"section"|"test"
 
 // ---- Hole / door (MEASURE THESE) --------------------------------------------
 bore_d         = 86;    // TODO MEASURE: drilled hole diameter in the door [mm]
@@ -95,6 +97,13 @@ grip_r         = 7;           // scallop cutter radius
 
 // ---- Cap --------------------------------------------------------------------
 cap_top_t = 4;   // closed-end thickness
+
+// ---- Net vent cap (bug screen; passive airflow) -----------------------------
+net_standoff = 4;   // gap between barrel tip (counterbore top) and the grille,
+                    //   so the Ø-barrel core never reaches the mesh
+grille_t     = 2.5; // grille thickness
+grille_bar   = 1.5; // mesh bar width
+grille_gap   = 2.0; // mesh opening (smaller = stops smaller bugs, less airflow)
 
 // ---- Widener (duct funnel)  (MEASURE THE DUCT) ------------------------------
 duct_od     = 130; // TODO MEASURE: AC hose OD; the hose inserts INTO the mouth
@@ -250,6 +259,50 @@ module helical_tab(bore_r, z0, arc, pitch, rr, protrude) {
 }
 
 // -----------------------------------------------------------------------------
+//  NET GRILLE  -- a printable square mesh disc (bars bridge the gaps, so it
+//                 prints flat with no support).  Clipped to diameter d.
+// -----------------------------------------------------------------------------
+module net_grille(d, t) {
+    pitch = grille_bar + grille_gap;
+    n = ceil(d/pitch);
+    intersection() {
+        cylinder(d=d, h=t);
+        union() {
+            // rim ring so the mesh is tied to the collar wall
+            difference() {
+                cylinder(d=d, h=t);
+                translate([0,0,-0.5]) cylinder(d=d-2*grille_bar, h=t+1);
+            }
+            // crossed bars
+            for (i=[-n:n]) {
+                translate([i*pitch, 0, t/2]) cube([grille_bar, d, t], center=true);
+                translate([0, i*pitch, t/2]) cube([d, grille_bar, t], center=true);
+            }
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+//  NET VENT CAP  -- clamps + seals the door like the cap, but vents through a
+//                   bug screen.  The grille sits in a chamber ABOVE the barrel
+//                   tip so the Ø-barrel core never protrudes through the mesh.
+//                   Air path: barrel bore -> chamber -> mesh -> out.
+// -----------------------------------------------------------------------------
+module net_cap() {
+    grille_z = acc_stack_h + net_standoff;       // mesh plane, clear of barrel tip
+    union() {
+        difference() {
+            accessory_collar(extra_h = acc_clear_depth + net_standoff);
+            accessory_bore();                     // thread + counterbore + lead-in
+            // open chamber from counterbore top up to the grille
+            translate([0,0,acc_stack_h-0.01])
+                cylinder(d=acc_clear_d, h=net_standoff+0.02);
+        }
+        translate([0,0,grille_z]) net_grille(acc_od, grille_t);
+    }
+}
+
+// -----------------------------------------------------------------------------
 //  WIDENER  -- steep flare to a straight mouth the AC hose INSERTS INTO; internal
 //              helical tabs grip the hose's spiral (twist to engage). Clamps the
 //              door like the cap.  Best printed MOUTH-DOWN (flare self-supports).
@@ -322,6 +375,7 @@ module assembly() {
 // -----------------------------------------------------------------------------
 if      (render_part == "body")     body();
 else if (render_part == "cap")      cap();
+else if (render_part == "net")      net_cap();
 else if (render_part == "widener")  widener();
 else if (render_part == "test")     test_coupon();
 else if (render_part == "assembly") assembly();

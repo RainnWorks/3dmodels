@@ -13,6 +13,9 @@ either side.
   tube, threaded both ends. Drops through the hole from outside; the barrel is a
   deliberate loose fit in the bore.
 - **Cap** — flanged, closed-top accessory. Winter seal / blanking plate.
+- **Net** — flanged accessory with a printed bug-mesh top. Passive vent: lets air
+  in/out but keeps insects out. The mesh sits in a chamber above the barrel tip so
+  the core never protrudes through it.
 - **Widener** — flanged accessory that flares fast to a straight mouth the AC
   hose **inserts into**; internal helical tabs grip the hose's spiral (twist to
   engage), like a coarse interrupted thread. The "inlet" the duct connects to.
