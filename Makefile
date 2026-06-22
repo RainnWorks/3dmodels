@@ -17,9 +17,9 @@ PREVDIR := previews
 EXPDIR  := export
 
 # Printable parts (get STL + 3MF). Accessories + the fit-test coupon.
-PARTS := body cap net widener test
+PARTS := body cap cap_out net_out widener test
 # Everything that gets a PNG preview (parts + the multi-part views).
-VIEWS := body cap net widener test assembly section section_zoom
+VIEWS := body cap cap_out net_out widener test assembly section section_zoom
 
 # --- render settings ---------------------------------------------------------
 COLOR := --colorscheme=Tomorrow

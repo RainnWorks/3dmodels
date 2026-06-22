@@ -12,18 +12,25 @@ either side.
   (outside port) + threaded *barrel* through the door (inside port). A flanged
   tube, threaded both ends. Drops through the hole from outside; the barrel is a
   deliberate loose fit in the bore.
-- **Cap** — flanged, closed-top accessory. Winter seal / blanking plate.
-- **Net** — flanged accessory with a printed bug-mesh top. Passive vent: lets air
-  in/out but keeps insects out. The mesh sits in a chamber above the barrel tip so
-  the core never protrudes through it.
-- **Widener** — flanged accessory that flares fast to a straight mouth the AC
-  hose **inserts into**; internal helical tabs grip the hose's spiral (twist to
-  engage), like a coarse interrupted thread. The "inlet" the duct connects to.
+There are **two accessory styles**, because the two faces of the door do
+different jobs:
 
-The accessories carry their own clamp flange, so screwing one down traps the door
-between the body flange (outside) and the accessory flange (inside) — the
-accessory *is* the clamp, no separate nut. Coarse trapezoidal thread does the
-clamping; bore slop is non-structural.
+**Inside (geared)** — these clamp the door: a grip flange bears on the inside
+face, so screwing one down traps the door between it and the body flange. The
+accessory *is* the clamp (no separate nut).
+
+- **Cap** — geared, closed top. Winter seal / blanking plate.
+- **Widener** — geared, flares fast to a straight mouth the AC hose **inserts
+  into**; internal helical tabs grip the hose's spiral (twist to engage). The
+  "inlet" the duct connects to.
+
+**Outside (plain)** — the body flange is already on the outside, so these are
+compact threaded knobs (light knurl, **no clamp flange**) that screw onto the
+outboard collar — no second gear stacked on the body flange.
+
+- **Cap_out** — plain closed cap. Outside blank.
+- **Net_out** — plain bug-mesh vent: air in/out, insects out. The mesh sits in a
+  chamber above the collar tip so the core never protrudes through it.
 
 ### Parameters
 
@@ -45,7 +52,7 @@ make clean
 ```
 
 Or call OpenSCAD directly, picking a part with `-D render_part="..."`
-(`body` | `cap` | `widener` | `test` | `assembly` | `section`):
+(`body` | `cap` | `cap_out` | `net_out` | `widener` | `test` | `assembly` | `section`):
 
 ```sh
 openscad -o export/widener.stl -D 'render_part="widener"' bulkhead.scad

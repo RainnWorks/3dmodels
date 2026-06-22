@@ -8,15 +8,19 @@
 //      outside port) + externally-threaded BARREL through the door (the inside
 //      port). It's a flanged tube, threaded at both ends. Drops through the
 //      hole from outside; the barrel is a loose fit in the bore.
-//    * Screw-on ACCESSORIES clamp the door themselves: each has a flange that
-//      bears on the door, so screwing it down traps the door between the body
-//      flange (outside) and the accessory flange (inside). The accessory IS the
-//      clamp -- no separate nut.
+//    * Two accessory styles, because the two faces of the door do different jobs:
+//      INSIDE (GEARED) -- clamps the door: a grip flange bears on the inside face
+//      so screwing it down traps the door between it and the body flange. The
+//      accessory IS the clamp (no separate nut).
 //        - CAP      = flanged, closed top.  Winter seal / blanking plate.
-//        - NET      = flanged, bug-mesh top.  Passive vent: airflow in/out but
-//                     keeps insects out. Mesh sits clear above the barrel tip.
 //        - WIDENER  = flanged, flares out to a mouth the AC hose INSERTS INTO;
 //                     internal helical tabs grip the hose's spiral (twist on).
+//      OUTSIDE (PLAIN) -- the body flange is already on the outside, so these are
+//      compact threaded knobs (light knurl, NO clamp flange) on the outboard
+//      collar -- no second gear stacked on the body flange.
+//        - CAP_OUT  = plain closed cap.  Outside blank.
+//        - NET_OUT  = plain bug-mesh vent.  Air in/out, insects out; mesh sits
+//                     clear above the collar tip so the core never protrudes.
 //    * Same accessories fit the outboard collar too, so EITHER face of the door
 //      can be capped or ducted. Swap cap<->widener by hand (twice a year); the
 //      door is only unclamped for the few seconds of the swap.
@@ -59,7 +63,7 @@ include <BOSL2/threading.scad>
 // -----------------------------------------------------------------------------
 //  PARAMETER BLOCK  -- everything dimension-driving lives here
 // -----------------------------------------------------------------------------
-render_part = "body";  // "body"|"cap"|"net"|"widener"|"assembly"|"section"|"test"
+render_part = "body";  // body|cap|cap_out|net_out|widener|assembly|section|test
 
 // ---- Hole / door (MEASURE THESE) --------------------------------------------
 bore_d         = 86;    // TODO MEASURE: drilled hole diameter in the door [mm]
@@ -99,11 +103,17 @@ grip_r         = 7;           // scallop cutter radius
 cap_top_t = 4;   // closed-end thickness
 
 // ---- Net vent cap (bug screen; passive airflow) -----------------------------
-net_standoff = 4;   // gap between barrel tip (counterbore top) and the grille,
-                    //   so the Ø-barrel core never reaches the mesh
+net_standoff = 4;   // gap between collar tip and the grille, so the Ø-barrel
+                    //   core never reaches the mesh
 grille_t     = 2.5; // grille thickness
 grille_bar   = 1.5; // mesh bar width
 grille_gap   = 2.0; // mesh opening (smaller = stops smaller bugs, less airflow)
+
+// ---- Outside (plain) caps -- screw onto the outboard collar, NO clamp flange
+//      (the body flange is already on the outside; don't stack a 2nd gear on it)
+out_engage  = collar_len; // female-thread depth (matches the outboard collar)
+out_flutes  = 16;         // light knurl for finger grip (not the big gear)
+out_flute_r = 3;
 
 // ---- Widener (duct funnel)  (MEASURE THE DUCT) ------------------------------
 duct_od     = 130; // TODO MEASURE: AC hose OD; the hose inserts INTO the mouth
@@ -138,6 +148,7 @@ barrel_minor = thread_d - 2*thread_depth;
 barrel_wall_at_root = (barrel_minor - airway_d)/2;
 body_cone_h = support_cones ? (flange_od - barrel_od)/2 : 0;  // 45deg, flange->collar
 acc_cone_h  = support_cones ? (acc_flange_od - acc_od)/2  : 0; // 45deg, flange->collar
+out_od      = acc_od + 6;                                      // compact knob OD
 
 echo(barrel_od=barrel_od, barrel_len=barrel_len, acc_od=acc_od);
 echo(barrel_wall_at_root=barrel_wall_at_root);
@@ -283,22 +294,44 @@ module net_grille(d, t) {
 }
 
 // -----------------------------------------------------------------------------
-//  NET VENT CAP  -- clamps + seals the door like the cap, but vents through a
-//                   bug screen.  The grille sits in a chamber ABOVE the barrel
-//                   tip so the Ø-barrel core never protrudes through the mesh.
-//                   Air path: barrel bore -> chamber -> mesh -> out.
+//  PLAIN (OUTSIDE) BASE  -- compact threaded knob with a light knurl.  Screws
+//    onto the outboard collar.  NO clamp flange -- the body flange is already on
+//    the outside, so we don't stack a second gear on it.  Origin Z=0 = open end.
 // -----------------------------------------------------------------------------
-module net_cap() {
-    grille_z = acc_stack_h + net_standoff;       // mesh plane, clear of barrel tip
+module plain_collar(extra_h=0) {
+    difference() {
+        cylinder(d=out_od, h=out_engage+extra_h);
+        for (i=[0:out_flutes-1])                  // light knurl
+            rotate([0,0,i*360/out_flutes])
+                translate([out_od/2,0,-1]) cylinder(r=out_flute_r, h=out_engage+extra_h+2);
+    }
+}
+
+module plain_bore() {
+    translate([0,0,-0.5]) female_thread_cutter(out_engage+0.5);
+    lead_in(-0.01);
+}
+
+// CAP_OUT -- plain closed cap for the outside port (winter blank).
+module cap_out() {
+    difference() {
+        plain_collar(extra_h=cap_top_t);          // solid top = the seal
+        plain_bore();
+    }
+}
+
+// NET_OUT -- plain bug-vent for the outside port.  Mesh sits above the collar
+//            tip (net_standoff) so the core never reaches it.
+module net_out() {
+    grille_z = out_engage + net_standoff;
     union() {
         difference() {
-            accessory_collar(extra_h = acc_clear_depth + net_standoff);
-            accessory_bore();                     // thread + counterbore + lead-in
-            // open chamber from counterbore top up to the grille
-            translate([0,0,acc_stack_h-0.01])
+            plain_collar(extra_h=net_standoff);
+            plain_bore();
+            translate([0,0,out_engage-0.01])      // open chamber to the grille
                 cylinder(d=acc_clear_d, h=net_standoff+0.02);
         }
-        translate([0,0,grille_z]) net_grille(acc_od, grille_t);
+        translate([0,0,grille_z]) net_grille(out_od, grille_t);
     }
 }
 
@@ -365,9 +398,9 @@ module assembly() {
     color("Gainsboro", 0.45)  door();
     // widener on the inside: flange bears on the inside door face (Z=door_thickness)
     color("Goldenrod")        translate([0,0,door_thickness]) widener();
-    // cap on the outboard collar (outside): flange bears on the flange face
+    // plain cap on the outboard collar (outside): compact knob, no stacked flange
     color("IndianRed")
-        translate([0,0,-flange_t]) mirror([0,0,1]) cap();
+        translate([0,0,-flange_t-body_cone_h]) mirror([0,0,1]) cap_out();
 }
 
 // -----------------------------------------------------------------------------
@@ -375,7 +408,8 @@ module assembly() {
 // -----------------------------------------------------------------------------
 if      (render_part == "body")     body();
 else if (render_part == "cap")      cap();
-else if (render_part == "net")      net_cap();
+else if (render_part == "cap_out")  cap_out();
+else if (render_part == "net_out")  net_out();
 else if (render_part == "widener")  widener();
 else if (render_part == "test")     test_coupon();
 else if (render_part == "assembly") assembly();
