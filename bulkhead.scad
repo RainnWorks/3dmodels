@@ -1,48 +1,53 @@
 // =============================================================================
-//  Bulkhead fan-duct fitting  --  two-part, parametric  (OpenSCAD + BOSL2)
+//  Bulkhead fan-duct fitting  --  modular, parametric  (OpenSCAD + BOSL2)
 // =============================================================================
-//  Mounts a portable fan duct through a hole drilled in a door.
+//  A threaded port through a hole drilled in a door, for a portable-AC hose.
 //
-//  HOW IT WORKS
-//    * BODY  = flange + outer spigot + threaded barrel. Goes through the hole
-//      from the OUTSIDE. Flange seats on the outside face of the door.
-//    * NUT   = fluted ring nut. Screws onto the barrel from the INSIDE and
-//      clamps the door between flange and nut. The printed thread does the
-//      clamping; the barrel is a loose fit in the bore, so bore slop is
-//      non-structural.
-//    * Duct connects (assumed) push-fit over the outer spigot.
+//  HOW IT WORKS  (one thread spec, used on BOTH faces of the door)
+//    * BODY  = outside flange + short externally-threaded OUTBOARD COLLAR (the
+//      outside port) + externally-threaded BARREL through the door (the inside
+//      port). It's a flanged tube, threaded at both ends. Drops through the
+//      hole from outside; the barrel is a loose fit in the bore.
+//    * Screw-on ACCESSORIES clamp the door themselves: each has a flange that
+//      bears on the door, so screwing it down traps the door between the body
+//      flange (outside) and the accessory flange (inside). The accessory IS the
+//      clamp -- no separate nut.
+//        - CAP      = flanged, closed top.  Winter seal / blanking plate.
+//        - WIDENER  = flanged, funnels the Ø74 throat out to the AC hose. The
+//                     "inlet" the duct connects to.
+//    * Same accessories fit the outboard collar too, so EITHER face of the door
+//      can be capped or ducted. Swap cap<->widener by hand (twice a year); the
+//      door is only unclamped for the few seconds of the swap.
 //
 //  ---------------------------------------------------------------------------
-//  PRINT NOTES   (Bambu X1/P1, PETG)
+//  PRINT NOTES   (Bambu; PLA for first fit-test, PETG for the real thing)
 //  ---------------------------------------------------------------------------
-//  ORIENTATION
-//    BODY  -> print SPIGOT-DOWN: duct boss flat on the plate, barrel + threads
-//             pointing UP. This keeps the flange's door-SEATING face pointing
-//             up so it prints flat and clean, and puts the thread on a vertical
-//             axis. The flange's duct-side underside is a ~14mm annular
-//             overhang -> turn on supports there (non-critical cosmetic face)
-//             or add a brim. Seating face and threads need no support.
-//    NUT   -> print FLAT on the plate, either face down. Internal trapezoidal
-//             thread (30 deg flanks, flat crests) is self-supporting -> NO
-//             supports. The flutes are the hand grip.
+//  FIT-TEST FIRST
+//    render_part="test" is a short male thread coupon. Print it + the CAP in
+//    PLA and check the thread runs smoothly and snugs up. Too tight -> raise
+//    thread_clearance; sloppy -> lower it. Reprint the coupon (minutes), THEN
+//    commit to the big parts.
 //
-//  THREAD DIRECTION (why it prints clean)
-//    Print BOTH parts with the THREAD AXIS VERTICAL. Each layer is then a
-//    continuous ring climbing one pitch - no bridging across the helix, so the
-//    coarse trapezoidal crests come out crisp. Male thread tip faces UP on the
-//    body; the female thread is a vertical bore in the nut.
+//  ORIENTATION (all parts: THREAD AXIS VERTICAL -> each layer is a clean ring,
+//               no bridging across the helix, crisp coarse crests)
+//    BODY     -> outboard collar DOWN on the plate, barrel + threads UP. Keeps
+//                the door-seating face of the flange printing flat (up). The
+//                flange's collar-side underside is an annular overhang -> light
+//                supports there (cosmetic face) or a brim.
+//    CAP      -> flange DOWN on the plate, closed top up. Internal trapezoidal
+//                thread (30 deg flanks, flat crests) is self-supporting -> no
+//                supports.
+//    WIDENER  -> flange DOWN (funnel mouth up). Funnel is a gentle cone, prints
+//                support-free; if your duct_od makes it steep, add supports.
 //
-//  PETG SETTINGS (start from your Bambu PETG profile, then)
-//    nozzle 0.4mm | layer 0.20mm (0.16 for finer crests)
-//    walls 3-4 perimeters  (barrel wall is solid wall-to-wall at ~3mm)
-//    infill 25-40% gyroid  | nozzle ~250-260C | bed ~70-80C
-//    part cooling 30-50%   | slow first layer | no vase mode | no ironing
+//  PLA (fit-test):  nozzle ~210C / bed ~60C, layer 0.20, walls 3, infill 20%.
+//  PETG (final):    nozzle ~250-260C / bed ~70-80C, layer 0.20, walls 3-4,
+//                   infill 25-40% gyroid, cooling 30-50%, slow first layer.
 //
-//  TOLERANCE
-//    thread_clearance = 0.45mm diametral is tuned for PETG on a Bambu.
-//    Nut too tight -> raise thread_clearance; sloppy -> lower it; reprint just
-//    the nut to dial it in (cheap, fast). Barrel is a deliberate loose fit in
-//    the bore (fit_clearance = 1mm); the clamp - not the bore - holds it.
+//  TOLERANCE / FIT
+//    thread_clearance = 0.45mm diametral. Barrel is a deliberate loose fit in
+//    the bore (fit_clearance = 1mm) -- the clamp, not the bore, holds it.
+//    Add foam/weather tape under the flanges for an air seal on the door.
 // =============================================================================
 
 include <BOSL2/std.scad>
@@ -51,63 +56,73 @@ include <BOSL2/threading.scad>
 // -----------------------------------------------------------------------------
 //  PARAMETER BLOCK  -- everything dimension-driving lives here
 // -----------------------------------------------------------------------------
-render_part   = "body";   // "body" | "nut" | "assembly" | "section"
+render_part = "body";  // "body"|"cap"|"widener"|"assembly"|"section"|"test"
 
 // ---- Hole / door (MEASURE THESE) --------------------------------------------
 bore_d         = 86;    // TODO MEASURE: drilled hole diameter in the door [mm]
 door_thickness = 40;    // TODO MEASURE: door thickness [mm]
 
-// ---- Fit -------------------------------------------------------------------
+// ---- Fit --------------------------------------------------------------------
 fit_clearance  = 1.0;   // barrel OD = bore_d - fit_clearance (loose drop-in)
 
-// ---- Thread (coarse, prints clean at large dia) -----------------------------
+// ---- Thread (coarse; one spec used everywhere) ------------------------------
 thread_pitch     = 5.0;  // coarse, 4-6 mm
 thread_clearance = 0.45; // diametral clearance male<->female (0.4-0.5)
-thread_length    = 18;   // nut-travel / engagement zone beyond nominal door
-                         //   (15-20mm; absorbs door-thickness error)
 thread_angle     = 30;   // trapezoidal flank half-angle (flat crests print clean)
 thread_depth     = thread_pitch * 0.5;  // shallow, robust printed engagement
+
+// ---- Barrel / ports ---------------------------------------------------------
+inside_thread_len  = 20; // barrel thread protruding inside (nut/accessory travel;
+                         //   absorbs door-thickness error, 15-20mm)
+collar_len         = 14; // outboard (outside) threaded port length
+airway_d           = 74; // clear through-airway diameter (keep airflow open)
+wall               = 3.0;// nominal wall thickness
 
 // ---- Flange (outside, seats on door) ----------------------------------------
 flange_od = bore_d + 29; // bore + ~28-30  -> ~14-15mm seating ring
 flange_t  = 5;           // flange thickness
 
-// ---- Ring nut (inside) ------------------------------------------------------
-nut_od     = bore_d + 29;  // matches flange OD
-nut_h      = 16;           // nut height
-nut_flutes = 14;           // hand-grip scallops around the rim
-flute_r    = 7;            // scallop cutter radius (deeper = grippier)
+// ---- Accessories (cap / widener) shared base --------------------------------
+acc_flange_od  = bore_d + 29; // clamp + grip flange on accessories
+acc_flange_t   = 6;           // accessory flange thickness
+acc_thread_len = 20;          // internal thread depth (= barrel inside port)
+acc_clear_depth = 8;          // clearance counterbore above thread: swallows the
+                              //   barrel tip when the door is THINNER than nominal
+grip_flutes    = 14;          // hand-grip scallops on accessory rim
+grip_r         = 7;           // scallop cutter radius
 
-// ---- Outer spigot (duct push-fit) -------------------------------------------
-spigot_od  = 80;   // TODO MEASURE duct: push-fit, just UNDER duct inner dia
-spigot_len = 25;   // TODO confirm: spigot length the duct slips over
+// ---- Cap --------------------------------------------------------------------
+cap_top_t = 4;   // closed-end thickness
 
-// ---- General ----------------------------------------------------------------
-wall      = 3.0;   // nominal wall thickness
-airway_d  = 74;    // clear through-airway diameter (keep airflow open)
+// ---- Widener (duct funnel)  (MEASURE THE DUCT) ------------------------------
+duct_id    = 145; // TODO MEASURE: AC hose inner dia; duct slips OVER the mouth
+funnel_len = 45;  // TODO tune: funnel height throat -> mouth
 
-// ---- Dev toggles ------------------------------------------------------------
-show_threads = true;   // false = plain barrel/bore for a fast proportions check
+// ---- Quality ----------------------------------------------------------------
+show_threads = true;   // false = plain bores/barrel for a fast proportions check
 $fa = 2;
-$fs = 0.6;
+$fs = 0.8;
 
 // -----------------------------------------------------------------------------
 //  DERIVED + SANITY CHECKS
 // -----------------------------------------------------------------------------
-barrel_od = bore_d - fit_clearance;          // thread MAJOR diameter
-thread_d  = barrel_od;
-barrel_len = door_thickness + thread_length; // fully threaded barrel length
+barrel_od  = bore_d - fit_clearance;            // thread MAJOR diameter
+thread_d   = barrel_od;
+barrel_len = door_thickness + inside_thread_len;// barrel: door + inside port
+acc_od     = thread_d + 2*wall;                 // accessory threaded-collar OD
+acc_clear_d = barrel_od + 1;                    // counterbore dia (clears barrel)
 barrel_minor = thread_d - 2*thread_depth;
 barrel_wall_at_root = (barrel_minor - airway_d)/2;
 
-echo(barrel_od=barrel_od, barrel_len=barrel_len);
-echo(barrel_minor=barrel_minor, barrel_wall_at_root=barrel_wall_at_root);
+echo(barrel_od=barrel_od, barrel_len=barrel_len, acc_od=acc_od);
+echo(barrel_wall_at_root=barrel_wall_at_root);
 assert(barrel_od < bore_d, "barrel must be smaller than bore");
-assert(airway_d < spigot_od - 2*0.8, "airway leaves no spigot wall");
 assert(barrel_wall_at_root > 1.0, "barrel wall at thread root too thin");
+assert(acc_thread_len >= inside_thread_len, "accessory thread must swallow barrel protrusion");
+assert(duct_id - 2*wall > airway_d, "duct mouth narrower than airway");
 
 // -----------------------------------------------------------------------------
-//  MALE THREAD on the barrel  (major dia = barrel_od)
+//  THREAD PRIMITIVES   (one spec: same pitch/angle/depth everywhere)
 // -----------------------------------------------------------------------------
 module male_thread(len) {
     if (show_threads)
@@ -119,31 +134,6 @@ module male_thread(len) {
         cylinder(d=barrel_od, h=len);
 }
 
-// -----------------------------------------------------------------------------
-//  BODY  -- flange + spigot + barrel.  Origin at flange seating face (Z=0).
-//           Barrel runs +Z (through door / inside).  Spigot runs -Z (duct).
-// -----------------------------------------------------------------------------
-module body() {
-    difference() {
-        union() {
-            // flange (seating face at Z=0, body below)
-            translate([0,0,-flange_t])
-                cylinder(d=flange_od, h=flange_t);
-            // outer spigot (duct side, -Z)
-            translate([0,0,-flange_t-spigot_len])
-                cylinder(d=spigot_od, h=spigot_len);
-            // threaded barrel (+Z, through door to inside)
-            male_thread(barrel_len);
-        }
-        // through airway
-        translate([0,0,-flange_t-spigot_len-1])
-            cylinder(d=airway_d, h=flange_t+spigot_len+barrel_len+2);
-    }
-}
-
-// -----------------------------------------------------------------------------
-//  FEMALE THREAD cutter (for the nut bore).  $slop gives running clearance.
-// -----------------------------------------------------------------------------
 module female_thread_cutter(len) {
     if (show_threads)
         trapezoidal_threaded_rod(d=thread_d, l=len, pitch=thread_pitch,
@@ -154,61 +144,139 @@ module female_thread_cutter(len) {
         cylinder(d=thread_d + thread_clearance, h=len);
 }
 
-// -----------------------------------------------------------------------------
-//  RING NUT  -- fluted hand grip, internal thread, clear bore.
-//              Sits base at Z=0, grows +Z.
-// -----------------------------------------------------------------------------
-module nut() {
-    difference() {
-        // fluted blank
-        difference() {
-            cylinder(d=nut_od, h=nut_h);
-            for (i = [0:nut_flutes-1])
-                rotate([0,0,i*360/nut_flutes])
-                    translate([nut_od/2, 0, -1])
-                        cylinder(r=flute_r, h=nut_h+2);
-        }
-        // threaded bore (its minor dia > airway_d, so airway stays clear)
-        translate([0,0,-0.5]) female_thread_cutter(nut_h+1);
-        // conical lead-in chamfers, both ends, so the nut starts easily
-        lead = thread_depth + 0.6;
-        translate([0,0,-0.01])
+// Conical lead-in so a female bore starts onto the thread easily.
+module lead_in(z, flip=false) {
+    lead = thread_depth + 0.6;
+    translate([0,0,z]) {
+        if (flip) mirror([0,0,1])
             cylinder(h=lead, r1=thread_d/2+lead, r2=thread_d/2-thread_depth);
-        translate([0,0,nut_h+0.01]) mirror([0,0,1])
+        else
             cylinder(h=lead, r1=thread_d/2+lead, r2=thread_d/2-thread_depth);
     }
 }
 
 // -----------------------------------------------------------------------------
-//  DOOR  (visualisation only)  -- slab with the drilled bore, Z=0..door_thickness
+//  BODY  -- flanged tube threaded both ends.  Origin (Z=0) at the OUTSIDE door
+//           face / flange seating face.  Barrel runs +Z (through door, inside).
+//           Outboard collar runs -Z (outside / duct or cap port).
+// -----------------------------------------------------------------------------
+module body() {
+    difference() {
+        union() {
+            // flange (seating face at Z=0, body outside the door at -Z)
+            translate([0,0,-flange_t]) cylinder(d=flange_od, h=flange_t);
+            // outboard collar (outside port, external thread)
+            translate([0,0,-flange_t-collar_len]) male_thread(collar_len);
+            // barrel (inside port, external thread, through the door)
+            male_thread(barrel_len);
+        }
+        // through airway
+        translate([0,0,-flange_t-collar_len-1])
+            cylinder(d=airway_d, h=flange_t+collar_len+barrel_len+2);
+    }
+}
+
+// -----------------------------------------------------------------------------
+//  ACCESSORY BASE  -- fluted clamp flange + internally-threaded collar (open).
+//    Local origin (Z=0) = the face that bears on the door; grows +Z away from
+//    the door.  Shared by cap() and widener().
+// -----------------------------------------------------------------------------
+module accessory_collar(extra_h=0) {
+    // solid stock: flange + collar tube (caller cuts the thread + features)
+    union() {
+        difference() {                          // fluted flange
+            cylinder(d=acc_flange_od, h=acc_flange_t);
+            for (i=[0:grip_flutes-1])
+                rotate([0,0,i*360/grip_flutes])
+                    translate([acc_flange_od/2,0,-1]) cylinder(r=grip_r, h=acc_flange_t+2);
+        }
+        cylinder(d=acc_od, h=acc_thread_len+extra_h); // collar
+    }
+}
+
+// female thread + clearance counterbore (swallows barrel tip) + lead-in
+module accessory_bore() {
+    translate([0,0,-0.5]) female_thread_cutter(acc_thread_len+0.5);
+    translate([0,0,acc_thread_len-0.01])
+        cylinder(d=acc_clear_d, h=acc_clear_depth+0.02);
+    lead_in(-0.01);                              // door-side entry lead-in
+}
+
+// height from the door-bearing face up to the top of the clearance counterbore
+acc_stack_h = acc_thread_len + acc_clear_depth;
+
+// -----------------------------------------------------------------------------
+//  CAP  -- closed-top accessory.  Seals / blanks a port and clamps the door.
+// -----------------------------------------------------------------------------
+module cap() {
+    difference() {
+        accessory_collar(extra_h=acc_clear_depth+cap_top_t); // solid top = seal
+        accessory_bore();                          // thread + counterbore below
+    }
+}
+
+// -----------------------------------------------------------------------------
+//  WIDENER  -- funnel accessory.  Bore opens out to the AC hose; the duct slips
+//              OVER the mouth.  Clamps the door like the cap.
+// -----------------------------------------------------------------------------
+module widener() {
+    mouth_od = duct_id;                            // duct slips over this
+    difference() {
+        union() {
+            accessory_collar(extra_h=acc_clear_depth); // flange + collar + cbore
+            translate([0,0,acc_stack_h])           // funnel: collar -> mouth
+                cylinder(d1=acc_od, d2=mouth_od+2*wall, h=funnel_len);
+        }
+        accessory_bore();
+        // funnel bore: counterbore dia -> mouth ID (stays >= airway throughout)
+        translate([0,0,acc_stack_h-0.01])
+            cylinder(d1=acc_clear_d, d2=mouth_od, h=funnel_len+0.02);
+    }
+}
+
+// -----------------------------------------------------------------------------
+//  TEST COUPON  -- short male stub (+ thin base) to fit-check against the CAP.
+// -----------------------------------------------------------------------------
+module test_coupon() {
+    coupon_len = 20;
+    cylinder(d=acc_od, h=2);                       // bed-adhesion base
+    translate([0,0,2]) male_thread(coupon_len);
+    translate([0,0,-0.01]) cylinder(d=airway_d, h=0.02); // (label the airway)
+}
+
+// -----------------------------------------------------------------------------
+//  DOOR  (visualisation only)
 // -----------------------------------------------------------------------------
 module door() {
     door_w = flange_od + 30;
     difference() {
-        translate([-door_w/2, -door_w/2, 0]) cube([door_w, door_w, door_thickness]);
+        translate([-door_w/2,-door_w/2,0]) cube([door_w,door_w,door_thickness]);
         translate([0,0,-1]) cylinder(d=bore_d, h=door_thickness+2);
     }
 }
 
 // -----------------------------------------------------------------------------
-//  ASSEMBLED  -- body through door, nut run down to the inside face.
-//    Nut placed at an integer number of pitches so its thread phase-mates
-//    the body thread in the render.
+//  ASSEMBLED  -- body through door, widener clamped on the inside, cap on the
+//    outboard collar (outside).  Accessory flanges sit a pitch-multiple away so
+//    threads phase-mate in the render.
 // -----------------------------------------------------------------------------
-nut_z = round(door_thickness/thread_pitch) * thread_pitch;  // inside face, in phase
-
 module assembly() {
-    color("SteelBlue")  body();
-    color("Gainsboro", 0.35) door();
-    // nut flipped so its lead-in faces the door, clamping face against inside
-    color("Goldenrod") translate([0,0,nut_z + nut_h]) mirror([0,0,1]) nut();
+    color("SteelBlue")        body();
+    color("Gainsboro", 0.45)  door();
+    // widener on the inside: flange bears on the inside door face (Z=door_thickness)
+    color("Goldenrod")        translate([0,0,door_thickness]) widener();
+    // cap on the outboard collar (outside): flange bears on the flange face
+    color("IndianRed")
+        translate([0,0,-flange_t]) mirror([0,0,1]) cap();
 }
 
 // -----------------------------------------------------------------------------
 //  RENDER SELECTOR
 // -----------------------------------------------------------------------------
-if (render_part == "body")      body();
-else if (render_part == "nut")  nut();
-else if (render_part == "assembly")  assembly();
+if      (render_part == "body")     body();
+else if (render_part == "cap")      cap();
+else if (render_part == "widener")  widener();
+else if (render_part == "test")     test_coupon();
+else if (render_part == "assembly") assembly();
 else if (render_part == "section")
-    difference() { assembly(); translate([-200,-200,-200]) cube([400,200,600]); }
+    difference() { assembly(); translate([-300,-300,-300]) cube([600,300,900]); }

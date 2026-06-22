@@ -2,47 +2,61 @@
 
 3D models for RainnWorks.
 
-## bulkhead.scad — two-part bulkhead fan-duct fitting
+## bulkhead.scad — modular bulkhead fitting for a portable-AC hose
 
-Parametric OpenSCAD model that mounts a portable fan duct through a hole drilled
-in a door. Two printed parts clamp the door between them:
+Parametric OpenSCAD model: a threaded port through a hole drilled in a door, with
+**one thread spec used on both faces** so you can screw accessories in or out on
+either side.
 
-- **Body** — flange + outer spigot + threaded barrel. Drops through the hole from
-  the outside; flange seats on the outside face of the door.
-- **Ring nut** — fluted hand-grip nut. Screws onto the barrel from the inside and
-  clamps the door. The printed coarse trapezoidal thread does the clamping; the
-  barrel is a deliberate loose fit in the bore, so bore slop is non-structural.
+- **Body** — outside flange + a short externally-threaded *outboard collar*
+  (outside port) + threaded *barrel* through the door (inside port). A flanged
+  tube, threaded both ends. Drops through the hole from outside; the barrel is a
+  deliberate loose fit in the bore.
+- **Cap** — flanged, closed-top accessory. Winter seal / blanking plate.
+- **Widener** — flanged funnel; opens the airway out to the AC hose (the duct
+  slips over the mouth). The "inlet" the duct connects to.
 
-Duct connection is assumed push-fit over the outer spigot (trivial to change once
-the duct dims are measured).
+The accessories carry their own clamp flange, so screwing one down traps the door
+between the body flange (outside) and the accessory flange (inside) — the
+accessory *is* the clamp, no separate nut. Coarse trapezoidal thread does the
+clamping; bore slop is non-structural.
 
 ### Parameters
 
 Everything dimension-driving is in the parameter block at the top of
 `bulkhead.scad`. The ones still needing a real measurement are marked `TODO`:
-`bore_d` (default 86), `door_thickness` (default 40), and the duct dims
-(`spigot_od` / `spigot_len`).
+`bore_d` (default 86), `door_thickness` (default 40), and `duct_id` (default 145).
 
-### Render / export
+### Build
 
-Drive the OpenSCAD CLI directly; pick a part with `-D render_part="..."`
-(`body` | `nut` | `assembly` | `section`):
+A `Makefile` drives the OpenSCAD CLI and only re-runs when `bulkhead.scad`
+changes:
 
 ```sh
-# preview
-openscad -o previews/body.png -D 'render_part="body"' \
-  --camera=0,0,0,72,0,22,0 --viewall --autocenter bulkhead.scad
-
-# export
-openscad -o export/body.stl -D 'render_part="body"' bulkhead.scad
-openscad -o export/nut.3mf  -D 'render_part="nut"'  bulkhead.scad
+make            # all previews + all STL/3MF exports
+make renders    # just the PNG previews
+make exports    # just the STL + 3MF files
+make body       # one part: its preview + STL + 3MF
+make clean
 ```
+
+Or call OpenSCAD directly, picking a part with `-D render_part="..."`
+(`body` | `cap` | `widener` | `test` | `assembly` | `section`):
+
+```sh
+openscad -o export/widener.stl -D 'render_part="widener"' bulkhead.scad
+```
+
+**Fit-test first:** `render_part="test"` is a short male thread coupon — print it
+plus the `cap` in PLA and check the thread runs smoothly before committing to the
+big parts. Tune `thread_clearance` if it's tight or sloppy.
 
 Requires [BOSL2](https://github.com/BelfrySCAD/BOSL2) in the OpenSCAD library path.
 
 ### Deliverables in this repo
 
-- `bulkhead.scad` — both parts + `render_part` selector. Print orientation and
-  PETG settings are documented in the header comment.
-- `previews/` — body, nut, assembly, and cross-section renders.
-- `export/` — `body.stl` / `nut.stl` and `.3mf` for each.
+- `bulkhead.scad` — all parts + `render_part` selector. Print orientation and
+  PLA/PETG settings are in the header comment.
+- `Makefile` — regenerates everything below.
+- `previews/` — body, cap, widener, test, assembly, and cross-section renders.
+- `export/` — `body` / `cap` / `widener` / `test` as `.stl` and `.3mf`.
