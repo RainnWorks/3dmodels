@@ -116,9 +116,11 @@ out_flutes  = 16;         // light knurl for finger grip (not the big gear)
 out_flute_r = 3;
 
 // ---- Widener (duct funnel)  (MEASURE THE DUCT) ------------------------------
-duct_od     = 130; // TODO MEASURE: AC hose OD; the hose inserts INTO the mouth
+duct_od     = 150; // TODO MEASURE: AC hose OD; the hose inserts INTO the mouth.
+                   //   Portable-AC / heat-pump hoses are a universal 130 or 150;
+                   //   150 is typical for heat-pump units. Measure yours to be sure.
 insert_clear = 2.0;// mouth ID = duct_od + this  (slide-in clearance)
-flare_len   = 16;  // steep flare height: throat -> mouth (short = widens fast)
+flare_len   = 20;  // steep flare height: throat -> mouth (short = widens fast)
 flat_len    = 30;  // straight mouth section the hose inserts into
 // internal helical grip tabs -- the hose's spiral twists into these (like a
 // coarse interrupted thread).  See the reference photo.
