@@ -37,8 +37,10 @@
 //    CAP      -> flange DOWN on the plate, closed top up. Internal trapezoidal
 //                thread (30 deg flanks, flat crests) is self-supporting -> no
 //                supports.
-//    WIDENER  -> flange DOWN (funnel mouth up). Funnel is a gentle cone, prints
-//                support-free; if your duct_od makes it steep, add supports.
+//    WIDENER  -> MOUTH DOWN (mouth ring on the plate, flange + thread on top).
+//                The steep flare narrows going up, so it self-supports; the
+//                grip tabs sit on a vertical wall and print clean. The flange at
+//                the top is a mild annular overhang -> light support or accept.
 //
 //  PLA (fit-test):  nozzle ~210C / bed ~60C, layer 0.20, walls 3, infill 20%.
 //  PETG (final):    nozzle ~250-260C / bed ~70-80C, layer 0.20, walls 3-4,
@@ -95,8 +97,15 @@ grip_r         = 7;           // scallop cutter radius
 cap_top_t = 4;   // closed-end thickness
 
 // ---- Widener (duct funnel)  (MEASURE THE DUCT) ------------------------------
-duct_id    = 145; // TODO MEASURE: AC hose inner dia; duct slips OVER the mouth
-funnel_len = 45;  // TODO tune: funnel height throat -> mouth
+duct_id    = 145; // TODO MEASURE: AC hose inner dia; hose slips OVER the mouth
+mouth_slip = 1.0; // mouth OD = duct_id - this  (slip-on clearance)
+flare_len  = 16;  // steep flare height: throat -> mouth (short = widens fast)
+flat_len   = 28;  // straight mouth section the hose grips onto
+// duct grip tabs (raised lugs on the flat section; hose stretches over them)
+tab_count  = 6;   // number of tabs around the mouth
+tab_len    = 12;  // tab length (along the axis)
+tab_h      = 2.0; // radial protrusion beyond the mouth OD
+tab_w      = 5;   // tab width
 
 // ---- Quality ----------------------------------------------------------------
 show_threads = true;   // false = plain bores/barrel for a fast proportions check
@@ -215,22 +224,40 @@ module cap() {
     }
 }
 
+// raised grip tabs around a cylinder (rounded capsules, print-friendly)
+module duct_tabs(z_mid, surf_r) {
+    r  = tab_w/2;
+    cr = surf_r + tab_h - r;                       // center radius so it sticks out tab_h
+    for (i=[0:tab_count-1]) rotate([0,0,i*360/tab_count])
+        hull() {
+            translate([cr,0,z_mid-(tab_len/2-r)]) sphere(r=r);
+            translate([cr,0,z_mid+(tab_len/2-r)]) sphere(r=r);
+        }
+}
+
 // -----------------------------------------------------------------------------
-//  WIDENER  -- funnel accessory.  Bore opens out to the AC hose; the duct slips
-//              OVER the mouth.  Clamps the door like the cap.
+//  WIDENER  -- funnel accessory.  Steep flare to a straight mouth that the AC
+//              hose slips OVER; grip tabs retain it.  Clamps the door like the
+//              cap.  Best printed MOUTH-DOWN (flare self-supports).
 // -----------------------------------------------------------------------------
 module widener() {
-    mouth_od = duct_id;                            // duct slips over this
+    mouth_od = duct_id - mouth_slip;               // hose slips over this
+    mouth_id = mouth_od - 2*wall;
+    flare_z  = acc_stack_h;
+    flat_z   = flare_z + flare_len;
     difference() {
         union() {
-            accessory_collar(extra_h=acc_clear_depth); // flange + collar + cbore
-            translate([0,0,acc_stack_h])           // funnel: collar -> mouth
-                cylinder(d1=acc_od, d2=mouth_od+2*wall, h=funnel_len);
+            accessory_collar(extra_h=acc_clear_depth);   // flange + collar + cbore
+            translate([0,0,flare_z])                      // steep flare
+                cylinder(d1=acc_od, d2=mouth_od, h=flare_len);
+            translate([0,0,flat_z])                       // straight mouth
+                cylinder(d=mouth_od, h=flat_len);
+            duct_tabs(flat_z + flat_len/2, mouth_od/2);   // grip tabs
         }
         accessory_bore();
-        // funnel bore: counterbore dia -> mouth ID (stays >= airway throughout)
-        translate([0,0,acc_stack_h-0.01])
-            cylinder(d1=acc_clear_d, d2=mouth_od, h=funnel_len+0.02);
+        // bore: flare then straight (stays >= airway throughout)
+        translate([0,0,flare_z-0.01]) cylinder(d1=acc_clear_d, d2=mouth_id, h=flare_len+0.02);
+        translate([0,0,flat_z-0.01])  cylinder(d=mouth_id, h=flat_len+0.02);
     }
 }
 
