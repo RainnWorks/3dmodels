@@ -28,20 +28,18 @@
 //    thread_clearance; sloppy -> lower it. Reprint the coupon (minutes), THEN
 //    commit to the big parts.
 //
-//  ORIENTATION (all parts: THREAD AXIS VERTICAL -> each layer is a clean ring,
-//               no bridging across the helix, crisp coarse crests)
-//    BODY     -> outboard collar DOWN on the plate, barrel + threads UP. Keeps
-//                the door-seating face of the flange printing flat (up). The
-//                flange's collar-side underside is an annular overhang -> light
-//                supports there (cosmetic face) or a brim.
-//    CAP      -> flange DOWN on the plate, closed top up. Internal trapezoidal
-//                thread (30 deg flanks, flat crests) is self-supporting -> no
-//                supports.
-//    WIDENER  -> MOUTH DOWN (mouth ring on the plate, flange + thread on top).
-//                The steep flare narrows going up, so it self-supports. The
-//                internal helical tabs have a rounded underside but still bridge
-//                ~4mm inward -> light support inside the mouth if they sag. The
-//                flange at the top is a mild annular overhang.
+//  ORIENTATION (all parts: THREAD AXIS VERTICAL).  Design is self-supporting --
+//  run with SUPPORTS OFF.  Two things make that work: the thread flanks are
+//  sloped (thread_angle ~50) so the downward flank never exceeds a printable
+//  overhang, and a 45deg cone under each flange (support_cones) replaces the
+//  flat overhang ring.
+//    BODY     -> outboard collar DOWN on the plate, barrel + threads UP. Flange
+//                seating face prints flat (up); its collar-side is the cone.
+//    CAP      -> flange DOWN on the plate, closed top up.
+//    WIDENER  -> MOUTH DOWN (mouth ring on the plate, flange on top). Flare and
+//                flange cone both self-support. The only marginal feature is the
+//                internal helical tabs (~4mm bridge) -- if they sag in PLA, dab
+//                support on just those, or raise tab_r.
 //
 //  PLA (fit-test):  nozzle ~210C / bed ~60C, layer 0.20, walls 3, infill 20%.
 //  PETG (final):    nozzle ~250-260C / bed ~70-80C, layer 0.20, walls 3-4,
@@ -71,7 +69,8 @@ fit_clearance  = 1.0;   // barrel OD = bore_d - fit_clearance (loose drop-in)
 // ---- Thread (coarse; one spec used everywhere) ------------------------------
 thread_pitch     = 5.0;  // coarse, 4-6 mm
 thread_clearance = 0.45; // diametral clearance male<->female (0.4-0.5)
-thread_angle     = 30;   // trapezoidal flank half-angle (flat crests print clean)
+thread_angle     = 50;   // flank angle -- larger = sloped flanks that self-support
+                         //   (downward flank ~45deg overhang, no flat underside)
 thread_depth     = thread_pitch * 0.5;  // shallow, robust printed engagement
 
 // ---- Barrel / ports ---------------------------------------------------------
@@ -110,6 +109,9 @@ tab_pitch    = 14;  // helix lead [mm/turn]; TODO match the hose's rib pitch
 tab_protrude = 4.0; // how far each tab sticks inward [mm]
 tab_r        = 3.0; // tab cross-section radius (thickness)
 
+// ---- Printability -----------------------------------------------------------
+support_cones = true;  // 45deg cones under the flanges so they print self-supporting
+
 // ---- Quality ----------------------------------------------------------------
 show_threads = true;   // false = plain bores/barrel for a fast proportions check
 $fa = 2;
@@ -125,6 +127,8 @@ acc_od     = thread_d + 2*wall;                 // accessory threaded-collar OD
 acc_clear_d = barrel_od + 1;                    // counterbore dia (clears barrel)
 barrel_minor = thread_d - 2*thread_depth;
 barrel_wall_at_root = (barrel_minor - airway_d)/2;
+body_cone_h = support_cones ? (flange_od - barrel_od)/2 : 0;  // 45deg, flange->collar
+acc_cone_h  = support_cones ? (acc_flange_od - acc_od)/2  : 0; // 45deg, flange->collar
 
 echo(barrel_od=barrel_od, barrel_len=barrel_len, acc_od=acc_od);
 echo(barrel_wall_at_root=barrel_wall_at_root);
@@ -177,14 +181,17 @@ module body() {
         union() {
             // flange (seating face at Z=0, body outside the door at -Z)
             translate([0,0,-flange_t]) cylinder(d=flange_od, h=flange_t);
-            // outboard collar (outside port, external thread)
-            translate([0,0,-flange_t-collar_len]) male_thread(collar_len);
+            // 45deg support cone (collar side) so the flange self-supports
+            translate([0,0,-flange_t-body_cone_h])
+                cylinder(d1=barrel_od, d2=flange_od, h=body_cone_h);
+            // outboard collar (outside port, external thread) below the cone
+            translate([0,0,-flange_t-body_cone_h-collar_len]) male_thread(collar_len);
             // barrel (inside port, external thread, through the door)
             male_thread(barrel_len);
         }
         // through airway
-        translate([0,0,-flange_t-collar_len-1])
-            cylinder(d=airway_d, h=flange_t+collar_len+barrel_len+2);
+        translate([0,0,-flange_t-body_cone_h-collar_len-1])
+            cylinder(d=airway_d, h=flange_t+body_cone_h+collar_len+barrel_len+2);
     }
 }
 
@@ -202,6 +209,9 @@ module accessory_collar(extra_h=0) {
                 rotate([0,0,i*360/grip_flutes])
                     translate([acc_flange_od/2,0,-1]) cylinder(r=grip_r, h=acc_flange_t+2);
         }
+        // 45deg support cone under the flange free face (self-supporting)
+        translate([0,0,acc_flange_t])
+            cylinder(d1=acc_flange_od, d2=acc_od, h=acc_cone_h);
         cylinder(d=acc_od, h=acc_thread_len+extra_h); // collar
     }
 }
