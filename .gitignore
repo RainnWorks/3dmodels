@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+
+# Slicer / CAD temp & output
+*.tmp
+*.bak
+*.lock
+
+# OS / editor cruft
+Thumbs.db
+*~
+.vscode/
+.idea/
