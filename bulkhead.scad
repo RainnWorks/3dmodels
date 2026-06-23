@@ -13,8 +13,9 @@
 //      so screwing it down traps the door between it and the body flange. The
 //      accessory IS the clamp (no separate nut).
 //        - CAP      = flanged, closed top.  Winter seal / blanking plate.
-//        - WIDENER  = flanged, flares out to a mouth the AC hose INSERTS INTO;
-//                     internal helical tabs grip the hose's spiral (twist on).
+//        - WIDENER  = flanged, flares out to a mouth the AC hose PUSHES INTO; the
+//                     mouth is slotted, so a worm-drive (jubilee) clamp in the
+//                     groove squeezes it tight onto the hose. Removable by hand.
 //      OUTSIDE (PLAIN) -- the body flange is already on the outside, so these are
 //      compact threaded knobs (light knurl, NO clamp flange) on the outboard
 //      collar -- no second gear stacked on the body flange.
@@ -116,19 +117,19 @@ out_flutes  = 16;         // light knurl for finger grip (not the big gear)
 out_flute_r = 3;
 
 // ---- Widener (duct funnel)  (MEASURE THE DUCT) ------------------------------
-duct_od     = 150; // TODO MEASURE: AC hose OD; the hose inserts INTO the mouth.
-                   //   Portable-AC / heat-pump hoses are a universal 130 or 150;
-                   //   150 is typical for heat-pump units. Measure yours to be sure.
+duct_od     = 135; // AC hose OD; the hose inserts INTO the mouth. Tuned from a
+                   //   test print: duct_od 130 (138 mouth OD) was slightly small,
+                   //   so +5mm -> 135 gives a 143 mouth OD / 137 bore.
 insert_clear = 2.0;// mouth ID = duct_od + this  (slide-in clearance)
-flare_len   = 20;  // steep flare height: throat -> mouth (short = widens fast)
-flat_len    = 30;  // straight mouth section the hose inserts into
-// internal helical grip tabs -- the hose's spiral twists into these (like a
-// coarse interrupted thread).  See the reference photo.
-tab_count    = 3;   // number of helical tabs around the inside
-tab_arc      = 75;  // angular span of each tab [deg]
-tab_pitch    = 14;  // helix lead [mm/turn]; TODO match the hose's rib pitch
-tab_protrude = 4.0; // how far each tab sticks inward [mm]
-tab_r        = 3.0; // tab cross-section radius (thickness)
+flare_len   = 16;  // steep flare height: throat -> mouth (short = widens fast)
+flat_len    = 34;  // straight mouth section the hose slides into + gets clamped
+// hose clamp: the mouth is a smooth bore the hose pushes into, slotted so a
+// worm-drive (jubilee) clamp seated in a groove squeezes it onto the hose.
+clamp_slots  = 6;   // longitudinal compression slots around the mouth
+slot_w       = 2.5; // slot width
+slot_margin  = 8;   // solid length left at the flare end (slots stop short of it)
+groove_w     = 11;  // worm-drive clamp band width (groove holds the clamp)
+groove_depth = 1.8; // groove depth (clamp sits recessed, can't slide off)
 
 // ---- Printability -----------------------------------------------------------
 support_cones = true;  // 45deg cones under the flanges so they print self-supporting
@@ -259,15 +260,18 @@ module cap() {
     }
 }
 
-// one internal helical tab: a rounded rib swept along a helix arc, protruding
-// inward from the mouth wall.  The hose's spiral twists into these.
-module helical_tab(bore_r, z0, arc, pitch, rr, protrude) {
-    rc = bore_r - protrude + rr;                   // path radius (innermost = bore_r-protrude)
-    steps = max(6, ceil(arc/6));
-    for (i=[0:steps-1]) hull() {
-        a0 = i*arc/steps; a1 = (i+1)*arc/steps;
-        translate([rc*cos(a0), rc*sin(a0), z0+(a0/360)*pitch]) sphere(r=rr);
-        translate([rc*cos(a1), rc*sin(a1), z0+(a1/360)*pitch]) sphere(r=rr);
+// compression slots + clamp groove cut into the mouth (used by widener)
+module mouth_clamp_cuts(mouth_od, mouth_top, flat_z) {
+    slot_len = flat_len - slot_margin;
+    groove_z = flat_z + (flat_len - groove_w)/2;
+    // longitudinal slots from the rim down (let the mouth squeeze)
+    for (i=[0:clamp_slots-1]) rotate([0,0, i*360/clamp_slots + 180/clamp_slots])
+        translate([0, -slot_w/2, mouth_top-slot_len])
+            cube([mouth_od/2+1, slot_w, slot_len+1]);
+    // worm-drive clamp groove (recessed outer band so the clamp can't slide off)
+    translate([0,0,groove_z]) difference() {
+        cylinder(d=mouth_od+2, h=groove_w);
+        translate([0,0,-1]) cylinder(d=mouth_od-2*groove_depth, h=groove_w+2);
     }
 }
 
@@ -338,34 +342,30 @@ module net_out() {
 }
 
 // -----------------------------------------------------------------------------
-//  WIDENER  -- steep flare to a straight mouth the AC hose INSERTS INTO; internal
-//              helical tabs grip the hose's spiral (twist to engage). Clamps the
-//              door like the cap.  Best printed MOUTH-DOWN (flare self-supports).
+//  WIDENER  -- steep flare to a straight mouth the AC hose PUSHES INTO; the mouth
+//              is slotted so a worm-drive (jubilee) clamp in the groove squeezes
+//              it onto the hose. Clamps the door like the cap. Print MOUTH-DOWN.
 // -----------------------------------------------------------------------------
 module widener() {
-    mouth_id = duct_od + insert_clear;             // hose slides into this
-    mouth_od = mouth_id + 2*wall;
-    flare_z  = acc_stack_h;
-    flat_z   = flare_z + flare_len;
-    tab_rise = (tab_arc/360)*tab_pitch;
-    tab_z0   = flat_z + (flat_len - tab_rise)/2;   // centre tabs in the flat band
-    union() {
-        difference() {
-            union() {
-                accessory_collar(extra_h=acc_clear_depth); // flange + collar + cbore
-                translate([0,0,flare_z])                    // steep flare
-                    cylinder(d1=acc_od, d2=mouth_od, h=flare_len);
-                translate([0,0,flat_z])                     // straight mouth
-                    cylinder(d=mouth_od, h=flat_len);
-            }
-            accessory_bore();
-            // bore: flare then straight (stays >= airway throughout)
-            translate([0,0,flare_z-0.01]) cylinder(d1=acc_clear_d, d2=mouth_id, h=flare_len+0.02);
-            translate([0,0,flat_z-0.01])  cylinder(d=mouth_id, h=flat_len+0.02);
+    mouth_id  = duct_od + insert_clear;            // smooth bore, hose slides in
+    mouth_od  = mouth_id + 2*wall;
+    flare_z   = acc_stack_h;
+    flat_z    = flare_z + flare_len;
+    mouth_top = flat_z + flat_len;
+    difference() {
+        union() {
+            accessory_collar(extra_h=acc_clear_depth); // flange + collar + cbore
+            translate([0,0,flare_z])                    // steep flare
+                cylinder(d1=acc_od, d2=mouth_od, h=flare_len);
+            translate([0,0,flat_z])                     // straight mouth
+                cylinder(d=mouth_od, h=flat_len);
         }
-        // internal helical grip tabs (added after the bore so they protrude in)
-        for (i=[0:tab_count-1]) rotate([0,0,i*360/tab_count])
-            helical_tab(mouth_id/2, tab_z0, tab_arc, tab_pitch, tab_r, tab_protrude);
+        accessory_bore();
+        // bore: flare then straight (stays >= airway throughout)
+        translate([0,0,flare_z-0.01]) cylinder(d1=acc_clear_d, d2=mouth_id, h=flare_len+0.02);
+        translate([0,0,flat_z-0.01])  cylinder(d=mouth_id, h=flat_len+0.02);
+        // clamp: compression slots + worm-drive groove
+        mouth_clamp_cuts(mouth_od, mouth_top, flat_z);
     }
 }
 
