@@ -20,9 +20,12 @@ face, so screwing one down traps the door between it and the body flange. The
 accessory *is* the clamp (no separate nut).
 
 - **Cap** — geared, closed top. Winter seal / blanking plate.
-- **Widener** — geared, flares fast to a straight mouth the AC hose **inserts
-  into**; internal helical tabs grip the hose's spiral (twist to engage). The
-  "inlet" the duct connects to.
+- **Widener** — geared, flares to a slotted **collet** mouth the AC hose pushes
+  into; its base is externally threaded for the collet nut. The "inlet" the duct
+  connects to.
+- **Collet nut** — a separate **all-printed** clamp. Goes over the hose and screws
+  onto the collet; its inner cone squeezes the fingers onto the hose as you
+  tighten. Hand on/off, no hardware. Fixes the hose pulling out on door swing.
 
 **Outside (plain)** — the body flange is already on the outside, so these are
 compact threaded knobs (light knurl, **no clamp flange**) that screw onto the

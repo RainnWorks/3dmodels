@@ -13,9 +13,11 @@
 //      so screwing it down traps the door between it and the body flange. The
 //      accessory IS the clamp (no separate nut).
 //        - CAP      = flanged, closed top.  Winter seal / blanking plate.
-//        - WIDENER  = flanged, flares out to a mouth the AC hose PUSHES INTO; the
-//                     mouth is slotted, so a worm-drive (jubilee) clamp in the
-//                     groove squeezes it tight onto the hose. Removable by hand.
+//        - WIDENER  = flanged, flares to a slotted COLLET mouth the hose pushes
+//                     into; its base is externally threaded for COLLET_NUT.
+//        - COLLET_NUT = separate all-printed clamp. Goes over the hose, screws
+//                     onto the collet; its inner cone squeezes the fingers onto
+//                     the hose. Hand on/off, no hardware. (Its own model.)
 //      OUTSIDE (PLAIN) -- the body flange is already on the outside, so these are
 //      compact threaded knobs (light knurl, NO clamp flange) on the outboard
 //      collar -- no second gear stacked on the body flange.
@@ -64,7 +66,7 @@ include <BOSL2/threading.scad>
 // -----------------------------------------------------------------------------
 //  PARAMETER BLOCK  -- everything dimension-driving lives here
 // -----------------------------------------------------------------------------
-render_part = "body";  // body|cap|cap_out|net_out|widener|assembly|section|test
+render_part = "body";  // body|cap|cap_out|net_out|widener|collet_nut|assembly|section|test
 
 // ---- Hole / door (MEASURE THESE) --------------------------------------------
 bore_d         = 86;    // TODO MEASURE: drilled hole diameter in the door [mm]
@@ -122,14 +124,19 @@ duct_od     = 135; // AC hose OD; the hose inserts INTO the mouth. Tuned from a
                    //   so +5mm -> 135 gives a 143 mouth OD / 137 bore.
 insert_clear = 2.0;// mouth ID = duct_od + this  (slide-in clearance)
 flare_len   = 16;  // steep flare height: throat -> mouth (short = widens fast)
-flat_len    = 34;  // straight mouth section the hose slides into + gets clamped
-// hose clamp: the mouth is a smooth bore the hose pushes into, slotted so a
-// worm-drive (jubilee) clamp seated in a groove squeezes it onto the hose.
-clamp_slots  = 6;   // longitudinal compression slots around the mouth
-slot_w       = 2.5; // slot width
-slot_margin  = 8;   // solid length left at the flare end (slots stop short of it)
-groove_w     = 13;  // worm-drive clamp band width (fits a typical 12mm band)
-groove_depth = 1.8; // groove depth (clamp sits recessed, can't slide off)
+// hose clamp = ALL-PRINTED collet + screw-on cap-nut (no hardware). The mouth is
+// a slotted collet with an external thread on its base; the separate cap-nut goes
+// over the hose and screws down, its inner cone squeezing the collet onto the
+// hose.  The nut (collet_nut) is its own model.
+collet_thread_len = 14;  // externally-threaded base of the collet (nut runs on this)
+collet_finger_len = 20;  // slotted fingers above the thread (these get squeezed)
+collet_slots      = 6;   // number of slots / fingers
+collet_slot_w     = 3;   // slot width
+collet_wall       = 2.5; // collet wall at the thread root
+collet_pitch      = 6;   // coarse external thread (nut clamps in ~1 turn)
+nut_wall          = 4;   // cap-nut wall thickness
+nut_flutes        = 18;  // knurl on the cap-nut for grip
+nut_cone          = 10;  // axial length of the nut's squeeze cone
 
 // ---- Printability -----------------------------------------------------------
 support_cones = true;  // 45deg cones under the flanges so they print self-supporting
@@ -152,6 +159,16 @@ barrel_wall_at_root = (barrel_minor - airway_d)/2;
 body_cone_h = support_cones ? (flange_od - barrel_od)/2 : 0;  // 45deg, flange->collar
 acc_cone_h  = support_cones ? (acc_flange_od - acc_od)/2  : 0; // 45deg, flange->collar
 out_od      = acc_od + 6;                                      // compact knob OD
+// collet (widener mouth) + cap-nut dims
+mouth_bore   = duct_od + insert_clear;            // hose slides into this
+collet_minor = mouth_bore + 2*collet_wall;        // collet OD at thread root / fingers
+collet_major = collet_minor + collet_pitch;       // external thread crest dia
+collet_len   = collet_thread_len + collet_finger_len;
+nut_id       = collet_major + thread_clearance;   // nut runs over the collet thread
+nut_od       = nut_id + 2*nut_wall;               // cap-nut outer dia
+hose_hole    = duct_od + 2;                        // nut top/cone throat: hose passes
+                                                   //   through, and it squeezes the
+                                                   //   142 fingers down onto the hose
 
 echo(barrel_od=barrel_od, barrel_len=barrel_len, acc_od=acc_od);
 echo(barrel_wall_at_root=barrel_wall_at_root);
@@ -181,6 +198,22 @@ module female_thread_cutter(len) {
                      $slop=thread_clearance/2, anchor=BOTTOM);
     else
         cylinder(d=thread_d + thread_clearance, h=len);
+}
+
+// Generic threads at an arbitrary diameter/pitch (used for the collet + nut).
+module ext_thread(d, len, pitch) {
+    if (show_threads)
+        trapezoidal_threaded_rod(d=d, l=len, pitch=pitch, thread_angle=thread_angle,
+                     thread_depth=pitch*0.5, internal=false, bevel1=false,
+                     bevel2=true, blunt_start=false, anchor=BOTTOM);
+    else cylinder(d=d, h=len);
+}
+module int_thread_cut(d, len, pitch) {
+    if (show_threads)
+        trapezoidal_threaded_rod(d=d, l=len, pitch=pitch, thread_angle=thread_angle,
+                     thread_depth=pitch*0.5, internal=true, bevel=false,
+                     $slop=thread_clearance/2, anchor=BOTTOM);
+    else cylinder(d=d + thread_clearance, h=len);
 }
 
 // Conical lead-in so a female bore starts onto the thread easily.
@@ -260,19 +293,14 @@ module cap() {
     }
 }
 
-// compression slots + clamp groove cut into the mouth (used by widener)
-module mouth_clamp_cuts(mouth_od, mouth_top, flat_z) {
-    slot_len = flat_len - slot_margin;
-    groove_z = flat_z + (flat_len - groove_w)/2;
-    // longitudinal slots from the rim down (let the mouth squeeze)
-    for (i=[0:clamp_slots-1]) rotate([0,0, i*360/clamp_slots + 180/clamp_slots])
-        translate([0, -slot_w/2, mouth_top-slot_len])
-            cube([mouth_od/2+1, slot_w, slot_len+1]);
-    // worm-drive clamp groove (recessed outer band so the clamp can't slide off)
-    translate([0,0,groove_z]) difference() {
-        cylinder(d=mouth_od+2, h=groove_w);
-        translate([0,0,-1]) cylinder(d=mouth_od-2*groove_depth, h=groove_w+2);
-    }
+// slots that split the collet into fingers (cut from the rim down, leaving the
+// threaded base solid so the nut always has full thread to run on)
+module collet_slots_cut(flat_z) {
+    slot_z0 = flat_z + collet_thread_len;          // slots start above the thread
+    slot_h  = collet_finger_len + 1;
+    for (i=[0:collet_slots-1]) rotate([0,0, i*360/collet_slots + 180/collet_slots])
+        translate([0, -collet_slot_w/2, slot_z0])
+            cube([collet_major/2+2, collet_slot_w, slot_h]);
 }
 
 // -----------------------------------------------------------------------------
@@ -342,30 +370,59 @@ module net_out() {
 }
 
 // -----------------------------------------------------------------------------
-//  WIDENER  -- steep flare to a straight mouth the AC hose PUSHES INTO; the mouth
-//              is slotted so a worm-drive (jubilee) clamp in the groove squeezes
-//              it onto the hose. Clamps the door like the cap. Print MOUTH-DOWN.
+//  WIDENER  -- flares to a COLLET mouth the AC hose pushes into. The collet's
+//              base is externally threaded for the separate cap-nut (collet_nut),
+//              which screws over the hose and squeezes the fingers onto it.
+//              Print MOUTH-DOWN.
 // -----------------------------------------------------------------------------
 module widener() {
-    mouth_id  = duct_od + insert_clear;            // smooth bore, hose slides in
-    mouth_od  = mouth_id + 2*wall;
     flare_z   = acc_stack_h;
     flat_z    = flare_z + flare_len;
-    mouth_top = flat_z + flat_len;
+    mouth_top = flat_z + collet_len;
     difference() {
         union() {
-            accessory_collar(extra_h=acc_clear_depth); // flange + collar + cbore
-            translate([0,0,flare_z])                    // steep flare
-                cylinder(d1=acc_od, d2=mouth_od, h=flare_len);
-            translate([0,0,flat_z])                     // straight mouth
-                cylinder(d=mouth_od, h=flat_len);
+            accessory_collar(extra_h=acc_clear_depth);   // flange + collar + cbore
+            translate([0,0,flare_z])                      // steep flare to collet root
+                cylinder(d1=acc_od, d2=collet_minor, h=flare_len);
+            translate([0,0,flat_z])                       // threaded base for the nut
+                ext_thread(collet_major, collet_thread_len, collet_pitch);
+            translate([0,0,flat_z+collet_thread_len-0.01]) // smooth slotted fingers
+                cylinder(d=collet_minor, h=collet_finger_len);
         }
         accessory_bore();
         // bore: flare then straight (stays >= airway throughout)
-        translate([0,0,flare_z-0.01]) cylinder(d1=acc_clear_d, d2=mouth_id, h=flare_len+0.02);
-        translate([0,0,flat_z-0.01])  cylinder(d=mouth_id, h=flat_len+0.02);
-        // clamp: compression slots + worm-drive groove
-        mouth_clamp_cuts(mouth_od, mouth_top, flat_z);
+        translate([0,0,flare_z-0.01]) cylinder(d1=acc_clear_d, d2=mouth_bore, h=flare_len+0.02);
+        translate([0,0,flat_z-0.01])  cylinder(d=mouth_bore, h=collet_len+0.02);
+        // external chamfer on the finger tips (lead for the nut cone) + slots
+        translate([0,0,mouth_top-0.01])
+            cylinder(h=3.5, r1=collet_minor/2+0.2, r2=collet_minor/2-3);
+        collet_slots_cut(flat_z);
+    }
+}
+
+// -----------------------------------------------------------------------------
+//  COLLET NUT  -- separate printed clamp. Goes over the hose, screws onto the
+//    collet's external thread; the inner cone squeezes the fingers onto the hose
+//    as it tightens.  Hand on/off, no hardware.  Print THREAD-AXIS VERTICAL.
+// -----------------------------------------------------------------------------
+module collet_nut() {
+    h = collet_len + 3;                               // spans thread + fingers
+    difference() {
+        // fluted knurl body
+        difference() {
+            cylinder(d=nut_od, h=h);
+            for (i=[0:nut_flutes-1]) rotate([0,0,i*360/nut_flutes])
+                translate([nut_od/2,0,-1]) cylinder(r=2.6, h=h+2);
+        }
+        // internal thread over the base (engages the collet)
+        translate([0,0,-0.5]) int_thread_cut(collet_major, collet_thread_len+2, collet_pitch);
+        // clearance bore over the fingers, then the squeeze cone, then hose hole
+        translate([0,0,collet_thread_len])
+            cylinder(d=collet_major+1, h=collet_finger_len-nut_cone+0.5);
+        translate([0,0,collet_thread_len+collet_finger_len-nut_cone])  // squeeze cone
+            cylinder(d1=collet_major+1, d2=hose_hole, h=nut_cone);
+        translate([0,0,collet_thread_len+collet_finger_len-0.01])      // hose pass-through
+            cylinder(d=hose_hole, h=4);
     }
 }
 
@@ -413,6 +470,17 @@ else if (render_part == "cap")      cap();
 else if (render_part == "cap_out")  cap_out();
 else if (render_part == "net_out")  net_out();
 else if (render_part == "widener")  widener();
+else if (render_part == "collet_nut") collet_nut();
+else if (render_part == "clampdemo")
+    difference() {
+        union() {
+            color("SteelBlue") widener();
+            color("Goldenrod") translate([0,0, acc_stack_h+flare_len]) collet_nut();
+            color("Gainsboro") translate([0,0, acc_stack_h+flare_len+8])   // hose stub
+                difference() { cylinder(d=duct_od, h=50); translate([0,0,-1]) cylinder(d=duct_od-8, h=52); }
+        }
+        translate([-300,-300,-300]) cube([600,300,900]);
+    }
 else if (render_part == "test")     test_coupon();
 else if (render_part == "assembly") assembly();
 else if (render_part == "section")

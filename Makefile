@@ -17,9 +17,9 @@ PREVDIR := previews
 EXPDIR  := export
 
 # Printable parts (get STL + 3MF). Accessories + the fit-test coupon.
-PARTS := body cap cap_out net_out widener test
+PARTS := body cap cap_out net_out widener collet_nut test
 # Everything that gets a PNG preview (parts + the multi-part views).
-VIEWS := body cap cap_out net_out widener test assembly section section_zoom
+VIEWS := body cap cap_out net_out widener collet_nut test assembly section section_zoom clamp_section
 
 # --- render settings ---------------------------------------------------------
 COLOR := --colorscheme=Tomorrow
@@ -48,6 +48,11 @@ $(PREVDIR)/%.png: $(SCAD) | $(PREVDIR)
 $(PREVDIR)/widener.png: $(SCAD) | $(PREVDIR)
 	$(OSCAD) -o $@ $(COLOR) --imgsize=750,650 \
 	    --camera=0,0,0,52,0,20,0 --viewall --autocenter -D 'render_part="widener"' $(SCAD)
+
+# clamp_section: collet + nut + hose, sectioned (overrides generic rule)
+$(PREVDIR)/clamp_section.png: $(SCAD) | $(PREVDIR)
+	$(OSCAD) -o $@ $(COLOR) --projection=ortho --imgsize=800,760 \
+	    --camera=0,0,55,90,0,0,0 --viewall --autocenter -D 'render_part="clampdemo"' $(SCAD)
 
 # section: orthographic, centred on the clamp stack (overrides generic rule)
 $(PREVDIR)/section.png: $(SCAD) | $(PREVDIR)
