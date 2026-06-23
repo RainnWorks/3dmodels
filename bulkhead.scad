@@ -128,7 +128,7 @@ flat_len    = 34;  // straight mouth section the hose slides into + gets clamped
 clamp_slots  = 6;   // longitudinal compression slots around the mouth
 slot_w       = 2.5; // slot width
 slot_margin  = 8;   // solid length left at the flare end (slots stop short of it)
-groove_w     = 11;  // worm-drive clamp band width (groove holds the clamp)
+groove_w     = 13;  // worm-drive clamp band width (fits a typical 12mm band)
 groove_depth = 1.8; // groove depth (clamp sits recessed, can't slide off)
 
 // ---- Printability -----------------------------------------------------------
