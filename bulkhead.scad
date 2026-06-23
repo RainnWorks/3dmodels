@@ -45,10 +45,13 @@
 //    BODY     -> outboard collar DOWN on the plate, barrel + threads UP. Flange
 //                seating face prints flat (up); its collar-side is the cone.
 //    CAP      -> flange DOWN on the plate, closed top up.
-//    WIDENER  -> MOUTH DOWN (mouth ring on the plate, flange on top). Flare and
-//                flange cone both self-support. The only marginal feature is the
-//                internal helical tabs (~4mm bridge) -- if they sag in PLA, dab
-//                support on just those, or raise tab_r.
+//    WIDENER  -> MOUTH DOWN (collet/threaded mouth ring on the plate, flange on
+//                top). Flare + flange cone self-support.
+//    COLLET_NUT -> HOLE-END DOWN (the small hose-hole face on the plate, OPEN
+//                threaded end UP) -- i.e. like a cup the right way up. The squeeze
+//                cone is then the inside-bottom (supported), not a ceiling, so no
+//                support. Printed open-end-down instead, the cone is a ceiling
+//                and the slicer asks for support -- just flip it.
 //
 //  PLA (fit-test):  nozzle ~210C / bed ~60C, layer 0.20, walls 3, infill 20%.
 //  PETG (final):    nozzle ~250-260C / bed ~70-80C, layer 0.20, walls 3-4,
