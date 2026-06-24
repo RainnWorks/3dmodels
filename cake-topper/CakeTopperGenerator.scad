@@ -24,56 +24,70 @@
 // =============================================================================
 
 /* [Fonts] */
-// macOS swirly options: "Snell Roundhand:style=Bold", "Savoye LET",
-// "Apple Chancery", "Zapfino", "Brush Script MT", "SignPainter:style=HouseScript"
-Text_Font       = "Snell Roundhand:style=Bold";
-Age_Font        = "Arial Black";   // the big number -- hard, clear, easy to read
+// Pick any font from MakerLab's library (the "Book" icon -> Third-party).
+// Defaults are Google fonts so they render on MakerWorld AND locally.
+// Nice scripts: Great Vibes, Pacifico, Dancing Script, Satisfy, Sacramento.
+// Nice bold numbers: Anton, Archivo Black, Bebas Neue, Oswald.
+Text_Font       = "Great Vibes";   // font
+Age_Font        = "Anton";         // font
 
 /* [Text] */
+// The three lines (the third is the name, printed bigger)
 Line1           = "Happy";
 Line2           = "Birthday";
-Line3           = "Mia";        // the name -- printed bigger
-Line1_Size      = 30;
-Line2_Size      = 30;
-Line3_Size      = 50;           // bigger than the other two
-Line_Gap        = 4;            // extra vertical gap between lines (mm)
-Text_Boldness   = 1.4;          // fatten the letters (offset r, mm)
-Text_Spacing    = 1.0;
+Line3           = "Mia";
+Line1_Size      = 30;           // [10:1:80]
+Line2_Size      = 30;           // [10:1:80]
+Line3_Size      = 50;           // [10:1:100]
+// extra vertical gap between lines (mm)
+Line_Gap        = 4;            // [-10:0.5:30]
+// fatten the letters (mm)
+Text_Boldness   = 1.4;          // [0:0.1:4]
+// letter spacing (1 = normal)
+Text_Spacing    = 1.0;          // [0.5:0.05:2]
 
 /* [Background number] */
-Age             = "1";          // the big number behind the text
-Age_Style       = "inlay";      // "inlay" | "engrave" | "deboss" | "raised"
-Age_Scale       = 1.12;         // number height vs. the text-block height
-Age_Boldness    = 3.0;          // fatten the number strokes (mm)
-Gap             = 2.2;          // clear gap between the number and the text (mm)
-Number_Outline  = 2.4;          // width of the engraved "1" outline groove (mm)
-Number_Stroke   = 1.5;          // width of the black outline around the inlaid
-                                // "1" (mm). 0 = no stroke
+// The big number behind the text (the age)
+Age             = "1";
+// How the number is shown
+Age_Style       = "inlay";      // [inlay, engrave, deboss, raised]
+// number height vs. the text-block height
+Age_Scale       = 1.12;         // [0.5:0.01:2.5]
+// fatten the number strokes (mm)
+Age_Boldness    = 3.0;          // [0:0.1:8]
+// clear gap between the number and the text (mm)
+Gap             = 2.2;          // [0:0.1:6]
+// width of the black outline around the inlaid number (mm). 0 = no stroke
+Number_Stroke   = 1.5;          // [0:0.1:5]
+// width of the engraved outline groove, for Age_Style="engrave" (mm)
+Number_Outline  = 2.4;          // [0.5:0.1:5]
 
 /* [Outline / halo] */
-Outline_thickness = 2.0;        // white border around the words (mm)
-Connect           = 3.0;        // close gaps in the base plate so floating bits
-                                // (e.g. script "i" dots) bridge to their letter (mm)
-
-/* [Layers] */
-Extrusion_Layer_Height = 0.20;
-Base_Layers     = 6;            // base plate
-Engrave_Layers  = 4;            // depth of the engraved number outline
-Inlay_Layers    = 5;            // number depth for inlay/deboss (< Base_Layers)
-                                // near-full so the gold "1" reads through the white
-Age_Layers      = 8;            // number height when Age_Style="raised"
-Text_Layers     = 12;           // letters sit highest
+// white border around the words (mm)
+Outline_thickness = 2.0;        // [0:0.1:5]
+// close gaps so floating bits (e.g. script "i" dots) bridge to their letter (mm)
+Connect           = 3.0;        // [0:0.1:6]
 
 /* [Posts] */
-Post_Spacing    = 80;           // distance between the two posts (mm). 0 = none
-Post_Width      = 5;
-Post_Length     = 70;
+// distance between the two posts (mm). 0 = no posts
+Post_Spacing    = 80;           // [0:1:160]
+Post_Width      = 5;            // [0:0.5:15]
+Post_Length     = 70;           // [0:1:150]
 
-/* [Colours (preview only)] */
-col_text        = "red";
-col_outline     = "white";      // the white backing/border around the words
-col_age         = "gold";       // the "1" cut into the white
-col_age_stroke  = "black";      // the outline around the "1" (also inlaid)
+/* [Colours] */
+// Drive the filament assignment on MakerWorld / Bambu Studio
+col_text        = "red";        // the letters
+col_outline     = "white";      // the backing / border around the words
+col_age         = "gold";       // the number
+col_age_stroke  = "black";      // the outline around the number
+
+/* [Advanced] */
+Extrusion_Layer_Height = 0.20;  // [0.04:0.04:0.4]
+Base_Layers     = 6;            // [2:1:20]
+Inlay_Layers    = 5;            // [1:1:19]
+Engrave_Layers  = 4;            // [1:1:19]
+Age_Layers      = 8;            // [1:1:30]
+Text_Layers     = 12;           // [1:1:40]
 
 /* [Hidden] */
 render_part     = "topper";
