@@ -47,6 +47,8 @@ Age_Scale       = 1.12;         // number height vs. the text-block height
 Age_Boldness    = 3.0;          // fatten the number strokes (mm)
 Gap             = 2.2;          // clear gap between the number and the text (mm)
 Number_Outline  = 2.4;          // width of the engraved "1" outline groove (mm)
+Number_Stroke   = 1.5;          // width of the black outline around the inlaid
+                                // "1" (mm). 0 = no stroke
 
 /* [Outline / halo] */
 Outline_thickness = 2.0;        // white border around the words (mm)
@@ -71,9 +73,14 @@ Post_Length     = 70;
 col_text        = "red";
 col_outline     = "white";      // the white backing/border around the words
 col_age         = "gold";       // the "1" cut into the white
+col_age_stroke  = "black";      // the outline around the "1" (also inlaid)
 
 /* [Hidden] */
 render_part     = "topper";
+// Solid=true -> one watertight single-colour solid (plate + raised text, no
+// colour inlay) for clean STL export. The 3MF export leaves this false so the
+// per-colour objects survive.
+Solid           = false;
 $fn             = 64;
 
 // --- derived heights ---------------------------------------------------------
@@ -85,6 +92,8 @@ text_h    = base_h + Text_Layers * Extrusion_Layer_Height;
 eps       = 0.001;
 weld      = 0.1;   // gold inlay grown slightly past its recess so walls overlap
                    // (not coincide) -> clean watertight union
+// how far the inlaid region (number + its black stroke) reaches past the glyph
+age_region = (Age_Style == "inlay") ? Number_Stroke : 0;
 
 // --- vertical layout ---------------------------------------------------------
 // line centres, stacked from the bottom (Line3) up; bottom of Line3 sits at y=0
@@ -159,7 +168,7 @@ module plate_2d() {
     close2d(Connect)
         union() {
             text_2d(Outline_thickness);  // white border hugs the words
-            age_2d(0);                   // bare number -> becomes the gold inlay
+            age_2d(age_region);          // number (+ black stroke) -> the inlay
             posts_2d();
         }
 }
@@ -195,12 +204,13 @@ module part_white() {
                 translate([0, 0, base_h - engrave_d + eps])
                     linear_extrude(engrave_d)
                         age_band();
-            // inlay: cut the FULL number, so gold runs right up to and under the
-            //        letters -> the letter "stroke" reads gold wherever the 1 is
+            // inlay: cut the FULL number (+ black stroke) out of the top, so gold
+            //        runs right up to and under the letters -> the letter "stroke"
+            //        reads gold wherever the 1 is, with a black outline around it
             if (Age_Style == "inlay")
                 translate([0, 0, base_h - inlay_d + eps])
                     linear_extrude(inlay_d)
-                        age_2d(0);
+                        age_2d(age_region);
             // deboss: groove the number but keep a clear gap around the letters
             if (Age_Style == "deboss")
                 translate([0, 0, base_h - inlay_d + eps])
@@ -226,6 +236,19 @@ module part_gold() {
     // ("deboss"/"engrave" -> no separate body; the carved plate is the effect)
 }
 
+// 2b) the black stroke around the "1" -- a ring just outside the gold, inlaid
+//     flush the same way (only for inlay, when Number_Stroke > 0)
+module part_black() {
+    if (Age_Style == "inlay" && Number_Stroke > 0)
+        color(col_age_stroke)
+            translate([0, 0, base_h - inlay_d])
+                linear_extrude(inlay_d - eps)
+                    difference() {
+                        age_2d(Number_Stroke + weld);  // overlaps the white wall
+                        age_2d(0);                     // gold fills the centre
+                    }
+}
+
 // 3) the text letters, raised highest
 module part_red() {
     color(col_text)
@@ -235,11 +258,23 @@ module part_red() {
 }
 
 // convenience wrapper (used for single-object PNG previews)
-module topper() { part_white(); part_gold(); part_red(); }
+module topper() { part_white(); part_gold(); part_black(); part_red(); }
+
+// a single watertight solid (no colour inlay) -- same outer shape, for STL
+module solid() {
+    color(col_outline) linear_extrude(base_h) plate_2d();
+    part_red();
+}
 
 // =============================================================================
-//  Output -- separate top-level objects so 3MF colour survives (lazy-union)
+//  Output -- separate top-level objects so 3MF colour survives (lazy-union);
+//  Solid=true collapses to one watertight body for clean STL export.
 // =============================================================================
-part_white();
-part_gold();
-part_red();
+if (Solid) {
+    solid();
+} else {
+    part_white();
+    part_gold();
+    part_black();
+    part_red();
+}

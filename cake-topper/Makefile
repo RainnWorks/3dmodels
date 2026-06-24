@@ -52,8 +52,9 @@ $(PREVDIR)/iso.png: $(SCAD) | $(PREVDIR)
 	$(OSCAD) -o $@ $(COLOR) $(ISOV) -D 'render_part="topper"' $(SCAD)
 
 # --- exports -----------------------------------------------------------------
+# STL is single-colour -> export the collapsed watertight solid (no inlay seams)
 $(EXPDIR)/%.stl: $(SCAD) | $(EXPDIR)
-	$(OSCAD) -o $@ -D 'render_part="$*"' $(SCAD)
+	$(OSCAD) -o $@ -D Solid=true -D 'render_part="$*"' $(SCAD)
 
 # 3MF keeps per-colour objects: lazy-union (so each top-level coloured object
 # stays separate) + colour export -> Bambu Studio imports a part per filament.
