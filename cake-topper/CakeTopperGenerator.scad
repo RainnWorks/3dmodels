@@ -92,8 +92,11 @@ text_h    = base_h + Text_Layers * Extrusion_Layer_Height;
 eps       = 0.001;
 weld      = 0.1;   // gold inlay grown slightly past its recess so walls overlap
                    // (not coincide) -> clean watertight union
-// how far the inlaid region (number + its black stroke) reaches past the glyph
-age_region = (Age_Style == "inlay") ? Number_Stroke : 0;
+// how far the carved/inlaid region (number + its black stroke) reaches past the
+// glyph, and how far the white PLATE reaches past that -- so a white outline
+// always wraps the black stroke, even where the "1" expands the part.
+age_recess = (Age_Style == "inlay") ? Number_Stroke : 0;
+age_plate  = (Age_Style == "inlay") ? Number_Stroke + Outline_thickness : 0;
 
 // --- vertical layout ---------------------------------------------------------
 // line centres, stacked from the bottom (Line3) up; bottom of Line3 sits at y=0
@@ -168,7 +171,7 @@ module plate_2d() {
     close2d(Connect)
         union() {
             text_2d(Outline_thickness);  // white border hugs the words
-            age_2d(age_region);          // number (+ black stroke) -> the inlay
+            age_2d(age_plate);           // number + black stroke + white outline
             posts_2d();
         }
 }
@@ -210,7 +213,7 @@ module part_white() {
             if (Age_Style == "inlay")
                 translate([0, 0, base_h - inlay_d + eps])
                     linear_extrude(inlay_d)
-                        age_2d(age_region);
+                        age_2d(age_recess);
             // deboss: groove the number but keep a clear gap around the letters
             if (Age_Style == "deboss")
                 translate([0, 0, base_h - inlay_d + eps])
