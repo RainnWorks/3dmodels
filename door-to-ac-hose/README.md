@@ -67,6 +67,29 @@ big parts. Tune `thread_clearance` if it's tight or sloppy.
 
 Requires [BOSL2](https://github.com/BelfrySCAD/BOSL2) in the OpenSCAD library path.
 
+### Publishing on MakerWorld (Parametric Model Maker / MakerLab)
+
+`bulkhead.scad` is annotated for MakerWorld's OpenSCAD customizer so buyers can
+dial in their own door/hose sizes and pick a part.
+
+- **Upload the `.scad` itself** (not a 3MF) to get the "Customize" button.
+- **BOSL2 is supported** — it's one of MakerLab's curated libraries, so the
+  `include <BOSL2/...>` lines work there unchanged. (No fonts are used, so the
+  macOS-font caveat from the cake topper doesn't apply here.)
+- **Pick a part:** `render_part` is a **dropdown** — the functional parts
+  (body, cap, widener, collet_nut, cap_out, net_out, test) are printable; the
+  assembly/section/clampdemo options are preview-only. A buyer customizes once
+  per part and downloads each.
+- **Customizer UI:** parameters are grouped with `/* [Section] */`, use
+  `// [min:step:max]` sliders, and internal vars (`$fa`, `$fs`) live under
+  `/* [Hidden] */`. Derived values (e.g. `flange_od = bore + flange_margin`) are
+  computed below the parameter block, so only the real inputs show in the UI.
+- **OpenSCAD 2021:** MakerLab runs the 2021 release. If a thread call errors on
+  upload, it's a BOSL2 version mismatch on their side — verify against the BOSL2
+  version MakerLab ships.
+- **Single colour:** each part prints in one filament; no multicolour setup
+  needed (the `color()` calls are only for the assembly/section previews).
+
 ### Deliverables in this repo
 
 - `bulkhead.scad` — all parts + `render_part` selector. Print orientation and

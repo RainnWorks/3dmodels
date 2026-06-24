@@ -68,90 +68,123 @@ include <BOSL2/threading.scad>
 
 // -----------------------------------------------------------------------------
 //  PARAMETER BLOCK  -- everything dimension-driving lives here
+//  (annotated for the OpenSCAD / MakerWorld MakerLab Customizer)
 // -----------------------------------------------------------------------------
-render_part = "body";  // body|cap|cap_out|net_out|widener|collet_nut|assembly|section|test
 
-// ---- Hole / door (MEASURE THESE) --------------------------------------------
-bore_d         = 86;    // TODO MEASURE: drilled hole diameter in the door [mm]
-door_thickness = 40;    // TODO MEASURE: door thickness [mm]
+/* [Part to make] */
+// Which piece to generate. Functional parts are printable; assembly/section/
+// clampdemo are preview-only visualisations.
+render_part = "body"; // [body:Body - port through the door, cap:Cap - inside blanking plate, widener:Widener - hose inlet, collet_nut:Collet nut - hose clamp, cap_out:Cap out - outside blank, net_out:Vent - outside bug screen, test:Thread test coupon, assembly:Preview - assembled, section:Preview - cut-away, clampdemo:Preview - hose clamp]
 
-// ---- Fit --------------------------------------------------------------------
-fit_clearance  = 1.0;   // barrel OD = bore_d - fit_clearance (loose drop-in)
+/* [Hole and door -- MEASURE THESE] */
+// Drilled hole diameter in the door (mm)
+bore_d = 86; // [40:1:160]
+// Door thickness (mm)
+door_thickness = 40; // [10:1:80]
 
-// ---- Thread (coarse; one spec used everywhere) ------------------------------
-thread_pitch     = 5.0;  // coarse, 4-6 mm
-thread_clearance = 0.45; // diametral clearance male<->female (0.4-0.5)
-thread_angle     = 50;   // flank angle -- larger = sloped flanks that self-support
-                         //   (downward flank ~45deg overhang, no flat underside)
-thread_depth     = thread_pitch * 0.5;  // shallow, robust printed engagement
+/* [Hose] */
+// AC / heat-pump hose OD -- the hose pushes INTO the widener mouth (mm)
+duct_od = 135; // [80:1:220]
+// Slide-in clearance: mouth bore = hose OD + this (mm)
+insert_clear = 2.0; // [0:0.1:5]
 
-// ---- Barrel / ports ---------------------------------------------------------
-inside_thread_len  = 20; // barrel thread protruding inside (nut/accessory travel;
-                         //   absorbs door-thickness error, 15-20mm)
-collar_len         = 14; // outboard (outside) threaded port length
-airway_d           = 74; // clear through-airway diameter (keep airflow open)
-wall               = 3.0;// nominal wall thickness
+/* [Fit and thread] */
+// Barrel OD = bore - this. A loose drop-in: the clamp holds it, not the bore (mm)
+fit_clearance = 1.0; // [0:0.1:4]
+// Thread pitch -- coarse (mm)
+thread_pitch = 5.0; // [2:0.5:8]
+// Diametral clearance between male and female thread (mm)
+thread_clearance = 0.45; // [0.1:0.05:1]
+// Thread flank angle -- larger = sloped flanks that print self-supporting (deg)
+thread_angle = 50; // [30:1:60]
 
-// ---- Flange (outside, seats on door) ----------------------------------------
-flange_od = bore_d + 29; // bore + ~28-30  -> ~14-15mm seating ring
-flange_t  = 5;           // flange thickness
+/* [Ports and barrel] */
+// Barrel thread protruding inside (accessory travel; absorbs door-thickness error) (mm)
+inside_thread_len = 20; // [10:1:40]
+// Outboard (outside) threaded port length (mm)
+collar_len = 14; // [6:1:30]
+// Clear through-airway diameter -- keep airflow open (mm)
+airway_d = 74; // [40:1:130]
+// Nominal wall thickness (mm)
+wall = 3.0; // [1.5:0.5:6]
 
-// ---- Accessories (cap / widener) shared base --------------------------------
-acc_flange_od  = bore_d + 29; // clamp + grip flange on accessories
-acc_flange_t   = 6;           // accessory flange thickness
-acc_thread_len = 20;          // internal thread depth (= barrel inside port)
-acc_clear_depth = 8;          // clearance counterbore above thread: swallows the
-                              //   barrel tip when the door is THINNER than nominal
-grip_flutes    = 14;          // hand-grip scallops on accessory rim
-grip_r         = 7;           // scallop cutter radius
+/* [Flange (outside, seats on door)] */
+// Seating ring width added around the bore: flange OD = bore + this (mm)
+flange_margin = 29; // [10:1:60]
+// Flange thickness (mm)
+flange_t = 5; // [2:0.5:12]
 
-// ---- Cap --------------------------------------------------------------------
-cap_top_t = 4;   // closed-end thickness
+/* [Accessories (cap / widener)] */
+// Grip + clamp flange width added around the bore (mm)
+acc_flange_margin = 29; // [10:1:60]
+// Accessory flange thickness (mm)
+acc_flange_t = 6; // [2:0.5:12]
+// Internal thread depth (should swallow the barrel protrusion) (mm)
+acc_thread_len = 20; // [10:1:40]
+// Clearance counterbore above the thread (swallows the barrel tip if the door is thin) (mm)
+acc_clear_depth = 8; // [0:1:20]
+// Hand-grip scallops around the accessory rim (count)
+grip_flutes = 14; // [0:1:40]
+// Scallop cutter radius (mm)
+grip_r = 7; // [1:0.5:15]
 
-// ---- Net vent cap (bug screen; passive airflow) -----------------------------
-net_standoff = 4;   // gap between collar tip and the grille, so the Ø-barrel
-                    //   core never reaches the mesh
-grille_t     = 2.5; // grille thickness
-grille_bar   = 1.5; // mesh bar width
-grille_gap   = 2.0; // mesh opening (smaller = stops smaller bugs, less airflow)
+/* [Cap] */
+// Closed-end thickness (mm)
+cap_top_t = 4; // [1:0.5:10]
 
-// ---- Outside (plain) caps -- screw onto the outboard collar, NO clamp flange
-//      (the body flange is already on the outside; don't stack a 2nd gear on it)
-out_engage  = collar_len; // female-thread depth (matches the outboard collar)
-out_flutes  = 16;         // light knurl for finger grip (not the big gear)
-out_flute_r = 3;
+/* [Outside caps and vent] */
+// Light knurl flutes on the compact outside knobs (count)
+out_flutes = 16; // [0:1:40]
+// Knurl cutter radius (mm)
+out_flute_r = 3; // [1:0.5:10]
+// Gap between collar tip and the grille so the core never reaches the mesh (mm)
+net_standoff = 4; // [1:0.5:12]
+// Grille thickness (mm)
+grille_t = 2.5; // [1:0.5:6]
+// Mesh bar width (mm)
+grille_bar = 1.5; // [0.5:0.1:4]
+// Mesh opening -- smaller stops smaller bugs but cuts airflow (mm)
+grille_gap = 2.0; // [1:0.5:6]
 
-// ---- Widener (duct funnel)  (MEASURE THE DUCT) ------------------------------
-duct_od     = 135; // AC hose OD; the hose inserts INTO the mouth. Tuned from a
-                   //   test print: duct_od 130 (138 mouth OD) was slightly small,
-                   //   so +5mm -> 135 gives a 143 mouth OD / 137 bore.
-insert_clear = 2.0;// mouth ID = duct_od + this  (slide-in clearance)
-flare_len   = 16;  // steep flare height: throat -> mouth (short = widens fast)
-// hose clamp = ALL-PRINTED collet + screw-on cap-nut (no hardware). The mouth is
-// a slotted collet with an external thread on its base; the separate cap-nut goes
-// over the hose and screws down, its inner cone squeezing the collet onto the
-// hose.  The nut (collet_nut) is its own model.
-collet_thread_len = 14;  // externally-threaded base of the collet (nut runs on this)
-collet_finger_len = 20;  // slotted fingers above the thread (these get squeezed)
-collet_slots      = 6;   // number of slots / fingers
-collet_slot_w     = 3;   // slot width
-collet_wall       = 2.5; // collet wall at the thread root
-collet_pitch      = 6;   // coarse external thread (nut clamps in ~1 turn)
-nut_wall          = 4;   // cap-nut wall thickness
-nut_flutes        = 18;  // knurl on the cap-nut for grip
-nut_cone          = 10;  // axial length of the nut's squeeze cone
+/* [Widener flare and collet] */
+// Steep flare height: throat -> mouth (short = widens fast) (mm)
+flare_len = 16; // [6:1:40]
+// Externally-threaded base of the collet (the nut runs on this) (mm)
+collet_thread_len = 14; // [6:1:30]
+// Slotted fingers above the thread (these get squeezed) (mm)
+collet_finger_len = 20; // [8:1:40]
+// Number of slots / fingers (count)
+collet_slots = 6; // [3:1:12]
+// Slot width (mm)
+collet_slot_w = 3; // [1:0.5:8]
+// Collet wall at the thread root (mm)
+collet_wall = 2.5; // [1.5:0.5:6]
+// Coarse external collet thread pitch (nut clamps in ~1 turn) (mm)
+collet_pitch = 6; // [3:0.5:10]
+// Cap-nut wall thickness (mm)
+nut_wall = 4; // [2:0.5:8]
+// Knurl flutes on the cap-nut (count)
+nut_flutes = 18; // [0:1:40]
+// Axial length of the nut's squeeze cone (mm)
+nut_cone = 10; // [4:1:25]
 
-// ---- Printability -----------------------------------------------------------
-support_cones = true;  // 45deg cones under the flanges so they print self-supporting
+/* [Advanced] */
+// 45deg cones under the flanges so they print self-supporting (supports OFF)
+support_cones = true;
+// false = plain bores/barrel for a fast proportions check (no thread geometry)
+show_threads = true;
 
-// ---- Quality ----------------------------------------------------------------
-show_threads = true;   // false = plain bores/barrel for a fast proportions check
+/* [Hidden] */
 $fa = 2;
 $fs = 0.8;
 
 // -----------------------------------------------------------------------------
 //  DERIVED + SANITY CHECKS
 // -----------------------------------------------------------------------------
+thread_depth   = thread_pitch * 0.5;            // shallow, robust printed engagement
+flange_od      = bore_d + flange_margin;        // outside seating flange OD
+acc_flange_od  = bore_d + acc_flange_margin;    // accessory grip/clamp flange OD
+out_engage     = collar_len;                    // outside-knob thread depth = collar
 barrel_od  = bore_d - fit_clearance;            // thread MAJOR diameter
 thread_d   = barrel_od;
 barrel_len = door_thickness + inside_thread_len;// barrel: door + inside port
