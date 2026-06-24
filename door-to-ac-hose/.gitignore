@@ -5,6 +5,8 @@
 *.tmp
 *.bak
 *.lock
+*.gcode
+result.json
 
 # OS / editor cruft
 Thumbs.db
