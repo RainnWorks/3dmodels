@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# Slicer / CAD temp & output
+*.tmp
+*.bak
+*.lock
+*.gcode
+result.json
+
+# OS / editor cruft
+Thumbs.db
+*~
+.vscode/
+.idea/
