@@ -111,9 +111,11 @@ head_clear = 0;       // [0:0.5:16]
 bottom_tray = false;
 
 /* [Advanced - Legs] */
-// How far each leg wraps around its corner pot, in degrees. Wider is stiffer and
-// heavier; 90 would run from one edge of the tray to the other.
-leg_sweep = 60;       // [20:2:90]
+// How far each corner leg wraps around its pot, in degrees. Bounded above: the
+// leg is lofted with hull(), which returns a CONVEX hull, so the arc hugging the
+// pot becomes a straight chord. Past about 59 degrees on the default pot that
+// chord cuts inside the cell hole and would foul the pot. Asserted.
+leg_sweep = 56;       // [20:2:90]
 // Leg wall thickness. A leg only ever carries about 4N, so this is set by what
 // prints cleanly -- 1.2mm is exactly three perimeters on a 0.4mm nozzle. (mm)
 leg_t = 1.2;          // [1.2:0.2:5]
@@ -125,12 +127,16 @@ leg_overlap = 1.2;    // [0:0.2:6]
 // right where the plate sags, and it carries the tray above at mid-span too.
 // There are (pots across - 1) x (pots deep - 1) of them.
 inner_legs = true;
-// Radius of an inner leg. It has to reach the rings around it or it is an island
-// floating in the middle of the deck, joined to nothing -- on the default pot
-// that means at least 11.4mm to touch them and 12.6mm for its wall to sit ON
-// one, the same way the corner legs do. Past that the rings bite into it and it
-// becomes a four-lobed diamond rather than a circle. (mm)
-inner_r = 13;         // [4:0.5:16]
+// How far an inner leg reaches before the surrounding pots cut into it. Past
+// ~12.6mm on the default pot they do, and it stops being a circle and becomes
+// the four-lobed diamond that actually fills the gap -- which is the point, as
+// that is what bonds it to the rings along a real length of arc rather than at
+// four tangent points. (mm)
+inner_r = 16;         // [6:0.5:26]
+// Radius of the spike an inner leg tapers down to. The leg is fat where it meets
+// the rings and thin where it plugs in: it is a rib first and an interlock
+// second, so there is no reason for the plug to be anything like as wide. (mm)
+inner_plug_r = 4;     // [1.5:0.5:12]
 // Straight length on the end of each leg. It passes through the plate below and
 // into that tray's own leg, so stacked trays slot together and can't slide. The
 // bottom tray stands on these, which is why it sits a little proud. Only (this
@@ -276,6 +282,13 @@ leg_seat_f = leg_seat / (leg_t + leg_fit);
 // section stops there rather than at the seat itself.
 tray_ph = (pitch - tray_fh - deck_t) / (1 - leg_seat_f)
         + ((bottom_tray && nest) ? lid_recess_h : 0);
+// Inner legs taper on a CONE rather than by offsetting the outline, so they can
+// go from the full diamond at the plate to a small spike without hull()
+// convexifying them on the way. Height chosen so an inner leg seats at the same
+// depth as a corner one -- otherwise only one of the two would ever bear.
+inner_cone_h = (pitch - tray_fh - deck_t)
+             / (1 - leg_fit / max(0.5, inner_r - inner_plug_r));
+
 // Where the leg seats, measured up from the start of the plug...
 leg_seat_z = tray_ph * leg_seat_f;
 // ...and so how far it hangs below that. The bottom tray stands on this.
@@ -354,6 +367,10 @@ assert(!hang || hang_d < pot_lip_d - 1.0,
 // The plate has to sit clear of the lid skirt, or it fouls the lid instead.
 assert(!hang || hang_seat < body_h - 0.5,
        "the plate would seat at or above the lid skirt -- check lip_h");
+// hull() convexifies the corner leg, replacing the arc that hugs the pot with a
+// chord. Keep that chord outside the cell hole or the leg fouls the pot.
+assert(!hang || (cell / 2 - leg_overlap) * cos(leg_sweep / 2) > hang_d / 2,
+       "leg_sweep is too wide: the corner leg's chord cuts inside the pot hole. Reduce leg_sweep.");
 assert(!hang || hang_d + 3 < cell,
        "hang holes leave too thin a web between cells -- raise pot_gap");
 
@@ -477,8 +494,8 @@ module leg_hole_2d() { offset(r = -leg_hole) children(); }
 // the corner legs only stiffen the ends, whereas a 56mm-deep column bonded to
 // the middle of the plate acts as a very deep rib exactly where it sags. It also
 // carries the tray above at mid-span rather than only at its corners.
-// Round, because it need not follow anything -- it is bounded by the four rings
-// around it, which only bite if inner_r is pushed past ~12.6mm.
+// Shaped by the four rings around it, so it fills the gap and bonds to each of
+// them along an arc instead of touching at a point.
 module inner_outline() {
     offset(r = leg_min / 2) offset(r = -leg_min / 2)
     difference() {
@@ -488,6 +505,19 @@ module inner_outline() {
                 circle(d = cell - 2 * leg_overlap);
     }
 }
+// One inner leg as a solid, `in` shrunk -- 0 for the outside, leg_t for the bore,
+// which is what keeps the wall an even thickness.
+module inner_solid(in) {
+    h = inner_cone_h;
+    tail = (in > 0) ? 2 : 0;                         // bore runs past the tip
+    intersection() {
+        linear_extrude(h + 2 * eps) offset(r = -in) inner_outline();
+        cylinder(h = h + 2 * eps, r1 = inner_r - in, r2 = inner_plug_r - in);
+    }
+    translate([0, 0, h - eps])
+        cylinder(h = leg_plug + tail + eps, r = inner_plug_r - in);
+}
+
 // The (cols-1) x (rows-1) points where four cells meet.
 module at_inner() {
     if (inner_legs && cols > 1 && rows > 1)
@@ -533,7 +563,7 @@ module underside(fh) {
     }
     if (uses_posts) {
         at_corners() linear_extrude(fh) leg_section() leg_outline();
-        at_inner()   linear_extrude(fh) leg_section() inner_outline();
+        at_inner()   linear_extrude(fh) inner_outline();
     }
     at_cells() cylinder(h = fh, d1 = lid_recess_d - recess_clear,
                         d2 = lid_recess_d - recess_clear + 2 * fh);
@@ -559,7 +589,7 @@ module deck() {
         at_cells() cylinder(h = deck_t, d = cell);
         if (uses_posts) {
             at_corners() linear_extrude(deck_t) leg_section() leg_outline();
-            at_inner()   linear_extrude(deck_t) leg_section() inner_outline();
+            at_inner()   linear_extrude(deck_t) inner_outline();
         }
         for (i = [0:cols-1])
             translate([cx(i), 0, deck_t / 2]) cube([rib_w, deck_d, deck_t], center = true);
@@ -619,13 +649,13 @@ module vertical(ph) {
             translate([0, 0, -eps]) leg_stack(ph + eps, leg_t, 2) leg_outline();
         }
     }
-    // Same treatment between the cells: taper, plug, fit -- so the inner legs
-    // interlock with the tray below exactly as the corner ones do.
-    at_inner() {
-        difference() {
-            leg_stack(ph, 0, 0) inner_outline();
-            translate([0, 0, -eps]) leg_stack(ph + eps, leg_t, 2) inner_outline();
-        }
+    // Inner legs: the full diamond where they meet the deck, coned down hard to
+    // a small spike that plugs into the tray below. Built as prism INTERSECT
+    // cone rather than a hull() loft -- a hull would convex-fill the diamond's
+    // concave sides and swallow the pots.
+    at_inner() difference() {
+        inner_solid(0);
+        translate([0, 0, -eps]) inner_solid(leg_t);
     }
     if (stack_style == "rails" || stack_style == "walls") {
         difference() {
@@ -675,8 +705,9 @@ module plate(fh, cups, ph, cells) difference() {
     if (uses_posts && leg_plug > 0)
         at_corners() translate([0, 0, -1])
             linear_extrude(fh + deck_t + 2) leg_hole_2d() leg_outline();
+        // Only a spike-sized hole, so the plug from above actually locates in it
         at_inner() translate([0, 0, -1])
-            linear_extrude(fh + deck_t + 2) leg_hole_2d() inner_outline();
+            cylinder(h = fh + deck_t + 2, r = inner_plug_r + leg_fit);
 }
 
 // The only part. One per layer of pots.

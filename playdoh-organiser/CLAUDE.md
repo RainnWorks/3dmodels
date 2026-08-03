@@ -110,10 +110,17 @@ supports in parallel, zero added height, 20 g a tray.
    four cells meet is a 56mm-deep rib bonded to the middle of the plate, which is
    where it sags, and it carries the tray above at mid-span too.
    `inner_r` HAS A FLOOR and the first attempt was below it: at 9mm the leg was
-   an island floating in the interstitial void, joined to nothing. It must reach
-   `cell/sqrt(2) - cell/2` = 11.4mm to touch the deck rings, and
-   `cell/sqrt(2) - (cell/2 - leg_overlap)` = 12.6mm for its wall to sit ON one.
-   Default 13.
+   an island floating in the interstitial void, joined to nothing (must reach
+   11.4mm to touch the deck rings). A circle that merely touches is still "barely
+   attached" though -- at 16mm the pots cut into it and it becomes the four-lobed
+   diamond that FILLS the gap, bonding to each ring along ~21mm of arc.
+   It tapers on a CONE (prism INTERSECT cone), not by offsetting the outline:
+   fat where it meets the rings, `inner_plug_r` where it plugs in. It is a rib
+   first and an interlock second, so there is no reason for the plug to be as
+   wide as the base. `inner_cone_h` is solved so its seat lands at exactly the
+   same depth as a corner leg's -- otherwise only one of the two ever bears.
+   It CANNOT use leg_stack: that lofts with hull(), which would convex-fill the
+   diamond's concave sides and swallow the pots.
    `leg_loft`/`leg_stack`/`leg_section`/`leg_hole_2d` all take the outline as
    children() so corner and inner legs share one taper/plug/fit implementation.
 10. **`hang` needs legs, and they point DOWN.** The plate sits 47.7mm up the pot,
@@ -130,6 +137,26 @@ supports in parallel, zero added height, 20 g a tray.
    on the foot would leave the bottom tray rocking on four studs.
 11. **The front scoop opens at the top.** An earlier ellipse cut arched over into
    an unprintable overhang. Now a U with a radiused floor, open to the top.
+
+## hull() convexifies -- the corner legs are not what they look like
+
+`leg_loft` lofts with `hull()`, which returns a CONVEX hull. The corner leg
+outline is concave (it is cut against the pot ring), so the arc hugging the pot
+becomes a straight CHORD and the leg is really a triangular tube, not the
+crescent `leg_outline()` describes. Renders of the whole tray hide this -- the
+deck pad underneath it is not hulled and does follow the ring, which is what you
+see from above. Isolate `vertical()` to see the real shape.
+
+Consequence: the chord's closest approach to a cell centre is
+`(cell/2 - leg_overlap) * cos(leg_sweep/2)`. It must stay outside `hang_d/2`.
+At the old default sweep of 60 it was 0.037mm INSIDE -- harmless in practice and
+the reason a printed tray was fine, but accidental and with zero margin. Default
+is now 56 (0.4mm clear) and an assert guards it.
+
+Not "fixed", because the convex triangular tube is arguably stiffer than the
+crescent and costs about the same. But the code and the comments claimed a shape
+it was not producing. If the crescent is genuinely wanted, the loft has to become
+a stack of thin offset prisms rather than a hull.
 
 ## Traps hit while building this
 

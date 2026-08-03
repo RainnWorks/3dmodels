@@ -30,7 +30,7 @@ nothing on it to read as an edge.
 There are legs at the corners and one wherever four cells meet — the inner ones
 are what stop a loaded tray bowing, since the corner legs only stiffen the ends.
 
-One part, **60 g**. Print one per layer of pots.
+One part, **58 g**. Print one per layer of pots.
 
 ![tray](previews/tray.png)
 
@@ -98,7 +98,7 @@ With `hang` cells (PLA per tray):
 
 | | PLA/tray | What holds the tray up | Trade |
 |---|---|---|---|
-| **`posts`** (default) | **60 g** | four corner legs, down to the tray below | Stands up empty, so you can load it on a table |
+| **`posts`** (default) | **58 g** | four corner legs, down to the tray below | Stands up empty, so you can load it on a table |
 | `pots` | 20 g | nothing — the pots do | Lightest, but only stands up once full |
 | `rails` | 82 g | solid end walls, bookend style | Stiff, front and back open |
 | `walls` | 106 g | full perimeter + scooped front | Most protective, heaviest |
@@ -143,11 +143,28 @@ is what these are for: a 56mm-deep column bonded to the middle of the plate is a
 very deep rib exactly where it sags, and it also carries the tray above at
 mid-span rather than only at its corners. Costs 12 g on a 3 × 2.
 
-`inner_r` (13mm) has a floor: an inner leg must reach the rings around it or it
-is an island in the middle of the deck joined to nothing. On the default pot
-that's 11.4mm to touch them and 12.6mm for its wall to sit *on* one, the way the
-corner legs do. `deck_t` is the other lever if it still flexes — 2.4 → 3.0 halves
-the bow for about 5 g.
+`inner_r` (16mm) is how far an inner leg reaches before the pots cut into it.
+It needs to be past ~12.6mm on the default pot, so that it stops being a circle
+and becomes the four-lobed diamond that fills the gap — that's what bonds it to
+each ring along an arc rather than at four tangent points.
+
+`inner_plug_r` (4mm) is the spike it tapers down to. An inner leg is a rib first
+and an interlock second, so it's fat where it meets the rings and thin where it
+plugs in. It's built as prism ∩ cone rather than a lofted taper, because a loft
+uses `hull()` and would convex-fill the diamond's concave sides and swallow the
+pots. Its cone height is set so it seats at exactly the same depth as a corner
+leg — otherwise only one of the two would ever bear.
+
+`deck_t` is the other lever if it still flexes — 2.4 → 3.0 halves the bow for
+about 5 g.
+
+### A caveat on the corner legs
+
+They're lofted with `hull()`, which returns a **convex** hull — so the arc that
+hugs the pot becomes a straight chord, and a corner leg is really a triangular
+tube rather than the crescent it's cut out as. At `leg_sweep = 56` that chord
+clears the pot hole by 0.4mm. Past ~59° it cuts inside and would foul the pot,
+which is now asserted. The default was 60 until a print prompted a proper look.
 
 The **bottom** tray stands on its plugs, so the tower has about 10mm of ground
 clearance under it. Harmless, and it keeps the pots off a wet worktop.
@@ -169,7 +186,7 @@ No separate base or lid, and with `hang` no cap either — every plate is
 referenced to its own layer's lids, so they're all identical and there's no
 special case at the bottom or the top.
 
-A 3-high, 6-pot tower is **3 trays = 180 g**, standing 181mm.
+A 3-high, 6-pot tower is **3 trays = 174 g**, standing 181mm.
 
 `bottom_tray = true` lengthens the posts by 4mm for the bottom tray. It only
 applies to `nest` cells, where the bottom layer's pots stand on the table instead
