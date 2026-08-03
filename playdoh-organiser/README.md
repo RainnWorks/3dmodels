@@ -207,10 +207,17 @@ grouped so the two that matter come first and nothing else is in the way:
 | **Layout** | `cols` × `rows` — usually the only thing to change |
 | **Pot size** | a preset; pick Custom to enter your own measurements |
 | **Options** | how pots are held, what holds the tray up, plate style |
-| **Preview** | which part to render — only *Tray* is printable |
 | *Advanced —* | pot dimensions, tray, legs, fit, cup cells |
 
-Everything past `/* [Hidden] */` is internal and doesn't appear.
+Everything past `/* [Hidden] */` is internal and doesn't appear — including
+`render_part`, deliberately. PMM takes the build plate from `mw_plate_1()` and
+the preview from `mw_assembly_view()` (the assembly is excluded from the exported
+3MF), so leaving `render_part` on show would let someone put a *preview* on the
+plate. It's still settable from the command line, which is what the Makefile
+drives.
+
+Those two module names come from community documentation of PMM rather than an
+official spec, so check the plate in MakerLab's own preview before publishing.
 
 `pot_preset` carries one entry — a real Play-Doh pot, measured. There are
 deliberately no presets for sizes nobody has put a caliper on; adding one means

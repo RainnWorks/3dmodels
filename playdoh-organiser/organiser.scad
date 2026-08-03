@@ -69,11 +69,6 @@ stack_style = "posts"; // [posts:Corner legs (recommended), pots:None - the pots
 // Open leaves out the plate between the rings. Saves material and looks better.
 deck_style = "open";  // [open:Open - frame and rings, solid:Solid plate]
 
-/* [Preview] */
-// Only "Tray" is printable -- the rest are views for checking the fit. Print one
-// tray per layer of pots; every tray is identical.
-render_part = "tray"; // [tray:Tray - the printable part, stack:Preview - loaded tower, slice:Preview - cross-section, section:Preview - cut-away, pot:Preview - one pot]
-
 /* [Advanced - Pot dimensions] */
 // These are used only when Pot size is set to Custom. The defaults are a real
 // Play-Doh pot, measured with calipers -- start from them and adjust.
@@ -161,6 +156,13 @@ cup_notch = true;
 cup_notch_w = 18;     // [5:1:40]
 
 /* [Hidden] */
+// Which part to render. Hidden from the MakerWorld customizer on purpose: there
+// the plate comes from mw_plate_1() and the preview from mw_assembly_view(), and
+// leaving this on show would let someone put a *preview* on the build plate.
+// Still settable from the command line -- it is what the Makefile drives.
+//   tray | stack | slice | section | pot
+render_part = "tray";
+
 $fa = 2;
 $fs = 0.5;
 eps = 0.01;
@@ -658,6 +660,23 @@ module tower(layers = 3, cap = true) {
         }
     }
 }
+
+// =============================================================================
+//  MakerWorld Parametric Model Maker entry points
+// =============================================================================
+//  PMM builds its 3MF from `mw_plate_N()` modules and uses `mw_assembly_view()`
+//  for the on-screen preview only -- the assembly is explicitly NOT included in
+//  the exported 3MF. Defining both means a customizer user gets the tray on the
+//  plate and the loaded tower as a preview, and cannot accidentally export a
+//  preview as though it were a part.
+//
+//  These sit alongside the `render_part` dispatch below, which is what the
+//  Makefile drives locally. Sourced from community documentation of PMM rather
+//  than an official spec, so check the plate in MakerLab's own preview before
+//  publishing rather than trusting it.
+// =============================================================================
+module mw_plate_1()       { tray(); }
+module mw_assembly_view() { tower(3); }
 
 // =============================================================================
 //  Dispatch
