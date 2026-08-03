@@ -368,10 +368,37 @@ make            # previews + STL/3MF exports
 make renders    # just previews
 make exports    # just STL + 3MF
 make styles     # the four stack_style comparison previews
+make test       # geometry tests -- do the parts actually fit together?
 make weigh      # material volume of every variant, for comparing filament
 make tray       # the main part: preview + STL + 3MF
 make clean
 ```
+
+## Tests
+
+`make test` — 11 checks, each one a bug that actually reached a print.
+
+Arithmetic isn't enough here. Both of the worst bugs passed every numeric check:
+a plug that couldn't enter its own hole (the two shapes were individually
+correct), and legs that seated at the same depth but ended at different heights.
+The tests ask whether parts **meet**, using the three things OpenSCAD will tell
+you:
+
+| Kind | Question it answers | Caught |
+|---|---|---|
+| `assert_*.scad` | is a derived value right? | legs ending 3.9mm apart |
+| `empty_*.scad` | does A fit inside B / miss B? | plug fouling its hole |
+| mesh checks | how many solids came out, and where? | a leg joined to nothing |
+
+The `empty_*` trick is the useful one: boolean emptiness is how you ask a solid
+modeller a yes/no question. *A fits inside B* is `difference(A, B)` being empty;
+*A and B miss* is `intersection(A, B)` being empty. OpenSCAD prints "Current top
+level object is empty", which is machine-checkable.
+
+Each was verified against the broken version before being kept — a test that
+can't fail is worth nothing. One needed strengthening as a result: checking a leg
+merely *doesn't overlap* a pot missed a 0.037mm intrusion, because that's finer
+than the tessellation of a 45.8mm circle. It now demands 0.3mm of clearance.
 
 Previews are forced to full (`--render`) geometry — the grid of cells overflows
 OpenSCAD's fast preview CSG, which would export a blank image.

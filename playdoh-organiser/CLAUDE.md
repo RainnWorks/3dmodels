@@ -193,6 +193,36 @@ bounded by the ring itself and cannot foul a pot at any sweep.
 - Prefer `slice` over `section` for reading a joint: a half-cut viewed straight
   on still shows what's *behind* it, so a cell hole reads as solid.
 
+## Tests (`make test`, tests/run.py)
+
+Written after two bugs reached a print that BOTH passed every arithmetic check:
+a plug that could not enter its own hole, and legs seating at equal depth but
+ending at different heights. The lesson is that checking a value is derived
+correctly is not the same as checking two parts meet.
+
+Three kinds, matching the only three handles OpenSCAD gives you:
+- `tests/assert_*.scad` -- render must succeed; the file asserts on derived
+  values. Catches self-consistent-but-wrong arithmetic.
+- `tests/empty_*.scad` -- render must produce NO geometry. Boolean emptiness is
+  how you ask a modeller a yes/no question: `difference(A,B)` empty means A fits
+  inside B, `intersection(A,B)` empty means they miss. This is the one that
+  matters -- it compares two shapes rather than re-deriving one.
+- mesh checks in run.py -- connected-component count (union-find over triangles
+  sharing a welded vertex) and bounding box, from the exported STL. Catches a
+  part that is present but joined to nothing.
+
+`tests/lib.scad` includes the model and sets `render_part = "none"` AFTER the
+include -- OpenSCAD resolves a scope's assignments before evaluating geometry
+and the last wins, so setting it first is silently overwritten and every test
+renders a whole tray.
+
+EVERY test was verified against the broken version before being kept. One failed
+that verification and had to be strengthened: asserting a leg merely does not
+overlap a pot missed the original 0.037mm intrusion, which is finer than the
+tessellation of a 45.8mm circle at the model's $fa. It now demands 0.3mm of
+clearance at $fn=240. Do the same for any new test -- a test that cannot fail is
+worse than no test, because it reads as coverage.
+
 ## Build / MakerWorld
 
 `make` (previews + STL/3MF), `make weigh` (filament table), `make styles`.

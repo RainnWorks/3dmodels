@@ -6,6 +6,7 @@
 #    make renders    # just the PNG previews
 #    make exports    # just the STL + 3MF files
 #    make styles     # the four stack_style comparison previews
+#    make test       # geometry tests -- do the parts actually fit together?
 #    make weigh      # material volume of every style, for comparing filament
 #    make tray       # the main part: its preview + STL + 3MF
 #    make open       # render + open the tray preview (macOS)
@@ -39,7 +40,7 @@ STLS     := $(addprefix $(EXPDIR)/,$(addsuffix .stl,$(PARTS)))
 TMFS     := $(addprefix $(EXPDIR)/,$(addsuffix .3mf,$(PARTS)))
 
 .DEFAULT_GOAL := all
-.PHONY: all renders exports styles weigh clean open $(PARTS)
+.PHONY: all renders exports styles weigh test clean open $(PARTS)
 
 all: renders exports
 renders: $(PREVIEWS)
@@ -106,6 +107,13 @@ $(EXPDIR)/%.stl: $(SCAD) | $(EXPDIR)
 
 $(EXPDIR)/%.3mf: $(SCAD) | $(EXPDIR)
 	$(OSCAD) -o $@ -D 'render_part="$*"' $(SCAD)
+
+# --- tests -------------------------------------------------------------------
+# Checks that parts MEET, not just that numbers are self-consistent. Both bugs
+# that reached a print (a plug that would not enter its hole, legs ending at
+# different heights) passed every arithmetic check going. See tests/run.py.
+test: $(SCAD)
+	@python3 tests/run.py
 
 # --- filament comparison -----------------------------------------------------
 # Solid volume of a tray in each style x deck_style, so the filament cost of a

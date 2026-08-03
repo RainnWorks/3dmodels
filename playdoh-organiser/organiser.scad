@@ -180,7 +180,7 @@ cup_notch_w = 18;     // [5:1:40]
 // leaving this on show would let someone put a *preview* on the build plate.
 // Still settable from the command line -- it is what the Makefile drives.
 //   tray | stack | slice | section | pot
-render_part = "tray";
+render_part = "tray";   // or "none" -- renders nothing, for the tests
 
 $fa = 2;
 $fs = 0.5;
@@ -781,12 +781,18 @@ module mw_assembly_view() { tower(3); }
 // =============================================================================
 //  Dispatch
 // =============================================================================
-if (render_part == "tray")        tray();
-else if (render_part == "pot")    pot();
-else if (render_part == "stack")  tower(3);
-// `section` keeps everything behind the cut plane; `slice` keeps only a thin
-// cross-section. Prefer `slice` for reading a joint: a half-cut viewed straight
-// on still shows what is BEHIND it, so a cell hole reads as solid (you are
-// looking at the far side of the ring) and a lid recess reads as full. Both are
-// applied per object inside clipped(), so the cut faces keep their colours.
-else if (render_part == "section" || render_part == "slice") tower(3);
+// Wrapped in a module and guarded, so the test harness can include this file for
+// its modules and derived values without also rendering a tray every time.
+module main() {
+    if (render_part == "tray")        tray();
+    else if (render_part == "pot")    pot();
+    else if (render_part == "stack")  tower(3);
+    // `section` keeps everything behind the cut plane; `slice` keeps only a thin
+    // cross-section. Prefer `slice` for reading a joint: a half-cut viewed
+    // straight on still shows what is BEHIND it, so a cell hole reads as solid
+    // (you are looking at the far side of the ring) and a lid recess reads as
+    // full. Both are applied per object inside clipped(), so the cut faces keep
+    // their colours.
+    else if (render_part == "section" || render_part == "slice") tower(3);
+}
+if (render_part != "none") main();
