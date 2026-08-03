@@ -121,6 +121,11 @@ supports in parallel, zero added height, 20 g a tray.
    same depth as a corner leg's -- otherwise only one of the two ever bears.
    It CANNOT use leg_stack: that lofts with hull(), which would convex-fill the
    diamond's concave sides and swallow the pots.
+   `inner_plug_len` is DERIVED, not `leg_plug`. Matching seat depths does not
+   give matching tip heights: the corner seat is 5.4mm up its gentle taper, the
+   steep inner cone reaches the hole size in 1.5mm. With both plugs at 6mm the
+   inner tips sat ~4mm high, so a tray on a table stood on four corners with the
+   middle -- the part that bows -- hanging clear. Derived so all six tips level.
    `leg_loft`/`leg_stack`/`leg_section`/`leg_hole_2d` all take the outline as
    children() so corner and inner legs share one taper/plug/fit implementation.
 10. **`hang` needs legs, and they point DOWN.** The plate sits 47.7mm up the pot,

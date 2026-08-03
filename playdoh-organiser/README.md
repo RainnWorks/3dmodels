@@ -148,6 +148,13 @@ It needs to be past ~12.6mm on the default pot, so that it stops being a circle
 and becomes the four-lobed diamond that fills the gap — that's what bonds it to
 each ring along an arc rather than at four tangent points.
 
+The spike is **longer** than the corner plug (9.9mm against 6mm) so that every
+leg tip is level. Both seat at the same depth, but not at the same point along
+their tapers — the corner's seat is 5.4mm up its gentle taper, while the steep
+inner cone reaches the hole size in 1.5mm. Left equal, the inner spikes came out
+4mm short, so a tray on a table stood on its corners with the middle — the part
+that bows — hanging clear.
+
 `inner_plug_r` (4mm) is the spike it tapers down to. An inner leg is a rib first
 and an interlock second, so it's fat where it meets the rings and thin where it
 plugs in. It's built as prism ∩ cone rather than a lofted taper, because a loft
@@ -225,6 +232,13 @@ mid-span rather than only at its corners. Costs 12 g on a 3 × 2.
 It needs to be past ~12.6mm on the default pot, so that it stops being a circle
 and becomes the four-lobed diamond that fills the gap — that's what bonds it to
 each ring along an arc rather than at four tangent points.
+
+The spike is **longer** than the corner plug (9.9mm against 6mm) so that every
+leg tip is level. Both seat at the same depth, but not at the same point along
+their tapers — the corner's seat is 5.4mm up its gentle taper, while the steep
+inner cone reaches the hole size in 1.5mm. Left equal, the inner spikes came out
+4mm short, so a tray on a table stood on its corners with the middle — the part
+that bows — hanging clear.
 
 `inner_plug_r` (4mm) is the spike it tapers down to. An inner leg is a rib first
 and an interlock second, so it's fat where it meets the rings and thin where it

@@ -289,6 +289,12 @@ tray_ph = (pitch - tray_fh - deck_t) / (1 - leg_seat_f)
 // depth as a corner one -- otherwise only one of the two would ever bear.
 inner_cone_h = (pitch - tray_fh - deck_t)
              / (1 - leg_fit / max(0.5, inner_r - inner_plug_r));
+// The two seat at the same depth, but not at the same point along their tapers:
+// the corner's is 5.4mm up its gentle taper, the inner cone reaches the hole size
+// in 1.5mm. Left alone that makes the inner spikes ~4mm shorter than the corner
+// plugs, so a tray on a table would stand on its corners with the middle -- the
+// part that bows -- hanging clear. Lengthen the spike to bring every tip level.
+inner_plug_len = leg_plug + max(0, tray_ph - inner_cone_h);
 
 // Where the leg seats, measured up from the start of the plug...
 leg_seat_z = tray_ph * leg_seat_f;
@@ -523,7 +529,7 @@ module inner_solid(in) {
         cylinder(h = h + 2 * eps, r1 = inner_r - in, r2 = inner_plug_r - in);
     }
     translate([0, 0, h - eps])
-        cylinder(h = leg_plug + tail + eps, r = inner_plug_r - in);
+        cylinder(h = inner_plug_len + tail + eps, r = inner_plug_r - in);
 }
 
 // The (cols-1) x (rows-1) points where four cells meet.
