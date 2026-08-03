@@ -120,10 +120,24 @@ leg_t = 1.2;          // [1.2:0.2:5]
 // How far the leg runs into the rings, so its wall sits ON one rather than
 // alongside it. Below one wall thickness the corner looks fat on the ring side.
 leg_overlap = 1.2;    // [0:0.2:6]
+// Legs between the cells, where four of them meet. Without these a loaded tray
+// bows: the corner legs stiffen only the ends, whereas one of these is a deep rib
+// right where the plate sags, and it carries the tray above at mid-span too.
+// There are (pots across - 1) x (pots deep - 1) of them.
+inner_legs = true;
+// Radius of an inner leg. It has to reach the rings around it or it is an island
+// floating in the middle of the deck, joined to nothing -- on the default pot
+// that means at least 11.4mm to touch them and 12.6mm for its wall to sit ON
+// one, the same way the corner legs do. Past that the rings bite into it and it
+// becomes a four-lobed diamond rather than a circle. (mm)
+inner_r = 13;         // [4:0.5:16]
 // Straight length on the end of each leg. It passes through the plate below and
 // into that tray's own leg, so stacked trays slot together and can't slide. The
-// bottom tray stands on these, which is why it sits a little proud. (mm)
-leg_plug = 10;        // [0:0.5:25]
+// bottom tray stands on these, which is why it sits a little proud. Only (this
+// minus the plate thickness) engages the leg below, so there is little point
+// going long -- 6mm still gives about 9mm of engagement once the taper above the
+// seat is counted. (mm)
+leg_plug = 6;         // [0:0.5:25]
 // What the leg seats on. There is no shoulder -- the leg tapers the whole way --
 // so it slides down until its taper matches the hole below. The taper is very
 // shallow, so a little here buys a lot of travel and a longer leg. Raise it if
@@ -426,10 +440,12 @@ module leg_outline() {
 // A lofted slice of the leg: `h` tall, its profile inset `i0` at the bottom and
 // `i1` at the top. Everything -- taper, blend, plug and the bore of all three --
 // is built from these, which is what keeps the wall thickness constant.
+// Takes the 2D outline as a child, so the corner legs and the inner legs get
+// exactly the same taper, plug and fit from one piece of code.
 module leg_loft(h, i0, i1) {
     hull() {
-        linear_extrude(eps) offset(r = -i0) leg_outline();
-        translate([0, 0, h - eps]) linear_extrude(eps) offset(r = -i1) leg_outline();
+        linear_extrude(eps) offset(r = -i0) children();
+        translate([0, 0, h - eps]) linear_extrude(eps) offset(r = -i1) children();
     }
 }
 
@@ -441,20 +457,43 @@ module leg_loft(h, i0, i1) {
 //   leg_plug      straight, so there is real length engaging the leg below
 module leg_stack(ph, extra, tail) {
     t2 = extra + leg_t + leg_fit;                    // the plug's section
-    leg_loft(ph, extra, t2);                         // one taper, the whole way
+    leg_loft(ph, extra, t2) children();              // one taper, the whole way
     translate([0, 0, ph - eps])                      // then straight
-        leg_loft(leg_plug + tail + eps, t2, t2);
+        leg_loft(leg_plug + tail + eps, t2, t2) children();
 }
 // Hollowed to a constant-thickness closed shell -- far stiffer than a small
 // square tube for the same material, and it wastes nothing on a solid core.
 module leg_section() {
-    difference() { leg_outline(); leg_hole_2d(); }
+    difference() { children(); offset(r = -leg_hole) children(); }
 }
 // The hollow down the middle of that shell.
 module leg_bore_2d() { offset(r = -leg_t) leg_outline(); }
 // The hole punched through the plate: the leg above seats on its rim, and its
 // plug passes through into the leg below.
-module leg_hole_2d() { offset(r = -leg_hole) leg_outline(); }
+module leg_hole_2d() { offset(r = -leg_hole) children(); }
+
+// Interior legs. Between every four cells the deck has a diamond of dead space
+// that nothing else uses, and a leg there is what stops a loaded tray bowing:
+// the corner legs only stiffen the ends, whereas a 56mm-deep column bonded to
+// the middle of the plate acts as a very deep rib exactly where it sags. It also
+// carries the tray above at mid-span rather than only at its corners.
+// Round, because it need not follow anything -- it is bounded by the four rings
+// around it, which only bite if inner_r is pushed past ~12.6mm.
+module inner_outline() {
+    offset(r = leg_min / 2) offset(r = -leg_min / 2)
+    difference() {
+        circle(r = inner_r);
+        for (sx = [-1, 1], sy = [-1, 1])
+            translate([sx * cell / 2, sy * cell / 2])
+                circle(d = cell - 2 * leg_overlap);
+    }
+}
+// The (cols-1) x (rows-1) points where four cells meet.
+module at_inner() {
+    if (inner_legs && cols > 1 && rows > 1)
+        for (i = [0:cols-2], j = [0:rows-2])
+            translate([cx(i) + cell / 2, cy(j) + cell / 2, 0]) children();
+}
 
 
 // =============================================================================
@@ -492,7 +531,10 @@ module underside(fh) {
             rrect(deck_w - 2 * foot_w, deck_d - 2 * foot_w,
                   max(0.1, deck_r - foot_w), fh + 2 * eps);
     }
-    if (uses_posts) at_corners() linear_extrude(fh) leg_section();
+    if (uses_posts) {
+        at_corners() linear_extrude(fh) leg_section() leg_outline();
+        at_inner()   linear_extrude(fh) leg_section() inner_outline();
+    }
     at_cells() cylinder(h = fh, d1 = lid_recess_d - recess_clear,
                         d2 = lid_recess_d - recess_clear + 2 * fh);
     for (i = [0:cols-1])                             // ribs, rim <-> frusta
@@ -515,7 +557,10 @@ module deck() {
                       max(0.1, deck_r - foot_w), deck_t + 2 * eps);
         }
         at_cells() cylinder(h = deck_t, d = cell);
-        if (uses_posts) at_corners() linear_extrude(deck_t) leg_section();
+        if (uses_posts) {
+            at_corners() linear_extrude(deck_t) leg_section() leg_outline();
+            at_inner()   linear_extrude(deck_t) leg_section() inner_outline();
+        }
         for (i = [0:cols-1])
             translate([cx(i), 0, deck_t / 2]) cube([rib_w, deck_d, deck_t], center = true);
         for (j = [0:rows-1])
@@ -570,8 +615,16 @@ module vertical(ph) {
         // whole way down and plugs through the plate below into that tray's leg.
         // Printable as-is: the section only ever shrinks going up.
         difference() {
-            leg_stack(ph, 0, 0);
-            translate([0, 0, -eps]) leg_stack(ph + eps, leg_t, 2);
+            leg_stack(ph, 0, 0) leg_outline();
+            translate([0, 0, -eps]) leg_stack(ph + eps, leg_t, 2) leg_outline();
+        }
+    }
+    // Same treatment between the cells: taper, plug, fit -- so the inner legs
+    // interlock with the tray below exactly as the corner ones do.
+    at_inner() {
+        difference() {
+            leg_stack(ph, 0, 0) inner_outline();
+            translate([0, 0, -eps]) leg_stack(ph + eps, leg_t, 2) inner_outline();
         }
     }
     if (stack_style == "rails" || stack_style == "walls") {
@@ -621,7 +674,9 @@ module plate(fh, cups, ph, cells) difference() {
     // leg wall, which the leg itself more than makes up for.
     if (uses_posts && leg_plug > 0)
         at_corners() translate([0, 0, -1])
-            linear_extrude(fh + deck_t + 2) leg_hole_2d();
+            linear_extrude(fh + deck_t + 2) leg_hole_2d() leg_outline();
+        at_inner() translate([0, 0, -1])
+            linear_extrude(fh + deck_t + 2) leg_hole_2d() inner_outline();
 }
 
 // The only part. One per layer of pots.

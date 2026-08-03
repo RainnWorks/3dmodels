@@ -14,7 +14,7 @@ It deliberately does **not** hang on the lid. That's soft press-on plastic and
 straight through. The lip is part of the pot: it gives **1.65mm of ledge**
 against 0.75mm on the lid rim, and a pot stays put with its lid off.
 
-Four corner **legs** reach down to the tray below — or to the table — so an empty
+**Legs** reach down to the tray below — or to the table — so an empty
 tray stands up on its own and you can load it on a worktop. A leg isn't a post
 bolted to the corner: it **is** the corner, hollowed out — bounded by the deck's
 own edge outside and the cell rings inside, so it wraps around the pots, fills
@@ -27,7 +27,10 @@ that tray's own leg — so stacked trays slot together and can't slide. There's 
 shoulder, no blend, and no zone that tapers faster than another, so there's
 nothing on it to read as an edge.
 
-One part, **48 g**. Print one per layer of pots.
+There are legs at the corners and one wherever four cells meet — the inner ones
+are what stop a loaded tray bowing, since the corner legs only stiffen the ends.
+
+One part, **60 g**. Print one per layer of pots.
 
 ![tray](previews/tray.png)
 
@@ -95,7 +98,7 @@ With `hang` cells (PLA per tray):
 
 | | PLA/tray | What holds the tray up | Trade |
 |---|---|---|---|
-| **`posts`** (default) | **48 g** | four corner legs, down to the tray below | Stands up empty, so you can load it on a table |
+| **`posts`** (default) | **60 g** | four corner legs, down to the tray below | Stands up empty, so you can load it on a table |
 | `pots` | 20 g | nothing — the pots do | Lightest, but only stands up once full |
 | `rails` | 82 g | solid end walls, bookend style | Stiff, front and back open |
 | `walls` | 106 g | full perimeter + scooped front | Most protective, heaviest |
@@ -130,8 +133,21 @@ the leg's inner wall **on** the ring rather than beside it. At 0 the two sit sid
 by side and their widths add — 4.7 + 1.2mm — giving a visibly fat edge on the
 ring side and none on the frame side.
 
-`leg_plug` (10mm) is the straight section on the end: 2.4mm of it passes through
+`leg_plug` (6mm) is the straight section on the end: 2.4mm of it passes through
 the plate below, the rest engages that tray's leg, tightening as it goes in.
+Counting the taper above the seat, about 9mm is inside the leg below.
+
+`inner_legs` puts a leg wherever four cells meet — `(cols-1) × (rows-1)` of them,
+so two on a 3 × 2. **A first print bowed noticeably when carried loaded**, which
+is what these are for: a 56mm-deep column bonded to the middle of the plate is a
+very deep rib exactly where it sags, and it also carries the tray above at
+mid-span rather than only at its corners. Costs 12 g on a 3 × 2.
+
+`inner_r` (13mm) has a floor: an inner leg must reach the rings around it or it
+is an island in the middle of the deck joined to nothing. On the default pot
+that's 11.4mm to touch them and 12.6mm for its wall to sit *on* one, the way the
+corner legs do. `deck_t` is the other lever if it still flexes — 2.4 → 3.0 halves
+the bow for about 5 g.
 
 The **bottom** tray stands on its plugs, so the tower has about 10mm of ground
 clearance under it. Harmless, and it keeps the pots off a wet worktop.
@@ -153,7 +169,7 @@ No separate base or lid, and with `hang` no cap either — every plate is
 referenced to its own layer's lids, so they're all identical and there's no
 special case at the bottom or the top.
 
-A 3-high, 6-pot tower is **3 trays = 144 g**, standing 180mm.
+A 3-high, 6-pot tower is **3 trays = 180 g**, standing 181mm.
 
 `bottom_tray = true` lengthens the posts by 4mm for the bottom tray. It only
 applies to `nest` cells, where the bottom layer's pots stand on the table instead

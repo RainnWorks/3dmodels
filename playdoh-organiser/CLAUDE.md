@@ -54,8 +54,8 @@ supports in parallel, zero added height, 20 g a tray.
   `hang` lets a loaded tray be lifted.
 - `bottom_tray` — post/rail/wall styles only: lengthens the posts by
   `lid_recess_h`. Print one tray with it on for the bottom of the tower.
-- `stack_style` — with `hang`: `posts` 48 g (default) · `pots` 20 g ·
-  `rails` 82 g · `walls` 106 g.
+- `stack_style` — with `hang`: `posts` 60 g (default, includes inner legs) ·
+  `pots` 20 g. `inner_legs` / `inner_r` control the mid-span legs.
 - `leg_sweep` / `leg_t` / `leg_overlap` / `leg_min` / `leg_seat` / `leg_plug`
   shape the leg. With `hang` the "posts" are LEGS, below the plate;
   with `nest`/`cup` the same geometry stands above it.
@@ -105,7 +105,18 @@ supports in parallel, zero added height, 20 g a tray.
    every plate is identical — no bottom special case, no cap, and no
    `bottom_tray` flag needed. `nest` references the layer below, which is why it
    has the bottom-tray asymmetry.
-9. **`hang` needs legs, and they point DOWN.** The plate sits 47.7mm up the pot,
+9. **Inner legs, from print feedback.** The first printed tray flexed when
+   carried loaded. Corner legs stiffen only the ends; a leg at each point where
+   four cells meet is a 56mm-deep rib bonded to the middle of the plate, which is
+   where it sags, and it carries the tray above at mid-span too.
+   `inner_r` HAS A FLOOR and the first attempt was below it: at 9mm the leg was
+   an island floating in the interstitial void, joined to nothing. It must reach
+   `cell/sqrt(2) - cell/2` = 11.4mm to touch the deck rings, and
+   `cell/sqrt(2) - (cell/2 - leg_overlap)` = 12.6mm for its wall to sit ON one.
+   Default 13.
+   `leg_loft`/`leg_stack`/`leg_section`/`leg_hole_2d` all take the outline as
+   children() so corner and inner legs share one taper/plug/fit implementation.
+10. **`hang` needs legs, and they point DOWN.** The plate sits 47.7mm up the pot,
    so an empty `hang` tray has nothing to stand on — it only self-supports once
    loaded, and you can't put it on a table to fill it. Legs fix that, and the
    length falls out as `pitch - deck_t` (50.7), the same number the posts already
