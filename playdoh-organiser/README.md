@@ -30,7 +30,7 @@ nothing on it to read as an edge.
 There are legs at the corners and one wherever four cells meet — the inner ones
 are what stop a loaded tray bowing, since the corner legs only stiffen the ends.
 
-One part, **58 g**. Print one per layer of pots.
+One part, **57 g**. Print one per layer of pots.
 
 ![tray](previews/tray.png)
 
@@ -98,7 +98,85 @@ With `hang` cells (PLA per tray):
 
 | | PLA/tray | What holds the tray up | Trade |
 |---|---|---|---|
-| **`posts`** (default) | **58 g** | four corner legs, down to the tray below | Stands up empty, so you can load it on a table |
+| **`posts`** (default) | **57 g** | four corner legs, down to the tray below | Stands up empty, so you can load it on a table |
+| `pots` | 20 g | nothing — the pots do | Lightest, but only stands up once full |
+| `rails` | 82 g | solid end walls, bookend style | Stiff, front and back open |
+| `walls` | 106 g | full perimeter + scooped front | Most protective, heaviest |
+
+A leg only ever carries about **4 N**, and the wrapped section is enormously
+stiff, so they're sized by what prints well rather than by strength: `leg_t` is
+1.2mm, exactly three perimeters on a 0.4 nozzle.
+
+`leg_sweep` (60°) sets how far the leg wraps around its corner cell. It's
+bounded by a **sector centred on the ring**, not by a box or a disc on the deck
+corner — that's what keeps the leg's inner edge *on* the ring for its whole
+length. A disc centred on the corner only reaches the ring within ±20° of the
+diagonal and leaves a lens of empty space either side; a square box is worse
+still, spearing a 1.5mm lobe inward past where the ring reaches. The outline is
+then morphologically **opened** at `leg_min` (0.8mm) so its ends run to a point
+where they meet the ring instead of stopping square.
+
+The taper can never exceed one wall plus the fit (~1.55mm) — any more and the
+plug wouldn't fit the bore below — so over a 56mm leg it works out at **1.6°**.
+
+Because there's no shoulder, `leg_seat` (0.15mm) is what the leg lands on: the
+plate's hole is that much smaller than the plug, and the leg slides down until
+its taper has grown back to match. At 1.6° a little radial buys a lot of axial —
+0.15mm puts the seat 5.4mm above the plug — so `leg_seat` also sets how far the
+leg protrudes and how long it has to be. **This makes the seat a taper fit, so
+the exact engagement depth moves by a few mm with print tolerance.** It doesn't
+affect the tower: the pots set the layer pitch, and the legs are a backstop for
+part-empty layers and a stand for an empty tray.
+
+`leg_overlap` (1.2mm, one wall) is how far the leg runs into the rings. It puts
+the leg's inner wall **on** the ring rather than beside it. At 0 the two sit side
+by side and their widths add — 4.7 + 1.2mm — giving a visibly fat edge on the
+ring side and none on the frame side.
+
+`leg_plug` (6mm) is the straight section on the end: 2.4mm of it passes through
+the plate below, the rest engages that tray's leg, tightening as it goes in.
+Counting the taper above the seat, about 9mm is inside the leg below.
+
+`inner_legs` puts a leg wherever four cells meet — `(cols-1) × (rows-1)` of them,
+so two on a 3 × 2. **A first print bowed noticeably when carried loaded**, which
+is what these are for: a 56mm-deep column bonded to the middle of the plate is a
+very deep rib exactly where it sags, and it also carries the tray above at
+mid-span rather than only at its corners. Costs 12 g on a 3 × 2.
+
+`inner_r` (16mm) is how far an inner leg reaches before the pots cut into it.
+It needs to be past ~12.6mm on the default pot, so that it stops being a circle
+and becomes the four-lobed diamond that fills the gap — that's what bonds it to
+each ring along an arc rather than at four tangent points.
+
+`inner_plug_r` (4mm) is the spike it tapers down to. An inner leg is a rib first
+and an interlock second, so it's fat where it meets the rings and thin where it
+plugs in. It's built as prism ∩ cone rather than a lofted taper, because a loft
+uses `hull()` and would convex-fill the diamond's concave sides and swallow the
+pots. Its cone height is set so it seats at exactly the same depth as a corner
+leg — otherwise only one of the two would ever bear.
+
+`deck_t` is the other lever if it still flexes — 2.4 → 3.0 halves the bow for
+about 5 g.
+
+### How the legs are tapered
+
+Not with `hull()`. A hull is **convex**, and these outlines are concave — they're
+cut against the pot rings — so a hulled corner leg came out as a triangular tube
+with a straight chord where the arc should be. The hole it plugs into keeps the
+arc, so the plug was filled in across exactly the curve the hole followed and two
+trays wouldn't go together. A print found it.
+
+The taper is a stack of 32 thin offset prisms instead: a 0.05mm ridge every
+1.75mm, far under a layer line. Inner legs never had the problem — they're
+prism ∩ cone.
+
+## `stack_style` — what carries the tray above
+
+With `hang` cells (PLA per tray):
+
+| | PLA/tray | What holds the tray up | Trade |
+|---|---|---|---|
+| **`posts`** (default) | **57 g** | four corner legs, down to the tray below | Stands up empty, so you can load it on a table |
 | `pots` | 20 g | nothing — the pots do | Lightest, but only stands up once full |
 | `rails` | 82 g | solid end walls, bookend style | Stiff, front and back open |
 | `walls` | 106 g | full perimeter + scooped front | Most protective, heaviest |
@@ -186,7 +264,7 @@ No separate base or lid, and with `hang` no cap either — every plate is
 referenced to its own layer's lids, so they're all identical and there's no
 special case at the bottom or the top.
 
-A 3-high, 6-pot tower is **3 trays = 174 g**, standing 181mm.
+A 3-high, 6-pot tower is **3 trays = 171 g**, standing 181mm.
 
 `bottom_tray = true` lengthens the posts by 4mm for the bottom tray. It only
 applies to `nest` cells, where the bottom layer's pots stand on the table instead

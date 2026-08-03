@@ -138,25 +138,33 @@ supports in parallel, zero added height, 20 g a tray.
 11. **The front scoop opens at the top.** An earlier ellipse cut arched over into
    an unprintable overhang. Now a U with a radiused floor, open to the top.
 
-## hull() convexifies -- the corner legs are not what they look like
+## hull() convexifies -- do not use it to taper these outlines
 
-`leg_loft` lofts with `hull()`, which returns a CONVEX hull. The corner leg
-outline is concave (it is cut against the pot ring), so the arc hugging the pot
-becomes a straight CHORD and the leg is really a triangular tube, not the
-crescent `leg_outline()` describes. Renders of the whole tray hide this -- the
-deck pad underneath it is not hulled and does follow the ring, which is what you
-see from above. Isolate `vertical()` to see the real shape.
+`leg_loft` originally tapered with `hull()`. hull() returns a CONVEX hull, and
+these outlines are concave (cut against the pot rings), so a corner leg came out
+as a triangular tube with a straight CHORD where the ring's arc should be.
 
-Consequence: the chord's closest approach to a cell centre is
-`(cell/2 - leg_overlap) * cos(leg_sweep/2)`. It must stay outside `hang_d/2`.
-At the old default sweep of 60 it was 0.037mm INSIDE -- harmless in practice and
-the reason a printed tray was fine, but accidental and with zero margin. Default
-is now 56 (0.4mm clear) and an assert guards it.
+That is not cosmetic. The hole a leg plugs into is punched straight from
+`leg_outline()` and keeps the arc, so the plug was filled in across exactly the
+curve the hole followed and two trays would not go together. It took a print to
+find; whole-tray renders hide it, because the deck pad underneath is not hulled
+and does follow the ring, which is what you see from above. Isolate `vertical()`
+to see the real shape.
 
-Not "fixed", because the convex triangular tube is arguably stiffer than the
-crescent and costs about the same. But the code and the comments claimed a shape
-it was not producing. If the crescent is genuinely wanted, the loft has to become
-a stack of thin offset prisms rather than a hull.
+`leg_loft` is now a stack of `leg_steps` thin offset prisms, each inset by the
+value at its mid-height, so the staircase straddles the true cone. 1.55mm of
+taper over ~56mm in 32 steps is a 0.05mm ridge every 1.75mm -- far under a layer
+line. Costs render time (0.6s, 208k facets) and nothing else.
+
+Regression test worth keeping: section the built leg inside its plug, subtract
+the hole, and check nothing remains. The old hull leg left 172 facets of
+overhang; the staircase leaves an empty object.
+
+Inner legs never had this -- they are `prism INTERSECT cone`, no hull.
+
+A `leg_sweep` assert was added when the chord was thought to be cosmetic, to keep
+it clear of the pot hole. It is gone: with the real outline restored, the leg is
+bounded by the ring itself and cannot foul a pot at any sweep.
 
 ## Traps hit while building this
 

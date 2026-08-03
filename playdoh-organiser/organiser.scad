@@ -111,11 +111,10 @@ head_clear = 0;       // [0:0.5:16]
 bottom_tray = false;
 
 /* [Advanced - Legs] */
-// How far each corner leg wraps around its pot, in degrees. Bounded above: the
-// leg is lofted with hull(), which returns a CONVEX hull, so the arc hugging the
-// pot becomes a straight chord. Past about 59 degrees on the default pot that
-// chord cuts inside the cell hole and would foul the pot. Asserted.
-leg_sweep = 56;       // [20:2:90]
+// How far each corner leg wraps around its pot, in degrees. Wider is stiffer and
+// heavier; 90 would run from one edge of the tray to the other. It cannot foul a
+// pot at any setting -- the outline is cut against the pot's ring.
+leg_sweep = 60;       // [20:2:90]
 // Leg wall thickness. A leg only ever carries about 4N, so this is set by what
 // prints cleanly -- 1.2mm is exactly three perimeters on a 0.4mm nozzle. (mm)
 leg_t = 1.2;          // [1.2:0.2:5]
@@ -186,6 +185,8 @@ render_part = "tray";
 $fa = 2;
 $fs = 0.5;
 eps = 0.01;
+// Slices used to taper a corner leg (see leg_loft -- hull() cannot be used)
+leg_steps = 32;
 
 // --- pot presets --------------------------------------------------------------
 // Order: total height, base dia, dia at the base of the lip, lip dia, dia over
@@ -367,10 +368,6 @@ assert(!hang || hang_d < pot_lip_d - 1.0,
 // The plate has to sit clear of the lid skirt, or it fouls the lid instead.
 assert(!hang || hang_seat < body_h - 0.5,
        "the plate would seat at or above the lid skirt -- check lip_h");
-// hull() convexifies the corner leg, replacing the arc that hugs the pot with a
-// chord. Keep that chord outside the cell hole or the leg fouls the pot.
-assert(!hang || (cell / 2 - leg_overlap) * cos(leg_sweep / 2) > hang_d / 2,
-       "leg_sweep is too wide: the corner leg's chord cuts inside the pot hole. Reduce leg_sweep.");
 assert(!hang || hang_d + 3 < cell,
        "hang holes leave too thin a web between cells -- raise pot_gap");
 
@@ -457,13 +454,24 @@ module leg_outline() {
 // A lofted slice of the leg: `h` tall, its profile inset `i0` at the bottom and
 // `i1` at the top. Everything -- taper, blend, plug and the bore of all three --
 // is built from these, which is what keeps the wall thickness constant.
-// Takes the 2D outline as a child, so the corner legs and the inner legs get
-// exactly the same taper, plug and fit from one piece of code.
+// Tapers the outline from inset i0 to i1 over height h, as a stack of thin
+// prisms rather than a hull() between two profiles.
+//
+// It HAS to be done this way. hull() returns a CONVEX hull, and this outline is
+// concave -- it is cut against the pot ring. A hulled leg therefore came out as
+// a triangular tube with a straight chord where the ring's arc should be, while
+// the hole it plugs into is punched from the outline directly and kept the arc.
+// The plug was filled in across exactly the curve the hole followed, so two
+// trays could not go together at all. Found on a print.
+//
+// Each step is offset by the value at its mid-height, so the staircase
+// straddles the true cone. At the default 1.55mm of taper over ~56mm and 32
+// steps that is a 0.05mm ridge every 1.75mm -- far under a layer line.
 module leg_loft(h, i0, i1) {
-    hull() {
-        linear_extrude(eps) offset(r = -i0) children();
-        translate([0, 0, h - eps]) linear_extrude(eps) offset(r = -i1) children();
-    }
+    for (k = [0 : leg_steps - 1])
+        translate([0, 0, k * h / leg_steps])
+            linear_extrude(h / leg_steps + eps)
+                offset(r = -(i0 + (i1 - i0) * (k + 0.5) / leg_steps)) children();
 }
 
 // The whole leg as one profile chain, `extra` further inset (0 for the outside,
