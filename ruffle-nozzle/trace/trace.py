@@ -88,6 +88,23 @@ for d in (18.0, 23.0):
     print(f'  at base O{d:.0f}: {np.ptp(P[:, 0])*d:5.2f} x {np.ptp(P[:, 1])*d:5.2f} mm, '
           f'area {area*d*d:5.2f} mm^2, min wall-to-edge {(0.5-np.hypot(P[:,0],P[:,1]).max())*d:.2f} mm')
 
+# --- how narrow does the slot get? -----------------------------------------
+# This is the number that decides whether the thing prints at all: a channel
+# under ~2 extrusion widths closes up, and the tail is much thinner than the
+# bulb. Local width = 2x the distance transform along the shape's ridge.
+from PIL import ImageDraw as _ID
+_res = 0.002                                    # in units of base diameter
+_lo, _hi = P.min(0) - 0.05, P.max(0) + 0.05
+_w = int((_hi[0] - _lo[0]) / _res); _h = int((_hi[1] - _lo[1]) / _res)
+_img = Image.new('L', (_w, _h), 0)
+_ID.Draw(_img).polygon([tuple((q - _lo) / _res) for q in P], fill=255)
+_dist = ndimage.distance_transform_edt(np.asarray(_img) > 0) * _res
+_wid = np.array([2 * r.max() for r in _dist if r.max() > 0])
+_wid = _wid[_wid > 0.005]                       # drop the rounded end caps
+min_w, p5 = _wid.min(), np.percentile(_wid, 5)
+print(f'slot width: narrowest {min_w*BASE_D_MM:.2f} mm, 5th pct {p5*BASE_D_MM:.2f} mm, '
+      f'median {np.median(_wid)*BASE_D_MM:.2f} mm  (at O{BASE_D_MM:.0f})')
+
 step = max(1, N // 96)
 Q = P[::step]
 block = ',\n'.join(f'  [{x: .5f}, {y: .5f}]' for x, y in Q)
@@ -105,6 +122,8 @@ assert n == 1, f'expected exactly one APERTURE block, patched {n}'
 new, nb = re.subn(r'APERTURE_BULB_R = [\d.]+;',
                   f'APERTURE_BULB_R = {bulb_r / d_px:.5f};', new)
 assert nb == 1, f'expected exactly one APERTURE_BULB_R, patched {nb}'
+new, nw = re.subn(r'APERTURE_MIN_W = [\d.]+;', f'APERTURE_MIN_W = {p5:.5f};', new)
+assert nw == 1, f'expected exactly one APERTURE_MIN_W, patched {nw}'
 open(MODEL, 'w').write(new)
 print(f'\nwrote {len(Q)} normalised points -> aperture_pts.txt and nozzle.scad')
 

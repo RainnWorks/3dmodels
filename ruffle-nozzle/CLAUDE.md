@@ -251,6 +251,31 @@ enter, and would foul it. Only the male thread can take a lead-in.
 
 Worth doing before believing any "no supports" claim about a new part.
 
+## The test coupon was deleted, and why that is the interesting bit
+
+There was a `coupon` part: the top 16mm of the nozzle on a pad, ~1/3 of the
+layers, sold as a cheap way to check `slot_grow` before committing to a full
+print. The user asked why you would bother. Measuring settled it:
+
+| region | median slot width |
+|---|---|
+| in the coupon (z >= 31.4) | 1.79 mm |
+| below it (z 15.6 .. 31.4)  | 0.86 mm |
+
+The slot is 1.9mm at the mouth and tapers to 0.8mm and below down the tail.
+Only the tail can close up -- and the coupon covered the wide half. It would
+have printed cleanly every time while the at-risk region went untested, which
+is worse than not printing it, because it manufactures confidence.
+
+The nozzle is an hour and is itself the test, so the coupon is gone. What
+replaced it is a NUMBER rather than a part: `trace.py` measures the slot's
+local width (distance transform along its ridge) and emits `APERTURE_MIN_W`,
+and the model echoes what that becomes after `slot_grow` in units of extrusion
+width, warning under 2. Currently 0.96mm = 2.4 extrusions -- close to the floor.
+
+The general lesson: a cheap test that does not cover the failure mode is not a
+cheap test. Check what the sample actually spans before trusting it.
+
 ## Tests (`make test`, tests/run.py)
 
 Same three kinds as the playdoh-organiser, for the same reason: checking that a

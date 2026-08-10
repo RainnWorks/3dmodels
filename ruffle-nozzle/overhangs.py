@@ -89,7 +89,7 @@ def report(name):
 
 
 def main():
-    parts = sys.argv[1:] or ["nozzle.stl", "sleeve.stl", "ring.stl", "coupon.stl"]
+    parts = sys.argv[1:] or ["nozzle.stl", "sleeve.stl", "ring.stl"]
     ok = all([report(p) for p in parts])
     print("\nall parts print unsupported" if ok else "\nsomething needs a second look")
     return 0 if ok else 1

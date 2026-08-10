@@ -8,7 +8,6 @@ One file, `nozzle.scad`, pure OpenSCAD (no libraries). Pick a part with
 
 ```
         /\          nozzle   -- the tool. Ø23 base, 47.4mm tall, 1.2->0.8mm wall.
-       /||\         coupon   -- just the tip, for testing the aperture.
       / || \
      /  ||  \       sleeve   -- goes inside the bag, pokes out the snip.
     /   \/   \      ring     -- screws over the sleeve, clamps the nozzle.
@@ -232,7 +231,6 @@ diameter gets a 1.10mm ledge with its own ring.
 ```
 make            # previews + STL/3MF for all parts
 make test       # the geometry tests
-make coupon     # the aperture test print
 make size D=20  # the whole set at some other base diameter
 make compare    # the side-by-side previews (model vs the source photo)
 make trace      # re-derive aperture AND proportions from the photos

@@ -10,7 +10,6 @@
 #    make compare    # the side-by-side previews (model vs the source photo)
 #    make overhangs  # what each part asks of the printer, from the meshes
 #    make trace      # re-derive aperture + proportions from the product photos
-#    make coupon     # the aperture test print: preview + STL
 #    make open       # render + open the assembly preview (macOS)
 #    make clean      # remove generated previews/ and export/
 #  Re-runs only when nozzle.scad changes.
@@ -24,10 +23,8 @@ EXPDIR  := export
 # The three printable parts. The nozzle alone is a complete tool -- the sleeve
 # and ring are the coupler, and are only needed to swap tips mid-bag.
 PARTS := nozzle sleeve ring
-# Plus the aperture test print -- not a part so much as a question. It is the
-# top 16mm, so ~1/3 of the layers, and it exists to settle slot_grow in two or
-# three goes rather than two or three full nozzles.
-EXTRA := coupon
+# There is no test coupon: see README. The nozzle IS the test.
+EXTRA :=
 # Everything that gets a PNG.
 VIEWS := $(PARTS) $(EXTRA) assembly section all aperture
 
@@ -95,10 +92,10 @@ $(COMPARES): $(SCAD) compare.py | $(PREVDIR)
 #   make size D=20
 D ?= 23
 size: | $(EXPDIR)
-	@echo "--- base Ø$(D): nozzle + coupon + sleeve + ring ---"
+	@echo "--- base Ø$(D): nozzle + sleeve + ring ---"
 	@$(OSCAD) -o $(EXPDIR)/nozzle_d$(D).stl --export-format binstl -D base_d=$(D) \
 	          -D 'render_part="nozzle"' $(SCAD) 2>&1 | sed -n 's/^ECHO: /  /p'
-	@for p in coupon sleeve ring; do \
+	@for p in sleeve ring; do \
 	  $(OSCAD) -o $(EXPDIR)/$${p}_d$(D).stl --export-format binstl -D base_d=$(D) \
 	           -D "render_part=\"$${p}\"" $(SCAD) >/dev/null 2>&1; \
 	done

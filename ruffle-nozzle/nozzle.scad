@@ -17,7 +17,7 @@
 
 /* [Part] */
 // Which part to render. nozzle/sleeve/ring are the printable ones.
-render_part = "nozzle"; // [nozzle, coupon, sleeve, ring, assembly, section, aperture, all]
+render_part = "nozzle"; // [nozzle, sleeve, ring, assembly, section, aperture, all]
 
 /* [Size] */
 // Outer diameter at the base. Everything else is derived from this.
@@ -95,9 +95,6 @@ clamp_relief = 0.2; // [0.05:0.05:0.6]
 // that wall_t and tip_wall_t come out as whole extrusions, so a 999-perimeter
 // slice fills them exactly instead of leaving a void or a gap-fill worm.
 line_w = 0.40;      // [0.3:0.01:0.8]
-// Height of the test coupon -- the top of the nozzle, for trying the aperture.
-coupon_h = 16;      // [6:1:30]
-coupon_pad = 0.8;   // [0:0.2:2]
 
 /* [Hidden] */
 $fa = 2;
@@ -114,6 +111,12 @@ big = 500;
 // Radius of the bulb -- the tip mouth -- in the same units. Everything beyond
 // it is the one-sided tail. Generated with the outline; do not hand-edit.
 APERTURE_BULB_R = 0.05548;
+
+// How narrow the slot gets (5th percentile of its local width, same units).
+// The bulb is wide and prints regardless; the TAIL is what closes up, and this
+// is the number that decides whether the part works. Generated with the
+// outline; do not hand-edit.
+APERTURE_MIN_W = 0.02452;
 
 APERTURE = [
   [ 0.01763, -0.35615],
@@ -299,6 +302,12 @@ echo(str("flank slot ", slit_len, " mm long (", 100 * slit_len / nozzle_h,
          "% of height; the photo measures 72%)"));
 echo(str("land at the slot: ", wall(slit_z), " mm at its foot -> ", wall(nozzle_h),
          " mm at the tip (steel is ~0.5)"));
+slot_min_w = APERTURE_MIN_W * base_d + 2 * slot_grow;
+echo(str("slot narrows to ", slot_min_w, " mm as modelled = ",
+         slot_min_w / line_w, " extrusions; FDM lays it ~0.1-0.2 narrower"));
+if (slot_min_w < 2 * line_w)
+    echo(str("NOTE: under 2 extrusions at the tail -- the fine end of the ",
+             "ruffle may close up. Raise slot_grow if the print shows it."));
 echo(str("thread: ", thr_h - thr_top_gap, " mm of rib, ", 2 * thr_lead_in,
          " of it lead-in ramped at ", atan(thr_depth / thr_lead_in),
          " deg off vertical"));
@@ -368,18 +377,6 @@ module nozzle() {
             cylinder(h = nozzle_h + 2 * eps, r1 = r_i(0), r2 = r_i(nozzle_h));
         aperture_cut();
     }
-}
-
-// The top of the nozzle on a thin pad -- a 5-minute print that tells you
-// whether slot_grow is right.
-module coupon() {
-    z0 = nozzle_h - coupon_h;
-    translate([0, 0, -z0]) intersection() {
-        nozzle();
-        translate([0, 0, z0]) cylinder(h = coupon_h + eps, r = big);
-    }
-    if (coupon_pad > 0)
-        cylinder(h = coupon_pad, d = 2 * r_o(z0) + 3);
 }
 
 // =============================================================================
@@ -541,7 +538,6 @@ module section() {
 }
 
 if      (render_part == "nozzle")   nozzle();
-else if (render_part == "coupon")   coupon();
 else if (render_part == "sleeve")   translate([0, 0, -sleeve_z0]) sleeve();
 else if (render_part == "ring")     translate([0, 0, thr_h]) ring();
 else if (render_part == "assembly") assembly();
