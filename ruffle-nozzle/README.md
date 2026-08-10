@@ -214,6 +214,7 @@ make            # previews + STL/3MF for all parts
 make test       # the geometry tests
 make coupon     # the aperture test print
 make sizes      # export the nozzle at both candidate diameters
+make compare    # the side-by-side previews (model vs photo, both sizes)
 make trace      # re-derive aperture AND proportions from the photos
 ```
 

@@ -7,6 +7,7 @@
 #    make exports    # just the STL + 3MF files
 #    make test       # geometry tests -- do the three parts actually fit?
 #    make sizes      # export the nozzle at BOTH candidate base diameters
+#    make compare    # the side-by-side previews (model vs photo, both sizes)
 #    make trace      # re-derive aperture + proportions from the product photos
 #    make coupon     # the aperture test print: preview + STL
 #    make open       # render + open the assembly preview (macOS)
@@ -37,9 +38,9 @@ STLS     := $(addprefix $(EXPDIR)/,$(addsuffix .stl,$(PARTS) $(EXTRA)))
 TMFS     := $(addprefix $(EXPDIR)/,$(addsuffix .3mf,$(PARTS)))
 
 .DEFAULT_GOAL := all
-.PHONY: all renders exports test sizes trace clean open $(PARTS) $(EXTRA)
+.PHONY: all renders exports test sizes compare trace clean open $(PARTS) $(EXTRA)
 
-all: renders exports
+all: renders exports compare
 
 renders: $(PREVIEWS)
 exports: $(STLS) $(TMFS)
@@ -68,6 +69,13 @@ $(PARTS) $(EXTRA): %: $(PREVDIR)/%.png $(EXPDIR)/%.stl
 
 test:
 	@python3 tests/run.py
+
+# Composites that OpenSCAD cannot make alone -- model against the photo it was
+# traced from, the three rotations, and the two sizes at a common scale.
+COMPARES := $(addprefix $(PREVDIR)/,rotate.png compare_top.png sizes.png)
+compare: $(COMPARES)
+$(COMPARES): $(SCAD) compare.py | $(PREVDIR)
+	@python3 compare.py
 
 # The published Ø is unresolved (see README). These are the two candidates,
 # ready to print side by side and settle it by hand. Not a scale factor: the
