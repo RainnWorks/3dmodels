@@ -8,6 +8,7 @@
 #    make test       # geometry tests -- do the three parts actually fit?
 #    make size D=20  # the whole set at some other base diameter
 #    make compare    # the side-by-side previews (model vs the source photo)
+#    make overhangs  # what each part asks of the printer, from the meshes
 #    make trace      # re-derive aperture + proportions from the product photos
 #    make coupon     # the aperture test print: preview + STL
 #    make open       # render + open the assembly preview (macOS)
@@ -40,7 +41,7 @@ STLS     := $(addprefix $(EXPDIR)/,$(addsuffix .stl,$(PARTS) $(EXTRA)))
 TMFS     := $(addprefix $(EXPDIR)/,$(addsuffix .3mf,$(PARTS)))
 
 .DEFAULT_GOAL := all
-.PHONY: all renders exports test size compare trace clean open $(PARTS) $(EXTRA)
+.PHONY: all renders exports test size compare overhangs trace clean open $(PARTS) $(EXTRA)
 
 all: renders exports compare
 
@@ -73,6 +74,11 @@ $(PARTS) $(EXTRA): %: $(PREVDIR)/%.png $(EXPDIR)/%.stl
 
 test:
 	@python3 tests/run.py
+
+# "No supports needed" is a claim about geometry, so measure it rather than
+# assert it -- this reads the exported meshes back.
+overhangs: exports
+	@python3 overhangs.py
 
 # Composites that OpenSCAD cannot make alone -- model against the photo it was
 # traced from, and the three rotations that show the slot is on one flank.

@@ -94,7 +94,7 @@ mistaken belief that the tip was two free petals needing extra section.)
 | Wall extrusion width | **0.40mm** |
 | Infill | 0 |
 | Supports | none |
-| Orientation | exactly as modelled; no part is flipped |
+| Orientation | exactly as modelled; **no part may be flipped** (see below) |
 
 **Why 999 loops.** The wall thickness varies continuously from 1.2 to 0.8mm, so
 on the way up it passes through every fractional multiple of the line width. A
@@ -104,6 +104,31 @@ continuous solid with no infill boundary anywhere. This is also why the two
 ends are set to exact multiples of 0.40 (3 extrusions and 2) — the model echoes
 those counts on render and warns if you pick a wall that is not a whole number
 of extrusions.
+
+**Orientation is not a free choice for the coupler.** Both halves are modelled
+and printed axis-vertical, and flipping either one reverses the handedness of
+its thread — an external and an internal thread that disagree is a bug you
+only find on the printer. `tests/empty_ring_screws_onto_sleeve.scad` catches it
+in CAD; nothing catches it in the slicer. Print them as exported.
+
+**Supports: none, and that is measured.** `make overhangs` reads the exported
+meshes back and reports every downward-facing face:
+
+| part | worst | ledge width |
+|---|---|---|
+| nozzle | 11° from vertical | nothing near-flat at all |
+| sleeve | 90° | mean 0.21mm, widest 1.00mm |
+| ring | 90° | mean 0.19mm, widest 0.73mm |
+
+The 90° faces are real but harmless, and the angle on its own is misleading.
+They are the **thread flanks**, which are a staircase rather than a smooth
+ramp: the helix is built as six nested extrusions, so each flank is six steps
+of **0.167mm**. A 90° face 0.167mm wide bridges without noticing. The single
+widest ledge on each part (~1mm) is where the thread run-out starts abruptly
+out of the core.
+
+(An earlier version of this table claimed the thread flanks were "45° or
+shallower". They are a 20° staircase. Measuring is why that got caught.)
 
 **Cooling.** Near the tip each layer is a thin ring of a few hundred mm², which
 at 0.1mm goes by fast. Set a minimum layer time (~8–10s) or slow the top third,

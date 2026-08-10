@@ -223,6 +223,24 @@ signature to look for:
    diameter. Fixed by running the bore `2*eps` past the cone's start. This one
    was internal to a single module and still leaked into every fit test.
 
+## Overhangs are measured, not claimed (`make overhangs`)
+
+The README asserted the thread flanks were "45 deg or shallower". They are a
+**20 deg staircase** -- `thread()` builds each flank as `thr_layers` nested
+extrusions, so it is six 0.167mm steps, every one of them a 90 deg face.
+
+Reading the exported meshes back settled it, and the lesson is that facet angle
+alone is the wrong statistic. What decides whether a face needs support is the
+LEDGE WIDTH -- how far it stands out past what is under it. 0.167mm bridges
+without noticing; the same 90 deg face 3mm wide would droop. `overhangs.py`
+reports both.
+
+Result: the nozzle has nothing near-flat at all (worst 11 deg), and the coupler
+halves are the thread staircase plus one ~1mm ledge each where the thread
+run-out starts abruptly out of the core. Everything prints unsupported.
+
+Worth doing before believing any "no supports" claim about a new part.
+
 ## Tests (`make test`, tests/run.py)
 
 Same three kinds as the playdoh-organiser, for the same reason: checking that a
