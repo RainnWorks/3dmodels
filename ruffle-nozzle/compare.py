@@ -1,17 +1,14 @@
 #!/usr/bin/env python3
 """Composite previews that OpenSCAD cannot make on its own.  Run with `make compare`.
 
-Three of the most useful pictures here are comparisons, and each needs two
-images side by side at a common scale:
+Both of these are comparisons, and each needs two or three images side by side:
 
   compare_top  the model rendered in the same view as the product photo. This
                is the check that the traced aperture actually came out right,
                and it is the one to look at after any re-trace.
+
   rotate       front / edge-on / back. The slot must appear on ONE flank only;
                seeing it from behind is how the two-free-petals bug was caught.
-  sizes        the two candidate base diameters, rescaled to a common mm/pixel
-               so the difference is real and not an artefact of --viewall
-               fitting each render to its own frame.
 
 OpenSCAD renders each part; the compositing is here.
 """
@@ -28,7 +25,6 @@ OPENSCAD = os.environ.get("OSCAD", "openscad")
 
 BG = (250, 250, 250)
 INK = (30, 30, 30)
-SIZES = (23, 18)
 
 
 def render(out, camera, size, defs=()):
@@ -73,35 +69,7 @@ def main():
     strip([photo, mine], ["photo: real #122, top-down", "model, same view"]) \
         .save(os.path.join(PREV, "compare_top.png"))
 
-    # --- sizes: the two candidates at a COMMON scale ------------------------
-    heights, imgs = {}, {}
-    for d in SIZES:
-        r = subprocess.run([OPENSCAD, "-o", os.path.join(PREV, f"nozzle_d{d}.png"),
-                            "--render", "--colorscheme=Tomorrow", "--camera=0,0,0,68,0,20,0",
-                            "--viewall", "--autocenter", "--imgsize=420,700",
-                            "-D", f"base_d={d}", "-D", 'render_part="nozzle"', MODEL],
-                           capture_output=True, text=True, check=True)
-        # take the height straight from the model's own echo, not a guess
-        line = next(l for l in r.stderr.splitlines() if l.startswith('ECHO: "nozzle '))
-        heights[d] = float(line.split(" x ")[1].split(" mm")[0])
-        imgs[d] = Image.open(os.path.join(PREV, f"nozzle_d{d}.png")).convert("RGB")
-
-    big = max(SIZES, key=lambda d: heights[d])
-    small = [d for d in SIZES if d != big][0]
-    k = heights[small] / heights[big]
-    a, b = imgs[big], imgs[small]
-    b = b.resize((max(1, int(b.width * k)), max(1, int(b.height * k))), Image.LANCZOS)
-
-    out = Image.new("RGB", (a.width + b.width + 60, a.height + 40), BG)
-    out.paste(a, (10, 40))
-    out.paste(b, (a.width + 40, 40 + a.height - b.height))   # stand them on one line
-    d = ImageDraw.Draw(out)
-    d.text((90, 14), f"base {big}mm  -  {heights[big]:.1f}mm tall", fill=INK)
-    d.text((a.width + 60, 14), f"base {small}mm  -  {heights[small]:.1f}mm tall", fill=INK)
-    out.save(os.path.join(PREV, "sizes.png"))
-
-    print("wrote rotate.png, compare_top.png, sizes.png, "
-          + ", ".join(f"nozzle_d{d}.png" for d in SIZES))
+    print("wrote rotate.png, compare_top.png")
 
 
 if __name__ == "__main__":

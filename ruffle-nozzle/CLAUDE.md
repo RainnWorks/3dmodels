@@ -282,27 +282,34 @@ Lives in `ruffle-nozzle/` within the `RainnWorks/3dmodels` repo, alongside the
 unrelated `cake-topper/`, `door-to-ac-hose/`, `playdoh-organiser/` and
 `van-airfilter-cap/`.
 
-## The coupler is sized, not universal
+## base_d is settled at 23, and that dissolves the coupler question
 
-Everything about it derives from `base_d`: `thr_major = base_d + 6`,
-`flange_od = base_d + 2*flange_over`, `clamp_d = base_d + 0.6`, and the nose is
-cut to `r_i(z) - 0.3`. So there is a Ø23 coupler and a Ø18 coupler, not "a
-coupler". Cross-fitting fails in both directions simultaneously -- the ring's
-lip bore is 2.8mm too wide to catch the smaller flange, and the nose is 4.4mm
-too fat to enter the smaller bore.
+The published numbers conflict (Ø23 stated twice, against a 1.8 x 1.8 x 3.5cm
+bounding box, against a measured h/d of 2.063). Two size variants were shipped
+for a while so a print could settle it -- and the coupler had to be exported
+per diameter, because its thread, clamp and nose all derive from base_d.
 
-`make sizes` therefore exports a full matched set per diameter and names every
-file `*_dNN`. It used to export only the nozzles, leaving an unsuffixed
-`sleeve.stl`/`ring.stl` in `export/` that were silently Ø23 -- an invitation to
-print a mismatched set. The user caught that.
+The user asked the question that dissolved it: what is the Ø18 variant FOR? The
+only thing that could have made the true diameter matter is fitting a
+commercial coupler, and we print our own. Nothing downstream depends on it. So
+it is a free choice, and Ø23 wins on flow area (16.1mm^2 vs 9.9, the latter
+being below a plain #12 round tip) and on every feature being 22% larger and
+thus more reliable at 0.4mm.
 
-If the profile family in the TODO ever happens, this is the thing to revisit:
-real tip/coupler systems standardise the SHANK so every tip shares one coupler
-and only the shape above it varies. That would mean giving the nozzle a fixed
-base diameter independent of the cone, which is a different part, not a
-parameter change.
+One diameter, one coupler, no suffixes. `make size D=20` covers the other case
+and builds the WHOLE set, never a lone nozzle -- cross-fitting fails in both
+directions at once (ring lip 2.8mm too wide to catch the smaller flange, nose
+4.4mm too fat to enter the smaller bore).
 
-## Open / TODO
+The tests still run at BOTH 23 and 18. The reason changed: not because 18 ships,
+but because it is the cheapest available proof that the parameterisation is real
+rather than tuned to one number.
+
+If the profile family in the TODO happens, all of it shares base_d = 23 and so
+shares one coupler already. The standard-shank idea is only needed if different
+profiles ever want different cone diameters, which is unlikely.
+
+## Open / TODO## Open / TODO
 
 - **Nothing has been printed.** `slot_grow` (does the aperture open to the
   traced size?) and the petals are both waiting on a print. Print `coupon`

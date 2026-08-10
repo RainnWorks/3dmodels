@@ -111,8 +111,9 @@ or the last few millimetres will slump while soft.
 
 Roughly 470 layers for the Ø23 nozzle. Budget an hour or so.
 
-**Print `coupon` first.** It is the top 16mm on a thin pad — five minutes, and
-it tells you whether `slot_grow` is right before you commit to the whole part.
+**Print `coupon` first.** It is the top 16mm on a thin pad — about a third of
+the layers, so ~20 minutes against the nozzle's hour — and it tells you whether
+`slot_grow` is right before you commit to the whole part.
 FDM lays a narrow slot narrower than modelled; `slot_grow = 0.20` is the
 compensation and it is the first number to tune.
 
@@ -171,49 +172,30 @@ The thread is **our own** — coarse, 3-start, 3mm pitch, 20° flank — not a
 reverse-engineered Wilton. A thread we define is a thread we can test, and
 `make test` does exactly that.
 
-## Which 23mm?
+## Why Ø23
 
-The published data conflicts, and the model does not hide it:
+The published data conflicts: the product copy says **"Dimensions: Ø 23 mm"**
+twice, the spec table says the item is **1.8 × 1.8 × 3.5 cm** (which cannot
+contain a Ø23 disc), and the side photo's tilt-corrected height/base ratio of
+**2.063** gives 47.4mm at Ø23 or 37.1mm at Ø18, matching neither cleanly.
 
-- the product copy says **"Dimensions: Ø 23 mm"**, twice;
-- the spec table says the item is **1.8 × 1.8 × 3.5 cm**, which cannot contain
-  a Ø23 disc;
-- the side photo's tilt-corrected height/base ratio is **2.063**, which at Ø23
-  gives a 47.4mm nozzle and at Ø18 gives 37.1mm.
+**It does not matter, so it is settled at Ø23.** The only thing that could have
+made the real diameter matter is fitting a commercial coupler — and we print
+our own, so nothing downstream cares. Given a free choice, Ø23 is the better
+one: **16.1mm² of flow area against Ø18's 9.9mm²** (which is below a plain #12
+round tip, and would want a noticeably harder squeeze), and every feature —
+tip rim, mouth, slot — is 22% larger and so prints more reliably at 0.4mm.
 
-That last one is the new evidence, and it does not favour the default: Ø18
-lands within 6% of the published 35mm *and* matches 1.8 × 1.8 exactly, whereas
-Ø23 agrees with nothing but itself.
+That also makes the coupler question disappear. There is one diameter, one
+coupler, and no suffixed files to mix up.
 
-### Settle it with a print
-
-`make sizes` exports a **matched set per diameter** — nozzle, coupon, sleeve
-and ring. The nozzle is ~20 minutes of filament, so printing one of each and
-holding them is cheaper than any amount of arguing with a product listing.
-
-> **The coupler is not one-size-fits-all.** Its thread, its clamp and its nose
-> all derive from `base_d`, so a Ø23 coupler does not work with a Ø18 nozzle,
-> and it fails in both directions at once: the Ø23 ring's lip bore is Ø23.6
-> against a Ø18 flange of Ø20.8, so the flange drops straight through with no
-> clamping ledge whatsoever; and the Ø23 sleeve's nose is Ø20.0 against a Ø18
-> bore of Ø15.6, so it will not even enter. Each size gets a 1.10mm ledge with
-> its OWN ring. Print `*_d23` together or `*_d18` together, never mixed.
-
-| | Ø23 | Ø18 |
-|---|---|---|
-| height | 47.4mm | 37.1mm |
-| aperture | 3.7 × 9.7mm, 16.1mm² | 2.9 × 7.6mm, 9.9mm² |
-| flank slot | 31.9mm (67% of height) | 24.3mm (65%) |
-| tip mouth | Ø2.95 in a Ø4.4 tip | Ø2.40 in a Ø4.4 tip |
-
-Note these are **not** the same part scaled: `wall_t`, `slot_grow` and every
-clearance are absolute, so the Ø18 fits are proved separately — `make test`
-runs the whole suite at both diameters. The Ø18 aperture drops below a #12
-round tip's 12.6mm², so expect to squeeze a little harder.
-
-The default stays **Ø23** until a print says otherwise. `-D base_d=18`
-rescales everything including the coupler. **Decide before printing the
-coupler** — that is where being wrong actually wastes time.
+`base_d` is still a parameter, and `make size D=20` builds the whole set at any
+other diameter. It deliberately builds the **whole** set, because the coupler
+is sized from `base_d`: a nozzle from one diameter will not clamp in a ring
+from another. A Ø23 ring's lip bore is Ø23.6 against a Ø18 flange of Ø20.8, so
+the flange drops straight through with no clamping ledge at all; and the Ø23
+sleeve's nose is Ø20.0 against a Ø18 bore of Ø15.6, too fat to enter. Each
+diameter gets a 1.10mm ledge with its own ring.
 
 ## Build
 
@@ -221,8 +203,8 @@ coupler** — that is where being wrong actually wastes time.
 make            # previews + STL/3MF for all parts
 make test       # the geometry tests
 make coupon     # the aperture test print
-make sizes      # export the nozzle at both candidate diameters
-make compare    # the side-by-side previews (model vs photo, both sizes)
+make size D=20  # the whole set at some other base diameter
+make compare    # the side-by-side previews (model vs the source photo)
 make trace      # re-derive aperture AND proportions from the photos
 ```
 

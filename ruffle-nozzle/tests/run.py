@@ -35,9 +35,10 @@ OPENSCAD = os.environ.get("OSCAD", "openscad")
 GREEN, RED, DIM, OFF = "\033[32m", "\033[31m", "\033[2m", "\033[0m"
 
 
-# Both candidate base diameters. The design is normalised to base_d, but the
-# walls, clearances and slot_grow are ABSOLUTE, so a O18 nozzle is not a scaled
-# O23 one and its fits have to be proved separately.
+# base_d ships at 23 only (see README). 18 is still exercised because the walls,
+# clearances and slot_grow are ABSOLUTE while the outline is normalised -- so a
+# second diameter is the cheapest proof that the parameterisation is real rather
+# than tuned to one number, and that `make size D=...` will hold up.
 SIZES = (23, 18)
 
 
