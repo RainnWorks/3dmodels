@@ -6,7 +6,7 @@
 #    make renders    # just the PNG previews
 #    make exports    # just the STL + 3MF files
 #    make test       # geometry tests -- do the three parts actually fit?
-#    make sizes      # export the nozzle at BOTH candidate base diameters
+#    make sizes      # export a MATCHED set (nozzle+coupon+sleeve+ring) per Ø
 #    make compare    # the side-by-side previews (model vs photo, both sizes)
 #    make trace      # re-derive aperture + proportions from the product photos
 #    make coupon     # the aperture test print: preview + STL
@@ -77,17 +77,25 @@ compare: $(COMPARES)
 $(COMPARES): $(SCAD) compare.py | $(PREVDIR)
 	@python3 compare.py
 
-# The published Ø is unresolved (see README). These are the two candidates,
-# ready to print side by side and settle it by hand. Not a scale factor: the
-# walls and clearances are absolute, so each is a genuinely different part.
+# The published Ø is unresolved (see README). These are the two candidates.
+#
+# EVERY part is exported per diameter, INCLUDING the coupler, because the
+# coupler is not one-size-fits-all: it derives its thread, its clamp and its
+# nose from base_d. A Ø23 ring's lip bore is Ø23.6 against a Ø18 nozzle's Ø20.8
+# flange -- the flange drops straight through it -- and the Ø23 nose is 4.4mm
+# too fat to enter a Ø18 bore. Mixing sizes gives you no clamping whatsoever,
+# so the files are named to make that impossible to do by accident.
 SIZES := 23 18
+SIZED := nozzle coupon sleeve ring
 sizes: | $(EXPDIR)
 	@for d in $(SIZES); do \
-	  echo "--- base Ø$$d ---"; \
+	  echo "--- base Ø$$d : nozzle_d$$d + coupon_d$$d + sleeve_d$$d + ring_d$$d ---"; \
 	  $(OSCAD) -o $(EXPDIR)/nozzle_d$$d.stl -D base_d=$$d \
 	           -D 'render_part="nozzle"' $(SCAD) 2>&1 | sed -n 's/^ECHO: /  /p'; \
-	  $(OSCAD) -o $(EXPDIR)/coupon_d$$d.stl -D base_d=$$d \
-	           -D 'render_part="coupon"' $(SCAD) >/dev/null 2>&1; \
+	  for p in coupon sleeve ring; do \
+	    $(OSCAD) -o $(EXPDIR)/$${p}_d$${d}.stl -D base_d=$$d \
+	             -D "render_part=\"$${p}\"" $(SCAD) >/dev/null 2>&1; \
+	  done; \
 	done
 
 # The aperture outline is generated, not drawn. This regenerates it from the

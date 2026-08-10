@@ -282,6 +282,26 @@ Lives in `ruffle-nozzle/` within the `RainnWorks/3dmodels` repo, alongside the
 unrelated `cake-topper/`, `door-to-ac-hose/`, `playdoh-organiser/` and
 `van-airfilter-cap/`.
 
+## The coupler is sized, not universal
+
+Everything about it derives from `base_d`: `thr_major = base_d + 6`,
+`flange_od = base_d + 2*flange_over`, `clamp_d = base_d + 0.6`, and the nose is
+cut to `r_i(z) - 0.3`. So there is a Ø23 coupler and a Ø18 coupler, not "a
+coupler". Cross-fitting fails in both directions simultaneously -- the ring's
+lip bore is 2.8mm too wide to catch the smaller flange, and the nose is 4.4mm
+too fat to enter the smaller bore.
+
+`make sizes` therefore exports a full matched set per diameter and names every
+file `*_dNN`. It used to export only the nozzles, leaving an unsuffixed
+`sleeve.stl`/`ring.stl` in `export/` that were silently Ø23 -- an invitation to
+print a mismatched set. The user caught that.
+
+If the profile family in the TODO ever happens, this is the thing to revisit:
+real tip/coupler systems standardise the SHANK so every tip shares one coupler
+and only the shape above it varies. That would mean giving the nozzle a fixed
+base diameter independent of the cone, which is a different part, not a
+parameter change.
+
 ## Open / TODO
 
 - **Nothing has been printed.** `slot_grow` (does the aperture open to the

@@ -187,9 +187,17 @@ lands within 6% of the published 35mm *and* matches 1.8 × 1.8 exactly, whereas
 
 ### Settle it with a print
 
-`make sizes` exports both candidates. The nozzle is ~20 minutes of filament, so
-printing one of each and holding them is cheaper than any amount of arguing
-with a product listing.
+`make sizes` exports a **matched set per diameter** — nozzle, coupon, sleeve
+and ring. The nozzle is ~20 minutes of filament, so printing one of each and
+holding them is cheaper than any amount of arguing with a product listing.
+
+> **The coupler is not one-size-fits-all.** Its thread, its clamp and its nose
+> all derive from `base_d`, so a Ø23 coupler does not work with a Ø18 nozzle,
+> and it fails in both directions at once: the Ø23 ring's lip bore is Ø23.6
+> against a Ø18 flange of Ø20.8, so the flange drops straight through with no
+> clamping ledge whatsoever; and the Ø23 sleeve's nose is Ø20.0 against a Ø18
+> bore of Ø15.6, so it will not even enter. Each size gets a 1.10mm ledge with
+> its OWN ring. Print `*_d23` together or `*_d18` together, never mixed.
 
 | | Ø23 | Ø18 |
 |---|---|---|
