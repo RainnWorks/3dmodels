@@ -83,6 +83,9 @@ thr_runout = 1.0;   // [0.4:0.2:3]
 // clear of it WITHOUT running up into the ring's clamp cone and slicing
 // the lip off the body.
 thr_top_gap = 0.6; // [0.2:0.1:2]
+// Ramp the sleeve's rib out of the core over this, at each end, rather than
+// starting it square. 1.5 against a 1.0 depth is a 34 deg cone off vertical.
+thr_lead_in = 1.5; // [0:0.1:4]
 // Gap left between the ring's clamp cone and the flange's, so the two are
 // not modelled as coincident faces. The ring takes it up on the thread.
 clamp_relief = 0.2; // [0.05:0.05:0.6]
@@ -296,6 +299,9 @@ echo(str("flank slot ", slit_len, " mm long (", 100 * slit_len / nozzle_h,
          "% of height; the photo measures 72%)"));
 echo(str("land at the slot: ", wall(slit_z), " mm at its foot -> ", wall(nozzle_h),
          " mm at the tip (steel is ~0.5)"));
+echo(str("thread: ", thr_h - thr_top_gap, " mm of rib, ", 2 * thr_lead_in,
+         " of it lead-in ramped at ", atan(thr_depth / thr_lead_in),
+         " deg off vertical"));
 echo(str("walls at ", line_w, " line width: base ", wall_t / line_w,
          " extrusions, tip ", tip_wall_t / line_w,
          " -- both should be whole numbers"));
@@ -313,6 +319,8 @@ assert(flange_od < thr_minor - 2 * thr_rclear - 0.4,
        "Flange will not pass through the coupler ring -- raise thr_major.");
 assert(tip_d > mouth_d + 1.0,
        "No rim left at the tip -- raise tip_d, the mouth is set by the trace.");
+assert(thr_h - thr_top_gap > 2 * thr_lead_in + 1.0,
+       "Lead-in eats the whole thread -- lower thr_lead_in or raise thr_h.");
 assert(clamp_d > 2 * r_o(flange_t) + 0.3,
        "The ring's lip would foul the cone instead of bearing on the flange.");
 assert(flange_t > clamp_c + 0.3 && flange_t > (thr_minor + 2 * thr_rclear - clamp_d) / 2,
@@ -393,7 +401,38 @@ module wedge_2d(r, a) {
 //  span than the sleeve's rib -- which is the only way to avoid the two
 //  threads ending on one coincident plane -- would silently put them 40 deg
 //  out of phase and they would not screw together at all.
-module thread(z0, h, rclear = 0, aclear = 0) {
+// Ramp the rib out of the core over `lead_in` at each end, instead of letting
+// it start square. Two reasons, and the second is the one that matters:
+//   - a square start is a full-depth horizontal ledge (thr_depth wide) hanging
+//     off the core; the ramp turns that into a cone atan(depth/lead_in) off
+//     vertical, which the printer does not have to bridge at all;
+//   - a chamfered rib self-centres going into the ring, so the thread can be
+//     started one-handed rather than hunted for.
+// Only the sleeve's rib gets this. The ring's GROOVE must stay full depth to
+// the ends or it would foul the very rib it is cut to accept, so it passes 0.
+module thread_envelope(z0, h, lead_in, rclear) {
+    union() {
+        translate([0, 0, z0 - eps])
+            cylinder(h = h + 2 * eps, r = thr_minor / 2 + rclear + eps);
+        translate([0, 0, z0])
+            cylinder(h = lead_in, r1 = thr_minor / 2 + rclear,
+                                  r2 = thr_major / 2 + rclear + eps);
+        translate([0, 0, z0 + lead_in])
+            cylinder(h = h - 2 * lead_in, r = thr_major / 2 + rclear + eps);
+        translate([0, 0, z0 + h - lead_in])
+            cylinder(h = lead_in, r1 = thr_major / 2 + rclear + eps,
+                                  r2 = thr_minor / 2 + rclear);
+    }
+}
+
+module thread(z0, h, rclear = 0, aclear = 0, lead_in = 0) {
+    if (lead_in > 0) intersection() {
+        thread_ribs(z0, h, rclear, aclear);
+        thread_envelope(z0, h, lead_in, rclear);
+    } else thread_ribs(z0, h, rclear, aclear);
+}
+
+module thread_ribs(z0, h, rclear = 0, aclear = 0) {
     translate([0, 0, z0])
     for (s = [0:thr_starts - 1]) rotate([0, 0, s * 360 / thr_starts])
         for (k = [0:thr_layers - 1]) {
@@ -432,7 +471,7 @@ module sleeve() {
                 cylinder(h = sleeve_body_h, d1 = sleeve_od, d2 = thr_minor);
             // thread core + rib
             translate([0, 0, -thr_h]) cylinder(h = thr_h, d = thr_minor);
-            thread(-thr_h, thr_h - thr_top_gap);
+            thread(-thr_h, thr_h - thr_top_gap, lead_in = thr_lead_in);
             // nose: follows the nozzle's own bore, so it centres the nozzle
             // instead of just plugging it
             cylinder(h = nose_h, r1 = r_i(0) - 0.3, r2 = r_i(nose_h) - 0.3);

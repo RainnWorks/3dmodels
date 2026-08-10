@@ -117,15 +117,20 @@ meshes back and reports every downward-facing face:
 | part | worst | ledge width |
 |---|---|---|
 | nozzle | 11° from vertical | nothing near-flat at all |
-| sleeve | 90° | mean 0.21mm, widest 1.00mm |
+| sleeve | 90° | mean 0.15mm, widest 0.19mm |
 | ring | 90° | mean 0.19mm, widest 0.73mm |
 
 The 90° faces are real but harmless, and the angle on its own is misleading.
 They are the **thread flanks**, which are a staircase rather than a smooth
 ramp: the helix is built as six nested extrusions, so each flank is six steps
-of **0.167mm**. A 90° face 0.167mm wide bridges without noticing. The single
-widest ledge on each part (~1mm) is where the thread run-out starts abruptly
-out of the core.
+of **0.167mm**. A 90° face 0.167mm wide bridges without noticing.
+
+The sleeve's rib is **ramped out of the core** over 1.5mm at each end rather
+than starting square — a 34° cone instead of a full-depth 1mm ledge, which took
+its worst overhang from 1.00mm to 0.19mm. That ramp also self-centres the rib
+going into the ring, so the thread can be started one-handed. The ring's groove
+keeps its 0.73mm ledge on purpose: it has to stay full depth to its ends or it
+would foul the very rib it is cut to accept, and 0.73mm bridges anyway.
 
 (An earlier version of this table claimed the thread flanks were "45° or
 shallower". They are a 20° staircase. Measuring is why that got caught.)

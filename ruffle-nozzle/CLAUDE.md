@@ -236,8 +236,18 @@ without noticing; the same 90 deg face 3mm wide would droop. `overhangs.py`
 reports both.
 
 Result: the nozzle has nothing near-flat at all (worst 11 deg), and the coupler
-halves are the thread staircase plus one ~1mm ledge each where the thread
-run-out starts abruptly out of the core. Everything prints unsupported.
+halves are the thread staircase plus, originally, one ~1mm ledge each where the
+rib started square out of the core.
+
+`thr_lead_in` fixed the sleeve's: the rib is trimmed to an envelope that ramps
+it out of the core over 1.5mm at each end, turning a full-depth horizontal
+ledge into a 34 deg cone, and taking the worst ledge from 1.00mm to 0.19mm --
+i.e. down to the staircase step, with no square run-out left. It also makes the
+rib self-centring going into the ring, which is the bigger practical win.
+
+The ring's groove deliberately does NOT get one and keeps its 0.73mm ledge: a
+groove trimmed at its ends would be shallower exactly where the rib has to
+enter, and would foul it. Only the male thread can take a lead-in.
 
 Worth doing before believing any "no supports" claim about a new part.
 
