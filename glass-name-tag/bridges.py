@@ -84,20 +84,88 @@ def island_struts(stl, min_gap=0.05):
         return (p[:, 0].max() - p[:, 0].min()) * (p[:, 1].max() - p[:, 1].min())
     main = max(labels, key=lambda l: extent(pts[l]))
 
+    # Mainland EDGES, not mainland vertices. A hulled stroke or a plain bar has
+    # vertices only where its segments end, so "nearest vertex" can be 12mm away
+    # along a bar whose nearest POINT is directly beneath the dot -- which is
+    # how an i-dot ended up tied to the far end of the bar by a line across the
+    # whole name. Point-to-segment is exact and costs nothing here.
+    seg = tris[roots == main][:, :, :2]
+    A = np.concatenate([seg[:, 0], seg[:, 1], seg[:, 2]])
+    B = np.concatenate([seg[:, 1], seg[:, 2], seg[:, 0]])
+    keep = np.linalg.norm(B - A, axis=1) > 1e-9
+    A, B = A[keep], B[keep]
+
+    def closest_on_edges(P):
+        """For each point in P, the nearest point lying on any mainland edge."""
+        AB = B - A                                     # (E,2)
+        L2 = np.einsum("ij,ij->i", AB, AB)             # (E,)
+        AP = P[:, None, :] - A[None, :, :]             # (P,E,2)
+        t = np.clip(np.einsum("pej,ej->pe", AP, AB) / L2, 0.0, 1.0)
+        proj = A[None, :, :] + t[:, :, None] * AB[None, :, :]
+        d = np.linalg.norm(P[:, None, :] - proj, axis=2)
+        j = np.argmin(d, axis=1)
+        i = np.arange(len(P))
+        return proj[i, j], d[i, j]
+
+    return mst_struts(tris, roots, labels, pts, min_gap)
+
+
+def mst_struts(tris, roots, labels, pts, min_gap):
+    """Join the pieces by a minimum spanning tree, not all to the mainland.
+
+    "Justine" comes apart into three: the bar plus the capital J, the whole
+    lowercase "ustine", and the dot over the i. Bridging every island to the
+    MAINLAND sends that dot straight past its own stem -- which lives in a
+    different island -- and ties it to the bar 14mm below, drawing a line down
+    the middle of the name.
+
+    An MST over the pieces gives each one its nearest neighbour instead: the
+    dot lands on its stem, and "ustine" lands on the J beside it. Same
+    guarantee (one connected body, n-1 struts for n pieces) at a fraction of
+    the length.
+    """
+    def nearest(a, b):
+        """Closest approach between pieces a and b: (point on a, point on b, d)."""
+        seg = tris[roots == b][:, :, :2]
+        A = np.concatenate([seg[:, 0], seg[:, 1], seg[:, 2]])
+        B = np.concatenate([seg[:, 1], seg[:, 2], seg[:, 0]])
+        keep = np.linalg.norm(B - A, axis=1) > 1e-9
+        A, B = A[keep], B[keep]
+        P = pts[a]
+        AB = B - A
+        L2 = np.einsum("ij,ij->i", AB, AB)
+        AP = P[:, None, :] - A[None, :, :]
+        t = np.clip(np.einsum("pej,ej->pe", AP, AB) / L2, 0.0, 1.0)
+        proj = A[None, :, :] + t[:, :, None] * AB[None, :, :]
+        d = np.linalg.norm(P[:, None, :] - proj, axis=2)
+        j = np.argmin(d, axis=1)
+        i = np.argmin(d[np.arange(len(P)), j])
+        return P[i], proj[i, j[i]], float(d[i, j[i]])
+
+    # Prim from the largest piece, so struts grow outward from the body.
+    def extent(p):
+        return (p[:, 0].max() - p[:, 0].min()) * (p[:, 1].max() - p[:, 1].min())
+    inside = [max(labels, key=lambda l: extent(pts[l]))]
+    outside = [l for l in labels if l != inside[0]]
+
     out = []
-    M = pts[main]
-    for lab in labels:
-        if lab == main:
-            continue
-        I = pts[lab]
-        # closest pair between the island and the mainland
-        d = np.linalg.norm(I[:, None, :] - M[None, :, :], axis=2)
-        i, j = np.unravel_index(np.argmin(d), d.shape)
-        gap = d[i, j]
-        if gap < min_gap:      # already touching; nothing to bridge
-            continue
-        out.append([round(float(I[i, 0]), 3), round(float(I[i, 1]), 3),
-                    round(float(M[j, 0]), 3), round(float(M[j, 1]), 3), round(float(gap), 3)])
+    while outside:
+        best = None
+        for a in outside:
+            for b in inside:
+                pa, pb, d = nearest(a, b)
+                if best is None or d < best[0]:
+                    best = (d, a, pa, pb)
+        d, lab, pa, pb = best
+        outside.remove(lab)
+        inside.append(lab)
+        # ALWAYS emit, however small the gap. There used to be a "close enough,
+        # they must already be touching" shortcut here and it was simply wrong:
+        # these pieces came back from the exporter as SEPARATE shells, which
+        # means they do not overlap, however near they look. Skipping the strut
+        # left "Corentin" in two pieces while every gap read as under 0.05mm.
+        out.append([round(float(pa[0]), 3), round(float(pa[1]), 3),
+                    round(float(pb[0]), 3), round(float(pb[1]), 3), round(d, 3)])
     return out
 
 
