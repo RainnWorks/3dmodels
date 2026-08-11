@@ -316,9 +316,21 @@
  "George|Pacifico|15.0|lift|9.6701|0.15": [],
  "George|Pacifico|15.0|rail|9.6701|0.15": [],
  "George|Pacifico|15.0|solid|9.6701|0.15": [],
+ "Grace|Great Vibes|15.0|lift|8.1078|0.15": [
+  [
+   20.632,
+   13.847,
+   19.511,
+   14.056
+  ]
+ ],
  "Grace|Great Vibes|15.0|rail|8.1078|0.15": [],
+ "Grace|Great Vibes|15.0|solid|8.1078|0.15": [],
  "Grace|Great Vibes|15|rail|7.9828|0.15": [],
  "Grace|Great Vibes|15|rail|8.1078|0.15": [],
+ "Grace|Pacifico|15.0|lift|9.6701|0.15": [],
+ "Grace|Pacifico|15.0|rail|9.6701|0.15": [],
+ "Grace|Pacifico|15.0|solid|9.6701|0.15": [],
  "Graham|Great Vibes|15.0|rail|8.1078|0.15": [],
  "Graham|Great Vibes|15|rail|8.1078|0.15": [],
  "Grumpy|Great Vibes|15.0|rail|8.1078|0.15": [],

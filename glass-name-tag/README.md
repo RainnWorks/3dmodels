@@ -125,17 +125,33 @@ Fattening and tightening the letter spacing barely moves it.
 
 ## The clip
 
-Sized for a wine glass rim, `glass_t = 2.0mm` max. The jaw closes to
-`glass_t - preload` at rest so it grips rather than merely hangs, and the
-spring angle is *derived* from that rather than set by eye:
+Sized for a wine glass rim, `glass_t = 2.0mm`.
 
-```
-sin(spring_ang) = (2*clip_rad - jaw) / spring_len
-```
+The bend radius is **not** a free parameter. It was, at 2.4mm, which put the
+two legs of the U 4.8mm apart for a 2mm rim: the rim could never seat in the
+curl, and the only thing that reached it was the angled tip of the arm.
+Measured by intersecting the clip with the glass wall, that version touched
+over **2.6mm** — a point. It was a hook, not a clip.
 
-`tests/assert_clip_grips.scad` checks the jaw actually closes below the rim
-thickness, that the preload is within what the arm can spring rather than take
-a set at, and that the bend is not tighter than the material is thick.
+So the curl is a rim wide (`bend_r = glass_t/2`), the rim seats right into it,
+and the arm then runs nearly straight, closing from `glass_t` at the curl to
+`glass_t - preload` at its end. That 0.8mm of interference is the grip, and
+spreading it along the arm is the whole point:
+
+| | contact length | interference |
+|---|---|---|
+| curl at 2.4mm radius | 2.6mm | 9.7mm³ |
+| curl at rim width | **24.0mm** | 27.3mm³ |
+
+The last of the arm flares back out (`lip_len`, `lip_ang`) so the rim slides up
+it instead of catching on a square end.
+
+`tests/assert_clip_grips.scad` checks the curl is about a rim wide in both
+directions, that the arm converges gently enough to clamp rather than claw, and
+that the lip actually flares past the arm. `tests/run.py` measures the contact
+length off the mesh and fails below 10mm.
+
+![clip on a rim](previews/section.png)
 
 ## Licence, and why this one is not published
 

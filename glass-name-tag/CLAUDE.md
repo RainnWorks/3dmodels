@@ -60,6 +60,12 @@ That is not a style preference, it is what kept catching real errors:
   `Gabby` is 4, median gap **1.22mm**, and the same holds for Pacifico, Snell
   Roundhand, Savoye LET, Brush Script MT and Zapfino. Five minutes of measuring
   saved building on a false premise.
+- **The clip was a hook.** The bend radius was picked as a free number (2.4mm)
+  and *looked* fine. Intersecting it with the glass wall said it touched the
+  rim over **2.6mm** — the curl was 4.8mm wide for a 2mm rim, so the rim never
+  seated and only the arm's tip reached it. Deriving the curl from the rim
+  (`glass_t/2`) took contact to **24.0mm**. The user spotted this by eye from a
+  render before any measurement was taken; the measurement only confirmed it.
 - **A regression the tests caught.** The first swish put its stroke's lower
   edge at **y = -0.10** — the centre was placed at `spine_w/2` when the stroke
   is `swish_w` wide. Invisible in a render; `empty_ink_clears_glass` failed

@@ -129,7 +129,7 @@ def main():
         for style in STYLES:
             print(f"\n  --- style={style} ---")
             for scad in sorted(f for f in os.listdir(HERE) if f.endswith(".scad")
-                               and f != "lib.scad"):
+                               and f != "lib.scad" and not f.startswith("probe_")):
                 path = os.path.join(HERE, scad)
                 # the scad-level checks only need a couple of representative
                 # names; the mesh checks below sweep the whole list
@@ -156,6 +156,25 @@ def main():
                    "loose pieces: " + ", ".join(bad_shell))
             report(not bad_y, f"{'no ink past the glass face':34} ({len(NAMES)} names)",
                    "reaches into the glass: " + ", ".join(bad_y))
+
+            # The clip must CLAMP, not hook. Measured as how far along the glass
+            # it actually interferes: the first version of this clip touched
+            # over 2.6mm -- a point -- because its curl was 4.8mm wide for a
+            # 2mm rim, so the rim never seated and only the arm tip reached it.
+            out = os.path.join(HERE, ".grip.stl")
+            if os.path.exists(out):
+                os.remove(out)
+            run(placed("Grace", font, style, set_drop, ic, bc)
+                + [os.path.join(HERE, "probe_grip.scad")], out=out)
+            if not os.path.exists(out):
+                report(False, f"{'clip clamps the rim':34}", "clip never touches the glass")
+            else:
+                gv = bridges.load_tris(out).reshape(-1, 3)
+                contact = float(gv[:, 0].max() - gv[:, 0].min())
+                os.remove(out)
+                report(contact >= 10.0, f"{'clip clamps the rim':34} ({contact:.1f}mm contact)",
+                       f"only {contact:.1f}mm of the clip meets the glass -- that is a "
+                       f"hook, not a clip; check the curl is about a rim wide")
 
     measure.save_cache(ic)
     bridges.save_cache(bc)

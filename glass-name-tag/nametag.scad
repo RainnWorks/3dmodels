@@ -97,10 +97,17 @@ spine_w     = 2.2;                  // [1:0.1:8]
 rail_w      = 1.6;                  // [0.8:0.1:4]
 // shortest the clip bar may be, for short names (mm)
 clip_min_len = 42;                  // [20:1:90]
-// bend radius where it goes over the rim
-clip_rad    = 2.4;                  // [1:0.1:6]
+// The bend is NOT a free radius. The two legs of the U must end up about a
+// rim apart or the rim cannot seat in the curl, so the inner radius is
+// glass_t/2 and the clip clamps along the arm instead of clawing at one point.
+// This only overrides it for experiments.
+clip_rad    = -1;                   // <0 = derive from glass_t
 // the sprung return arm that presses on the inside of the glass
 spring_len  = 18;                   // [8:1:40]
+// the entry lip: the last of the arm flares back OUT, so the rim has something
+// to slide up rather than a square end to catch on
+lip_len     = 3.5;                  // [0:0.5:10]
+lip_ang     = 22;                   // [0:1:60]
 // gap between the end of the name and where the bend starts (mm)
 clip_margin = 4;                    // [0:0.5:15]
 // how far back from the hook the bar at the glass face runs, for style="rail".
@@ -190,10 +197,18 @@ clip_len    = (eff_style == "rail") ? swish_x0 + swish_len
 // The jaw is the gap between the spine's glass face (y=0) and the return arm.
 // At rest it closes to (glass_t - preload) so it grips; the arm springs open to
 // take the rim.
-jaw         = max(0.2, glass_t - preload);
-// Arm root sits at y = -2*clip_rad (the far side of the bend). Angle it back so
-// the narrowest point of the jaw is `jaw` below the glass face.
-sin_a       = (2 * clip_rad - jaw) / spring_len;
+// The rim seats in the curl, so the gap THERE is the rim thickness. The arm
+// then closes to `jaw` over its length -- that 0.8mm of interference is the
+// grip, and spreading it along the arm is what makes this a clip rather than
+// a hook that touches at one point.
+jaw_root    = glass_t;                       // gap where the rim bottoms out
+jaw         = max(0.2, glass_t - preload);   // gap at the end of the arm
+bend_r      = (clip_rad >= 0) ? clip_rad : jaw_root / 2;
+clip_w      = swish_w;                       // the clip is the swish continuing
+// centreline radius of the swept stroke round the bend
+bend_rc     = bend_r + clip_w / 2;
+// how much the arm converges over its length
+sin_a       = (jaw_root - jaw) / spring_len;
 spring_ang  = asin(min(1, max(-1, sin_a)));
 
 // =============================================================================
@@ -300,44 +315,30 @@ module struts_2d() {
 //  The clip -- spine, a bend over the rim, and a sprung return arm
 // =============================================================================
 module clip_2d() {
-    // the bend, tangent to the spine's glass face (y = 0)
-    translate([clip_len, -clip_rad])
-        rotate(-(90 + spring_ang))
-            rotate_extrude_2d(180 + spring_ang, clip_rad, spine_w);
-    // the sprung arm, angled back toward the glass face
-    translate([clip_len, -clip_rad])
-        rotate(180 - spring_ang)
-            translate([0, clip_rad]) {
-                square([spring_len, spine_w]);
-                translate([spring_len, spine_w / 2]) circle(d = spine_w);
-            }
+    // Centreline of the bend: starts at the top, where the swish arrives, and
+    // wraps clockwise 180 degrees plus the arm's convergence.
+    c   = [clip_len, -jaw_root / 2];
+    n   = 48;
+    sweep = 180 + spring_ang;
+    pts_bend = [for (i = [0:n]) let (t = sweep * i / n)
+                    c + bend_rc * [sin(t), cos(t)]];
+    // End of the bend, and the direction the arm runs in: back along -x,
+    // tilted by spring_ang so the gap closes from jaw_root to jaw.
+    pe  = pts_bend[n];
+    dir = [-cos(spring_ang), sin(spring_ang)];
+    pa  = pe + dir * spring_len;
+    // the entry lip flares back out so the rim slides in
+    dl  = [-cos(spring_ang - lip_ang), sin(spring_ang - lip_ang)];
+    pl  = pa + dl * lip_len;
+    path = concat(pts_bend, [pa], lip_len > 0 ? [pl] : []);
+    stroke(path, clip_w);
 }
 
-// The swish. The rail has to get from the baseline down to the glass face
-// somehow, and a straight ramp fills that space with a solid wedge -- which is
-// the one thing this shape must not look like. So sweep a stroke along a cubic
-// instead: it leaves the rail travelling flat, dives, and arrives flat at the
-// clip, reading as the tail of the last letter rather than as structure.
-//
-// Control points share their neighbours' y, which makes the curve monotonic in
-// y -- that is what guarantees it never dips below the glass face on the way.
-function bez(t, p0, p1, p2, p3) =
-    pow(1-t,3)*p0 + 3*pow(1-t,2)*t*p1 + 3*(1-t)*t*t*p2 + pow(t,3)*p3;
-
-// stroke width along the sweep: starts at the rail, thickens into the clip
-function sw_w(t) = rail_w + (swish_w - rail_w) * t;
-
-module swish_2d() {
-    p0 = [swish_x0,            base_y + weld - rail_w/2];
-    p3 = [clip_len,            swish_w/2];   // lower edge lands exactly on y=0
-    d1 = swish_len * swish_bias;
-    d2 = swish_len * (1 - swish_bias);
-    p1 = [swish_x0 + d1, p0[1] + swish_rise + d1 * tan(swish_exit)];
-    p2 = [clip_len - d2, p3[1] + d2 * tan(swish_exit)];
-    n  = 56;
-    for (i = [0:n-1]) hull() {
-        translate(bez(i/n,     p0,p1,p2,p3)) circle(d = sw_w(i/n));
-        translate(bez((i+1)/n, p0,p1,p2,p3)) circle(d = sw_w((i+1)/n));
+// a constant-width stroke through a list of points, round ends
+module stroke(pts, w) {
+    for (i = [0:len(pts)-2]) hull() {
+        translate(pts[i])   circle(d = w);
+        translate(pts[i+1]) circle(d = w);
     }
 }
 
@@ -376,5 +377,13 @@ else if (render_part == "weld")
             square([4 * clip_len, weld_probe]);
     }
 else if (render_part == "clip") linear_extrude(thick) union() { spine_2d(); clip_2d(); }
+// The clip with the glass wall drawn in, so the grip can be SEEN rather than
+// taken on trust: the rim seats in the curl and the arm closes on it.
+else if (render_part == "section") {
+    color("SteelBlue") linear_extrude(thick) union() { spine_2d(); clip_2d(); }
+    color("LightCyan", 0.65)
+        translate([clip_len - 34, -glass_t, thick/2 - 0.6])
+            cube([40, glass_t, 1.2]);
+}
 else if (render_part == "none") ;
 else assert(false, str("unknown render_part \"", render_part, "\""));
