@@ -70,14 +70,14 @@ one: | $(PREVDIR) $(EXPDIR)
 ic=measure.load_cache(); bc=bridges.load_cache(); \
 names=[l.strip() for l in open('names.txt') if l.strip()]; \
 sd=max(measure.measure(n,'Great Vibes',15,0.15,cache=ic)['drop'] for n in names); \
-compare.tag_png('$(PREVDIR)/$(N).png','$(N)','Great Vibes',15,'rail',sd,0.15,ic,bc); \
+compare.tag_png('$(PREVDIR)/$(N).png','$(N)','Great Vibes',15,'lift',sd,0.15,ic,bc); \
 measure.save_cache(ic); bridges.save_cache(bc); print('$(PREVDIR)/$(N).png')"
 
 $(PREVDIR) $(EXPDIR):
 	@mkdir -p $@
 
 open: grid
-	@open $(PREVDIR)/all_rail.png
+	@open $(PREVDIR)/all_lift_bite3.0.png
 
 clean:
 	rm -rf $(PREVDIR) $(EXPDIR) ink.json bridges.json
