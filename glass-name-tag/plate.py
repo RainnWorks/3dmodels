@@ -46,6 +46,7 @@ def export_tag(name, ink, struts, font, size, style, set_drop, bold):
     cmd = ([OPENSCAD, "-o", out, "--export-format", "binstl", "--enable=textmetrics",
             "-D", 'render_part="tag"', "-D", f'font="{font}"', "-D", f"txt_size={size}",
             "-D", f'style="{style}"', "-D", f"set_drop={set_drop}", "-D", f"bold={bold}"]
+           + (["-D", f"bite={os.environ['BITE']}"] if "BITE" in os.environ else [])
            + measure.scad_args(name, ink)
            + (["-D", f"struts={json.dumps(struts)}"] if struts else [])
            + [MODEL])
@@ -124,7 +125,7 @@ def main():
     font = os.environ.get("FONT", "Great Vibes")
     size = float(os.environ.get("SIZE", 15))
     bold = float(os.environ.get("BOLD", 0.15))
-    style = os.environ.get("STYLE", "rail")
+    style = os.environ.get("STYLE", "lift")
     names = [l.strip() for l in open(os.path.join(HERE, "names.txt")) if l.strip()]
 
     # Wipe every previously generated plate first. A run that packs onto fewer
@@ -142,7 +143,8 @@ def main():
     inks = {n: measure.measure(n, font, size, bold, cache=ic) for n in names}
     set_drop = max(v["drop"] for v in inks.values())
 
-    print(f"{len(names)} names -- {font} {size:g}mm bold+{bold} style={style}")
+    print(f"{len(names)} names -- {font} {size:g}mm bold+{bold} style={style}"
+          + (f" bite={os.environ['BITE']}mm" if "BITE" in os.environ else ""))
     print(f"bed {BED:g}mm, {MARGIN:g}mm keep-out, {GAP:g}mm between tags\n")
     print("exporting tags...")
     boxes = {}

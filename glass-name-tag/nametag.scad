@@ -100,6 +100,9 @@ preload     = 0.8;                  // [0:0.1:2]
 spine_w     = 2.2;                  // [1:0.1:8]
 // the rail under the baseline, for style="window"
 rail_w      = 1.6;                  // [0.8:0.1:4]
+// diameter of the rounding on the bar's far end. Capped at the bar's own
+// depth, so a deep bar (style="solid") gets a nose rather than a half-disc.
+bar_end_d   = 4.0;                  // [0:0.2:12]
 // shortest the clip bar may be, for short names (mm)
 clip_min_len = 42;                  // [20:1:90]
 // The bend is NOT a free radius. The two legs of the U must end up about a
@@ -271,7 +274,17 @@ module spine_2d() {
     if (eff_style == "rail") {
         swish_2d();
     } else {
-        square([clip_len, bar_w]);
+        // The far end is rounded. Every other terminal on the part is round --
+        // the letter strokes, the clip's tip -- so a square-cut bar end is the
+        // one place the eye catches a machined edge on an otherwise drawn shape.
+        r = min(bar_w, bar_end_d) / 2;
+        union() {
+            translate([r, 0]) square([clip_len - r, bar_w]);
+            translate([r, bar_w / 2]) circle(d = 2 * r);
+            // if the bar is deeper than the rounding, keep the rest square-backed
+            if (r < bar_w / 2)
+                translate([0, bar_w / 2]) square([r, bar_w / 2]);
+        }
     }
 }
 
