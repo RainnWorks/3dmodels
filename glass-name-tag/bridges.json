@@ -1,21 +1,13 @@
 {
- "Alice|Great Vibes|15.0|lift|8.1078|0.15": [
+ "Alice|Great Vibes|15.0|lift|8.1078|0.15|default|d5ef03d047": [
   [
    26.05,
-   12.833,
+   11.433,
    25.308,
-   13.171
+   11.771
   ]
  ],
- "Alice|Great Vibes|15.0|rail|8.1078|0.15": [
-  [
-   26.05,
-   18.058,
-   25.308,
-   18.396
-  ]
- ],
- "Alice|Great Vibes|15.0|solid|8.1078|0.15": [
+ "Alice|Great Vibes|15.0|rail|8.1078|0.15|default|d5ef03d047": [
   [
    26.05,
    18.058,
@@ -23,23 +15,7 @@
    18.396
   ]
  ],
- "Alice|Great Vibes|15|flush|8.1078|0.15": [
-  [
-   26.05,
-   11.35,
-   25.308,
-   11.688
-  ]
- ],
- "Alice|Great Vibes|15|lift|8.1078|0.15": [
-  [
-   26.05,
-   12.833,
-   25.308,
-   13.171
-  ]
- ],
- "Alice|Great Vibes|15|rail|8.1078|0.15": [
+ "Alice|Great Vibes|15.0|solid|8.1078|0.15|default|d5ef03d047": [
   [
    26.05,
    18.058,
@@ -47,72 +23,72 @@
    18.396
   ]
  ],
- "Alice|Great Vibes|15|solid|8.1078|0.15": [
+ "Alice|Pacifico|15.0|lift|9.6701|0.15|default|d5ef03d047": [],
+ "Alice|Pacifico|15.0|rail|9.6701|0.15|default|d5ef03d047": [],
+ "Alice|Pacifico|15.0|solid|9.6701|0.15|default|d5ef03d047": [],
+ "Ava|Great Vibes|15.0|lift|8.1078|0.15|default|d5ef03d047": [],
+ "Ava|Great Vibes|15.0|rail|8.1078|0.15|default|d5ef03d047": [],
+ "Ava|Great Vibes|15.0|solid|8.1078|0.15|default|d5ef03d047": [],
+ "Ava|Pacifico|15.0|lift|9.6701|0.15|default|d5ef03d047": [],
+ "Ava|Pacifico|15.0|rail|9.6701|0.15|default|d5ef03d047": [],
+ "Ava|Pacifico|15.0|solid|9.6701|0.15|default|d5ef03d047": [],
+ "Beth|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [],
+ "Beth|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Beth|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [],
+ "Beth|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Betty|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
-   26.05,
-   18.058,
-   25.308,
-   18.396
+   25.669,
+   10.261,
+   26.56,
+   10.145
   ]
  ],
- "Alice|Pacifico|15.0|lift|9.6701|0.15": [],
- "Alice|Pacifico|15.0|rail|9.6701|0.15": [],
- "Alice|Pacifico|15.0|solid|9.6701|0.15": [],
- "Alice|Pacifico|15|flush|9.5202|0.0": [
+ "Betty|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
   [
-   28.008,
-   14.736,
-   27.721,
-   14.8
+   25.669,
+   10.261,
+   26.56,
+   10.145
   ]
  ],
- "Alice|Pacifico|15|rail|9.5202|0.0": [
+ "Betty|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
-   28.008,
-   22.857,
-   27.721,
-   22.92
+   25.669,
+   10.261,
+   26.56,
+   10.145
   ]
  ],
- "Ava|Great Vibes|15.0|lift|8.1078|0.15": [],
- "Ava|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Ava|Great Vibes|15.0|solid|8.1078|0.15": [],
- "Ava|Pacifico|15.0|lift|9.6701|0.15": [],
- "Ava|Pacifico|15.0|rail|9.6701|0.15": [],
- "Ava|Pacifico|15.0|solid|9.6701|0.15": [],
- "Beth|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Beth|Great Vibes|15|rail|8.1078|0.15": [],
- "Betty|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Betty|Great Vibes|15|rail|8.1078|0.15": [],
- "Christopher|Great Vibes|15.0|flush|7.9578|0.0": [
+ "Betty|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
   [
-   35.175,
-   10.289,
-   34.938,
-   8.975
+   25.669,
+   10.261,
+   26.56,
+   10.145
   ]
  ],
- "Christopher|Great Vibes|15.0|lift|8.1078|0.15": [
+ "Christopher|Great Vibes|15.0|lift|8.1078|0.15|default|d5ef03d047": [
   [
    19.091,
-   10.743,
+   9.343,
    19.858,
-   10.43
+   9.03
   ],
   [
    35.291,
-   15.98,
+   14.58,
    35.112,
-   14.96
+   13.56
   ],
   [
    59.712,
-   10.43,
+   9.03,
    59.097,
-   10.775
+   9.375
   ]
  ],
- "Christopher|Great Vibes|15.0|rail|8.1078|0.15": [
+ "Christopher|Great Vibes|15.0|rail|8.1078|0.15|default|d5ef03d047": [
   [
    35.291,
    16.851,
@@ -120,7 +96,7 @@
    15.831
   ]
  ],
- "Christopher|Great Vibes|15.0|solid|8.1078|0.15": [
+ "Christopher|Great Vibes|15.0|solid|8.1078|0.15|default|d5ef03d047": [
   [
    35.291,
    16.851,
@@ -128,67 +104,7 @@
    15.831
   ]
  ],
- "Christopher|Great Vibes|15|flush|7.9578|0.0": [
-  [
-   35.175,
-   10.289,
-   34.938,
-   8.975
-  ]
- ],
- "Christopher|Great Vibes|15|flush|8.1078|0.15": [
-  [
-   35.291,
-   10.143,
-   35.112,
-   9.123
-  ]
- ],
- "Christopher|Great Vibes|15|lift|8.1078|0.15": [
-  [
-   19.091,
-   10.743,
-   19.858,
-   10.43
-  ],
-  [
-   35.291,
-   15.98,
-   35.112,
-   14.96
-  ],
-  [
-   59.712,
-   10.43,
-   59.097,
-   10.775
-  ]
- ],
- "Christopher|Great Vibes|15|rail|8.1078|0.15": [
-  [
-   35.291,
-   16.851,
-   35.112,
-   15.831
-  ]
- ],
- "Christopher|Great Vibes|15|solid|8.1078|0.15": [
-  [
-   35.291,
-   16.851,
-   35.112,
-   15.831
-  ]
- ],
- "Christopher|Pacifico|15.0|lift|9.6701|0.15": [
-  [
-   40.582,
-   22.408,
-   40.608,
-   21.319
-  ]
- ],
- "Christopher|Pacifico|15.0|rail|9.6701|0.15": [
+ "Christopher|Pacifico|15.0|lift|9.6701|0.15|default|d5ef03d047": [
   [
    40.582,
    21.008,
@@ -196,7 +112,7 @@
    19.919
   ]
  ],
- "Christopher|Pacifico|15.0|solid|9.6701|0.15": [
+ "Christopher|Pacifico|15.0|rail|9.6701|0.15|default|d5ef03d047": [
   [
    40.582,
    21.008,
@@ -204,166 +120,412 @@
    19.919
   ]
  ],
- "Christopher|Pacifico|15|flush|9.5202|0.0": [
+ "Christopher|Pacifico|15.0|solid|9.6701|0.15|default|d5ef03d047": [
   [
-   40.436,
-   12.888,
-   40.452,
-   11.499
-  ]
- ],
- "Christopher|Pacifico|15|rail|9.5202|0.0": [
-  [
-   40.436,
+   40.582,
    21.008,
-   40.452,
-   19.619
+   40.608,
+   19.919
   ]
  ],
- "Clara|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Clara|Great Vibes|15|rail|8.1078|0.15": [],
- "Corentin|Great Vibes|15.0|rail|8.1078|0.15": [
+ "Clara|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   20.122,
+   6.3,
+   19.395,
+   6.564
+  ]
+ ],
+ "Clara|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Clara|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   20.122,
+   6.3,
+   19.395,
+   6.564
+  ]
+ ],
+ "Clara|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Corentin|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   19.909,
+   6.389,
+   19.395,
+   6.564
+  ],
+  [
+   52.653,
+   11.59,
+   64.404,
+   2.4
+  ]
+ ],
+ "Corentin|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
   [
    51.583,
-   16.851,
+   11.122,
    51.404,
-   15.831
+   10.102
   ]
  ],
- "Corentin|Great Vibes|15|rail|8.1078|0.15": [
+ "Corentin|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   19.909,
+   6.389,
+   19.395,
+   6.564
+  ],
+  [
+   52.653,
+   11.59,
+   64.404,
+   2.4
+  ]
+ ],
+ "Corentin|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
   [
    51.583,
-   16.851,
+   11.122,
    51.404,
-   15.831
+   10.102
   ]
  ],
- "Eileen|Great Vibes|15.0|rail|8.1078|0.15": [
+ "Eileen|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
    24.624,
-   16.851,
+   10.122,
    24.446,
-   15.831
+   9.102
   ]
  ],
- "Eileen|Great Vibes|15|rail|8.1078|0.15": [
+ "Eileen|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
   [
    24.624,
-   16.851,
+   10.122,
    24.446,
-   15.831
+   9.102
   ]
  ],
- "Emilio|Great Vibes|15.0|rail|8.1078|0.15": [
+ "Eileen|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   24.624,
+   10.122,
+   24.446,
+   9.102
+  ]
+ ],
+ "Eileen|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   24.624,
+   10.122,
+   24.446,
+   9.102
+  ]
+ ],
+ "Emilio|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
    35.395,
-   16.851,
+   10.122,
    35.217,
-   15.831
+   9.102
   ],
   [
    42.904,
-   18.058,
+   11.329,
    42.162,
-   18.396
+   11.667
   ]
  ],
- "Emilio|Great Vibes|15|rail|8.1078|0.15": [
+ "Emilio|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
   [
    35.395,
-   16.851,
+   10.122,
    35.217,
-   15.831
+   9.102
   ],
   [
    42.904,
-   18.058,
+   11.329,
    42.162,
-   18.396
+   11.667
   ]
  ],
- "Esma|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Esma|Great Vibes|15|rail|8.1078|0.15": [],
- "Frankie|Great Vibes|15.0|rail|8.1078|0.15": [
+ "Emilio|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   35.395,
+   10.122,
+   35.217,
+   9.102
+  ],
+  [
+   42.904,
+   11.329,
+   42.162,
+   11.667
+  ]
+ ],
+ "Emilio|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   35.395,
+   10.122,
+   35.217,
+   9.102
+  ],
+  [
+   42.904,
+   11.329,
+   42.162,
+   11.667
+  ]
+ ],
+ "Esma|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [],
+ "Esma|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Esma|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [],
+ "Esma|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Frankie|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
    56.041,
-   16.851,
+   10.997,
    55.862,
-   15.831
+   9.977
   ]
  ],
- "Frankie|Great Vibes|15|rail|8.1078|0.15": [
+ "Frankie|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
   [
    56.041,
-   16.851,
+   10.997,
    55.862,
-   15.831
+   9.977
   ]
  ],
- "Gabby|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Gabby|Great Vibes|15|rail|7.9828|0.15": [],
- "Gabby|Great Vibes|15|rail|8.1078|0.15": [],
- "George|Great Vibes|15.0|lift|8.1078|0.15": [
+ "Frankie|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
-   20.532,
-   12.948,
+   56.041,
+   10.997,
+   55.862,
+   9.977
+  ]
+ ],
+ "Frankie|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   56.041,
+   10.997,
+   55.862,
+   9.977
+  ]
+ ],
+ "Gabby|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   20.516,
+   11.559,
    19.336,
-   13.288
+   11.888
+  ],
+  [
+   41.151,
+   12.713,
+   41.968,
+   12.456
   ]
  ],
- "George|Great Vibes|15.0|rail|8.1078|0.15": [],
- "George|Great Vibes|15.0|solid|8.1078|0.15": [],
- "George|Pacifico|15.0|lift|9.6701|0.15": [],
- "George|Pacifico|15.0|rail|9.6701|0.15": [],
- "George|Pacifico|15.0|solid|9.6701|0.15": [],
- "Grace|Great Vibes|15.0|lift|8.1078|0.15": [
+ "Gabby|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   20.516,
+   11.559,
+   19.336,
+   11.888
+  ],
+  [
+   41.151,
+   12.713,
+   41.968,
+   12.456
+  ]
+ ],
+ "Gabby|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   20.516,
+   11.559,
+   19.336,
+   11.888
+  ],
+  [
+   41.151,
+   12.713,
+   41.968,
+   12.456
+  ]
+ ],
+ "Gabby|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   20.516,
+   11.559,
+   19.336,
+   11.888
+  ],
+  [
+   41.151,
+   12.713,
+   41.968,
+   12.456
+  ]
+ ],
+ "George|Great Vibes|15.0|lift|8.1078|0.15|default|d5ef03d047": [],
+ "George|Great Vibes|15.0|rail|8.1078|0.15|default|d5ef03d047": [],
+ "George|Great Vibes|15.0|solid|8.1078|0.15|default|d5ef03d047": [],
+ "George|Pacifico|15.0|lift|9.6701|0.15|default|d5ef03d047": [],
+ "George|Pacifico|15.0|rail|9.6701|0.15|default|d5ef03d047": [],
+ "George|Pacifico|15.0|solid|9.6701|0.15|default|d5ef03d047": [],
+ "Grace|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
    20.632,
-   13.847,
+   12.447,
    19.511,
-   14.056
+   12.656
   ]
  ],
- "Grace|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Grace|Great Vibes|15.0|solid|8.1078|0.15": [],
- "Grace|Great Vibes|15|rail|7.9828|0.15": [],
- "Grace|Great Vibes|15|rail|8.1078|0.15": [],
- "Grace|Pacifico|15.0|lift|9.6701|0.15": [],
- "Grace|Pacifico|15.0|rail|9.6701|0.15": [],
- "Grace|Pacifico|15.0|solid|9.6701|0.15": [],
- "Graham|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Graham|Great Vibes|15|rail|8.1078|0.15": [],
- "Grumpy|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Grumpy|Great Vibes|15|rail|8.1078|0.15": [],
- "Gwen|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Gwen|Great Vibes|15|rail|8.1078|0.15": [],
- "Harry|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Harry|Great Vibes|15|rail|8.1078|0.15": [],
- "Hazz|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Hazz|Great Vibes|15|rail|8.1078|0.15": [],
- "Jai|Great Vibes|15.0|flush|7.9578|0.0": [
+ "Grace|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
   [
-   36.8,
-   10.289,
-   36.563,
-   8.975
+   20.632,
+   12.447,
+   19.511,
+   12.656
   ]
  ],
- "Jai|Great Vibes|15.0|lift|8.1078|0.15": [
+ "Grace|Great Vibes|15.0|lift|8.1078|0.15|default|d5ef03d047": [
+  [
+   20.632,
+   12.447,
+   19.511,
+   12.656
+  ]
+ ],
+ "Grace|Great Vibes|15.0|rail|8.1078|0.15|default|d5ef03d047": [],
+ "Grace|Great Vibes|15.0|solid|8.1078|0.15|default|d5ef03d047": [],
+ "Grace|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   20.632,
+   12.447,
+   19.511,
+   12.656
+  ]
+ ],
+ "Grace|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   20.632,
+   12.447,
+   19.511,
+   12.656
+  ]
+ ],
+ "Grace|Pacifico|15.0|lift|9.6701|0.15|default|d5ef03d047": [],
+ "Grace|Pacifico|15.0|rail|9.6701|0.15|default|d5ef03d047": [],
+ "Grace|Pacifico|15.0|solid|9.6701|0.15|default|d5ef03d047": [],
+ "Graham|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   20.632,
+   12.447,
+   19.511,
+   12.656
+  ]
+ ],
+ "Graham|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   20.632,
+   12.447,
+   19.511,
+   12.656
+  ]
+ ],
+ "Graham|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   20.632,
+   12.447,
+   19.511,
+   12.656
+  ]
+ ],
+ "Graham|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   20.632,
+   12.447,
+   19.511,
+   12.656
+  ]
+ ],
+ "Grumpy|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   50.303,
+   12.693,
+   51.051,
+   12.456
+  ]
+ ],
+ "Grumpy|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Grumpy|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   50.303,
+   12.693,
+   51.051,
+   12.456
+  ]
+ ],
+ "Grumpy|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Gwen|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   20.18,
+   10.37,
+   18.978,
+   10.768
+  ]
+ ],
+ "Gwen|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   20.18,
+   10.37,
+   18.978,
+   10.768
+  ]
+ ],
+ "Gwen|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   20.18,
+   10.37,
+   18.978,
+   10.768
+  ]
+ ],
+ "Gwen|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   20.18,
+   10.37,
+   18.978,
+   10.768
+  ]
+ ],
+ "Harry|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [],
+ "Harry|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Harry|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [],
+ "Harry|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Hazz|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [],
+ "Hazz|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Hazz|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [],
+ "Hazz|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Jai|Great Vibes|15.0|lift|8.1078|0.15|default|d5ef03d047": [
   [
    26.824,
-   13.528,
+   12.128,
    25.414,
-   14.114
+   12.714
   ],
   [
    36.591,
-   19.842,
+   18.442,
    31.786,
-   25.226
+   23.826
   ]
  ],
- "Jai|Great Vibes|15.0|rail|8.1078|0.15": [
+ "Jai|Great Vibes|15.0|rail|8.1078|0.15|default|d5ef03d047": [
   [
    36.916,
    16.851,
@@ -371,7 +533,7 @@
    15.831
   ]
  ],
- "Jai|Great Vibes|15.0|solid|8.1078|0.15": [
+ "Jai|Great Vibes|15.0|solid|8.1078|0.15|default|d5ef03d047": [
   [
    36.916,
    16.851,
@@ -379,29 +541,21 @@
    15.831
   ]
  ],
- "Jai|Great Vibes|15|flush|7.9578|0.0": [
-  [
-   36.8,
-   10.289,
-   36.563,
-   8.975
-  ]
- ],
- "Jai|Pacifico|15.0|lift|9.6701|0.15": [
+ "Jai|Pacifico|15.0|lift|9.6701|0.15|default|d5ef03d047": [
   [
    17.727,
-   9.665,
+   8.265,
    16.229,
-   10.262
+   8.862
   ],
   [
    28.63,
-   17.297,
+   15.898,
    18.724,
-   19.634
+   18.234
   ]
  ],
- "Jai|Pacifico|15.0|rail|9.6701|0.15": [
+ "Jai|Pacifico|15.0|rail|9.6701|0.15|default|d5ef03d047": [
   [
    30.27,
    21.008,
@@ -409,7 +563,7 @@
    19.928
   ]
  ],
- "Jai|Pacifico|15.0|solid|9.6701|0.15": [
+ "Jai|Pacifico|15.0|solid|9.6701|0.15|default|d5ef03d047": [
   [
    30.27,
    21.008,
@@ -417,211 +571,232 @@
    19.928
   ]
  ],
- "Jai|Pacifico|15|flush|9.5202|0.0": [
-  [
-   30.123,
-   12.888,
-   30.083,
-   11.508
-  ]
- ],
- "Jenny|Great Vibes|15.0|lift|8.1078|0.15": [
-  [
-   26.927,
-   13.912,
-   25.559,
-   14.464
-  ]
- ],
- "Jenny|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Jenny|Great Vibes|15.0|solid|8.1078|0.15": [],
- "Jenny|Great Vibes|15|flush|7.9578|0.0": [],
- "Jenny|Great Vibes|15|flush|8.1078|0.15": [],
- "Jenny|Great Vibes|15|lift|8.1078|0.15": [
-  [
-   26.927,
-   13.912,
-   25.559,
-   14.464
-  ]
- ],
- "Jenny|Great Vibes|15|rail|8.1078|0.15": [],
- "Jenny|Great Vibes|15|solid|8.1078|0.15": [],
- "Jenny|Pacifico|15.0|lift|9.6701|0.15": [
+ "Jenny|Great Vibes|15.0|lift|8.1078|0.15|default|d5ef03d047": [],
+ "Jenny|Great Vibes|15.0|rail|8.1078|0.15|default|d5ef03d047": [],
+ "Jenny|Great Vibes|15.0|solid|8.1078|0.15|default|d5ef03d047": [],
+ "Jenny|Pacifico|15.0|lift|9.6701|0.15|default|d5ef03d047": [
   [
    16.229,
-   17.512,
+   16.112,
    17.873,
-   17.033
+   15.633
   ]
  ],
- "Jenny|Pacifico|15.0|rail|9.6701|0.15": [],
- "Jenny|Pacifico|15.0|solid|9.6701|0.15": [],
- "Jenny|Pacifico|15|flush|9.5202|0.0": [],
- "Jenny|Pacifico|15|rail|9.5202|0.0": [],
- "Justine|Great Vibes|15.0|rail|8.1078|0.15": [
+ "Jenny|Pacifico|15.0|rail|9.6701|0.15|default|d5ef03d047": [],
+ "Jenny|Pacifico|15.0|solid|9.6701|0.15|default|d5ef03d047": [],
+ "Justine|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
-   46.332,
-   16.851,
-   46.154,
-   15.831
-  ]
- ],
- "Justine|Great Vibes|15|rail|8.1078|0.15": [
-  [
-   46.332,
-   16.851,
-   46.154,
-   15.831
-  ]
- ],
- "Kaine|Great Vibes|15.0|rail|8.1078|0.15": [
-  [
-   39.478,
-   16.851,
-   39.3,
-   15.831
-  ]
- ],
- "Kaine|Great Vibes|15|rail|8.1078|0.15": [
-  [
-   39.478,
-   16.851,
-   39.3,
-   15.831
-  ]
- ],
- "Marlow|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Marlow|Great Vibes|15|rail|8.1078|0.15": [],
- "Matt|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Matt|Great Vibes|15|rail|8.1078|0.15": [],
- "Mia|Great Vibes|15.0|rail|8.1078|0.15": [
-  [
-   35.562,
-   16.851,
-   35.383,
-   15.831
-  ]
- ],
- "Mia|Great Vibes|15|rail|8.1078|0.15": [
-  [
-   35.562,
-   16.851,
-   35.383,
-   15.831
-  ]
- ],
- "Millie|Great Vibes|15.0|flush|7.9578|0.0": [
-  [
-   35.446,
-   10.289,
-   35.209,
-   8.975
+   26.745,
+   12.598,
+   25.56,
+   13.066
   ],
   [
-   47.495,
-   11.287,
-   46.48,
-   11.751
+   45.738,
+   18.058,
+   32.058,
+   24.194
   ]
  ],
- "Millie|Great Vibes|15.0|lift|8.1078|0.15": [
+ "Justine|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   26.745,
+   12.598,
+   25.56,
+   13.066
+  ],
+  [
+   45.738,
+   18.058,
+   32.058,
+   24.194
+  ]
+ ],
+ "Justine|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   26.745,
+   12.598,
+   25.56,
+   13.066
+  ],
+  [
+   45.738,
+   18.058,
+   32.058,
+   24.194
+  ]
+ ],
+ "Justine|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   26.745,
+   12.598,
+   25.56,
+   13.066
+  ],
+  [
+   45.738,
+   18.058,
+   32.058,
+   24.194
+  ]
+ ],
+ "Kaine|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   33.922,
+   4.223,
+   33.9,
+   4.09
+  ],
+  [
+   39.077,
+   14.258,
+   35.363,
+   17.427
+  ]
+ ],
+ "Kaine|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   33.922,
+   4.223,
+   33.9,
+   4.09
+  ],
+  [
+   39.077,
+   14.258,
+   35.363,
+   17.427
+  ]
+ ],
+ "Kaine|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   33.922,
+   4.223,
+   33.9,
+   4.09
+  ],
+  [
+   39.077,
+   14.258,
+   35.363,
+   17.427
+  ]
+ ],
+ "Kaine|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   33.922,
+   4.223,
+   33.9,
+   4.09
+  ],
+  [
+   39.077,
+   14.258,
+   35.363,
+   17.427
+  ]
+ ],
+ "Marlow|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   32.264,
+   5.921,
+   30.809,
+   6.283
+  ]
+ ],
+ "Marlow|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Marlow|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   32.264,
+   5.921,
+   30.809,
+   6.283
+  ]
+ ],
+ "Marlow|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Matt|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   32.264,
+   5.921,
+   30.809,
+   6.283
+  ]
+ ],
+ "Matt|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Matt|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   32.264,
+   5.921,
+   30.809,
+   6.283
+  ]
+ ],
+ "Matt|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Mia|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
    34.999,
-   13.98,
+   12.58,
    33.708,
-   14.651
+   13.251
   ],
   [
    33.786,
-   11.571,
+   10.171,
    32.524,
-   12.182
-  ],
-  [
-   47.456,
-   13.736,
-   34.27,
-   16.336
+   10.782
   ]
  ],
- "Millie|Great Vibes|15.0|rail|8.1078|0.15": [
+ "Mia|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
   [
    35.562,
-   16.851,
+   11.302,
    35.383,
-   15.831
-  ],
-  [
-   47.509,
-   18.058,
-   46.766,
-   18.396
+   10.282
   ]
  ],
- "Millie|Great Vibes|15.0|solid|8.1078|0.15": [
-  [
-   35.562,
-   16.851,
-   35.383,
-   15.831
-  ],
-  [
-   47.509,
-   18.058,
-   46.766,
-   18.396
-  ]
- ],
- "Millie|Great Vibes|15|flush|7.9578|0.0": [
-  [
-   35.446,
-   10.289,
-   35.209,
-   8.975
-  ],
-  [
-   47.495,
-   11.287,
-   46.48,
-   11.751
-  ]
- ],
- "Millie|Great Vibes|15|flush|8.1078|0.15": [
-  [
-   35.562,
-   10.143,
-   35.383,
-   9.123
-  ],
-  [
-   47.509,
-   11.35,
-   46.766,
-   11.688
-  ]
- ],
- "Millie|Great Vibes|15|lift|8.1078|0.15": [
+ "Mia|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
    34.999,
-   13.98,
+   12.58,
    33.708,
-   14.651
+   13.251
   ],
   [
    33.786,
-   11.571,
+   10.171,
    32.524,
-   12.182
+   10.782
+  ]
+ ],
+ "Mia|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   35.562,
+   11.302,
+   35.383,
+   10.282
+  ]
+ ],
+ "Millie|Great Vibes|15.0|lift|8.1078|0.15|default|d5ef03d047": [
+  [
+   34.999,
+   12.58,
+   33.708,
+   13.251
+  ],
+  [
+   33.786,
+   10.171,
+   32.524,
+   10.782
   ],
   [
    47.456,
-   13.736,
+   12.336,
    34.27,
-   16.336
+   14.936
   ]
  ],
- "Millie|Great Vibes|15|rail|8.1078|0.15": [
+ "Millie|Great Vibes|15.0|rail|8.1078|0.15|default|d5ef03d047": [
   [
    35.562,
    16.851,
@@ -635,7 +810,7 @@
    18.396
   ]
  ],
- "Millie|Great Vibes|15|solid|8.1078|0.15": [
+ "Millie|Great Vibes|15.0|solid|8.1078|0.15|default|d5ef03d047": [
   [
    35.562,
    16.851,
@@ -649,15 +824,15 @@
    18.396
   ]
  ],
- "Millie|Pacifico|15.0|lift|9.6701|0.15": [
+ "Millie|Pacifico|15.0|lift|9.6701|0.15|default|d5ef03d047": [
   [
    33.373,
-   12.992,
+   11.592,
    33.4,
-   11.903
+   10.503
   ]
  ],
- "Millie|Pacifico|15.0|rail|9.6701|0.15": [
+ "Millie|Pacifico|15.0|rail|9.6701|0.15|default|d5ef03d047": [
   [
    33.373,
    21.008,
@@ -665,7 +840,7 @@
    19.919
   ]
  ],
- "Millie|Pacifico|15.0|solid|9.6701|0.15": [
+ "Millie|Pacifico|15.0|solid|9.6701|0.15|default|d5ef03d047": [
   [
    33.373,
    21.008,
@@ -673,57 +848,21 @@
    19.919
   ]
  ],
- "Millie|Pacifico|15|flush|9.5202|0.0": [
-  [
-   33.227,
-   12.888,
-   33.244,
-   11.499
-  ],
-  [
-   50.403,
-   14.736,
-   50.117,
-   14.8
-  ]
- ],
- "Millie|Pacifico|15|rail|9.5202|0.0": [
-  [
-   33.227,
-   21.008,
-   33.244,
-   19.619
-  ],
-  [
-   50.403,
-   22.857,
-   50.117,
-   22.92
-  ]
- ],
- "Niamh|Great Vibes|15.0|flush|7.9578|0.0": [
-  [
-   29.612,
-   10.289,
-   29.376,
-   8.975
-  ]
- ],
- "Niamh|Great Vibes|15.0|lift|8.1078|0.15": [
+ "Niamh|Great Vibes|15.0|lift|8.1078|0.15|default|d5ef03d047": [
   [
    29.166,
-   14.634,
+   13.234,
    27.984,
-   15.139
+   13.739
   ],
   [
    27.96,
-   12.237,
+   10.837,
    26.775,
-   12.892
+   11.492
   ]
  ],
- "Niamh|Great Vibes|15.0|rail|8.1078|0.15": [
+ "Niamh|Great Vibes|15.0|rail|8.1078|0.15|default|d5ef03d047": [
   [
    29.729,
    16.851,
@@ -731,7 +870,7 @@
    15.831
   ]
  ],
- "Niamh|Great Vibes|15.0|solid|8.1078|0.15": [
+ "Niamh|Great Vibes|15.0|solid|8.1078|0.15|default|d5ef03d047": [
   [
    29.729,
    16.851,
@@ -739,23 +878,15 @@
    15.831
   ]
  ],
- "Niamh|Great Vibes|15|flush|7.9578|0.0": [
-  [
-   29.612,
-   10.289,
-   29.376,
-   8.975
-  ]
- ],
- "Niamh|Pacifico|15.0|lift|9.6701|0.15": [
+ "Niamh|Pacifico|15.0|lift|9.6701|0.15|default|d5ef03d047": [
   [
    26.123,
-   12.992,
+   11.592,
    26.149,
-   11.903
+   10.503
   ]
  ],
- "Niamh|Pacifico|15.0|rail|9.6701|0.15": [
+ "Niamh|Pacifico|15.0|rail|9.6701|0.15|default|d5ef03d047": [
   [
    26.123,
    21.008,
@@ -763,7 +894,7 @@
    19.919
   ]
  ],
- "Niamh|Pacifico|15.0|solid|9.6701|0.15": [
+ "Niamh|Pacifico|15.0|solid|9.6701|0.15|default|d5ef03d047": [
   [
    26.123,
    21.008,
@@ -771,150 +902,265 @@
    19.919
   ]
  ],
- "Niamh|Pacifico|15|flush|9.5202|0.0": [
+ "Nicola|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
-   25.977,
-   12.888,
-   25.994,
-   11.499
-  ]
- ],
- "Nicola|Great Vibes|15.0|rail|8.1078|0.15": [
-  [
-   29.729,
-   16.851,
-   29.55,
-   15.831
-  ]
- ],
- "Nicola|Great Vibes|15|rail|8.1078|0.15": [
-  [
-   29.729,
-   16.851,
-   29.55,
-   15.831
-  ]
- ],
- "Noah|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Noah|Great Vibes|15|rail|8.1078|0.15": [],
- "Pascal|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Pascal|Great Vibes|15|rail|8.1078|0.15": [],
- "Poppy|Great Vibes|15.0|lift|8.1078|0.15": [
-  [
-   4.821,
-   8.366,
-   0.0,
-   2.2
+   29.166,
+   13.234,
+   27.984,
+   13.739
   ],
   [
-   34.565,
-   9.919,
-   39.532,
-   5.309
-  ],
-  [
-   42.824,
-   12.906,
-   43.572,
-   12.669
+   27.96,
+   10.837,
+   26.775,
+   11.492
   ]
  ],
- "Poppy|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Poppy|Great Vibes|15.0|solid|8.1078|0.15": [],
- "Poppy|Great Vibes|15|flush|7.9578|0.0": [],
- "Poppy|Pacifico|15.0|lift|9.6701|0.15": [
+ "Nicola|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   29.729,
+   11.956,
+   29.55,
+   10.936
+  ]
+ ],
+ "Nicola|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   29.166,
+   13.234,
+   27.984,
+   13.739
+  ],
+  [
+   27.96,
+   10.837,
+   26.775,
+   11.492
+  ]
+ ],
+ "Nicola|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   29.729,
+   11.956,
+   29.55,
+   10.936
+  ]
+ ],
+ "Noah|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   27.094,
+   8.294,
+   25.493,
+   9.159
+  ]
+ ],
+ "Noah|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Noah|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   27.094,
+   8.294,
+   25.493,
+   9.159
+  ]
+ ],
+ "Noah|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Pascal|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [],
+ "Pascal|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Pascal|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [],
+ "Pascal|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Poppy|Great Vibes|15.0|lift|8.1078|0.15|default|d5ef03d047": [
+  [
+   24.424,
+   14.514,
+   24.817,
+   13.904
+  ]
+ ],
+ "Poppy|Great Vibes|15.0|rail|8.1078|0.15|default|d5ef03d047": [],
+ "Poppy|Great Vibes|15.0|solid|8.1078|0.15|default|d5ef03d047": [],
+ "Poppy|Pacifico|15.0|lift|9.6701|0.15|default|d5ef03d047": [
   [
    19.331,
-   20.231,
+   18.831,
    20.542,
-   19.413
+   18.013
   ]
  ],
- "Poppy|Pacifico|15.0|rail|9.6701|0.15": [],
- "Poppy|Pacifico|15.0|solid|9.6701|0.15": [],
- "Poppy|Pacifico|15|flush|9.5202|0.0": [],
- "Quentin|Great Vibes|15.0|rail|8.1078|0.15": [
+ "Poppy|Pacifico|15.0|rail|9.6701|0.15|default|d5ef03d047": [],
+ "Poppy|Pacifico|15.0|solid|9.6701|0.15|default|d5ef03d047": [],
+ "Quentin|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
-   46.937,
-   16.851,
-   46.758,
-   15.831
-  ]
- ],
- "Quentin|Great Vibes|15|rail|8.1078|0.15": [
+   8.172,
+   7.211,
+   7.975,
+   6.643
+  ],
   [
-   46.937,
-   16.851,
-   46.758,
-   15.831
+   19.926,
+   8.27,
+   18.879,
+   5.647
+  ],
+  [
+   47.801,
+   16.87,
+   59.758,
+   2.4
   ]
  ],
- "Robin|Great Vibes|15.0|rail|8.1078|0.15": [
+ "Quentin|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   8.172,
+   7.211,
+   7.975,
+   6.643
+  ],
+  [
+   19.926,
+   8.27,
+   18.879,
+   5.647
+  ],
+  [
+   47.81,
+   16.878,
+   59.758,
+   3.4
+  ]
+ ],
+ "Quentin|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   8.172,
+   7.211,
+   7.975,
+   6.643
+  ],
+  [
+   19.926,
+   8.27,
+   18.879,
+   5.647
+  ],
+  [
+   47.801,
+   16.87,
+   59.758,
+   2.4
+  ]
+ ],
+ "Quentin|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   8.172,
+   7.211,
+   7.975,
+   6.643
+  ],
+  [
+   19.926,
+   8.27,
+   18.879,
+   5.647
+  ],
+  [
+   47.81,
+   16.878,
+   59.758,
+   3.4
+  ]
+ ],
+ "Robin|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
    42.145,
-   16.851,
+   9.768,
    41.966,
-   15.831
+   8.748
   ]
  ],
- "Robin|Great Vibes|15|rail|8.1078|0.15": [
+ "Robin|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
   [
    42.145,
-   16.851,
+   9.768,
    41.966,
-   15.831
+   8.748
   ]
  ],
- "Sacha|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Sacha|Great Vibes|15|rail|8.1078|0.15": [],
- "Seb|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Seb|Great Vibes|15|rail|7.9828|0.15": [],
- "Seb|Great Vibes|15|rail|8.1078|0.15": [],
- "Sheila|Great Vibes|15.0|rail|8.1078|0.15": [
+ "Robin|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   42.145,
+   9.768,
+   41.966,
+   8.748
+  ]
+ ],
+ "Robin|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   42.145,
+   9.768,
+   41.966,
+   8.748
+  ]
+ ],
+ "Sacha|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [],
+ "Sacha|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Sacha|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [],
+ "Sacha|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Seb|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [],
+ "Seb|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Seb|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [],
+ "Seb|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Sheila|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
    38.547,
-   16.851,
+   10.809,
    38.368,
-   15.831
+   9.789
   ]
  ],
- "Sheila|Great Vibes|15|rail|8.1078|0.15": [
+ "Sheila|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
   [
    38.547,
-   16.851,
+   10.809,
    38.368,
-   15.831
+   9.789
   ]
  ],
- "Sophie|Great Vibes|15.0|flush|7.9578|0.0": [
+ "Sheila|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
-   46.868,
-   10.289,
-   46.631,
-   8.975
+   38.547,
+   10.809,
+   38.368,
+   9.789
   ]
  ],
- "Sophie|Great Vibes|15.0|lift|8.1078|0.15": [
+ "Sheila|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   38.547,
+   10.809,
+   38.368,
+   9.789
+  ]
+ ],
+ "Sophie|Great Vibes|15.0|lift|8.1078|0.15|default|d5ef03d047": [
   [
    22.383,
-   11.68,
+   10.28,
    23.344,
-   11.283
+   9.883
   ],
   [
    36.946,
-   10.43,
+   9.03,
    36.332,
-   10.775
+   9.375
   ],
   [
    46.346,
-   16.596,
+   15.196,
    36.975,
-   14.009
+   12.609
   ]
  ],
- "Sophie|Great Vibes|15.0|rail|8.1078|0.15": [
+ "Sophie|Great Vibes|15.0|rail|8.1078|0.15|default|d5ef03d047": [
   [
    46.984,
    16.851,
@@ -922,7 +1168,7 @@
    15.831
   ]
  ],
- "Sophie|Great Vibes|15.0|solid|8.1078|0.15": [
+ "Sophie|Great Vibes|15.0|solid|8.1078|0.15|default|d5ef03d047": [
   [
    46.984,
    16.851,
@@ -930,73 +1176,13 @@
    15.831
   ]
  ],
- "Sophie|Great Vibes|15|flush|7.9578|0.0": [
-  [
-   46.868,
-   10.289,
-   46.631,
-   8.975
-  ]
- ],
- "Sophie|Great Vibes|15|flush|8.1078|0.15": [
-  [
-   46.984,
-   10.143,
-   46.805,
-   9.123
-  ]
- ],
- "Sophie|Great Vibes|15|lift|8.1078|0.15": [
-  [
-   22.383,
-   11.68,
-   23.344,
-   11.283
-  ],
-  [
-   36.946,
-   10.43,
-   36.332,
-   10.775
-  ],
-  [
-   46.346,
-   16.596,
-   36.975,
-   14.009
-  ]
- ],
- "Sophie|Great Vibes|15|rail|8.1078|0.15": [
-  [
-   46.984,
-   16.851,
-   46.805,
-   15.831
-  ]
- ],
- "Sophie|Great Vibes|15|solid|8.1078|0.15": [
-  [
-   46.984,
-   16.851,
-   46.805,
-   15.831
-  ]
- ],
- "Sophie|Pacifico|15.0|lift|9.6701|0.15": [
+ "Sophie|Pacifico|15.0|lift|9.6701|0.15|default|d5ef03d047": [
   [
    17.233,
-   15.855,
+   14.455,
    18.417,
-   15.744
+   14.344
   ],
-  [
-   51.29,
-   22.408,
-   51.316,
-   21.319
-  ]
- ],
- "Sophie|Pacifico|15.0|rail|9.6701|0.15": [
   [
    51.29,
    21.008,
@@ -1004,7 +1190,7 @@
    19.919
   ]
  ],
- "Sophie|Pacifico|15.0|solid|9.6701|0.15": [
+ "Sophie|Pacifico|15.0|rail|9.6701|0.15|default|d5ef03d047": [
   [
    51.29,
    21.008,
@@ -1012,124 +1198,159 @@
    19.919
   ]
  ],
- "Sophie|Pacifico|15|flush|9.5202|0.0": [
+ "Sophie|Pacifico|15.0|solid|9.6701|0.15|default|d5ef03d047": [
   [
-   51.144,
-   12.888,
-   51.16,
-   11.499
-  ]
- ],
- "Sophie|Pacifico|15|rail|9.5202|0.0": [
-  [
-   51.144,
+   51.29,
    21.008,
-   51.16,
-   19.619
+   51.316,
+   19.919
   ]
  ],
- "Tali|Great Vibes|15.0|rail|8.1078|0.15": [
+ "Tali|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
    37.467,
-   18.058,
+   12.079,
    36.724,
-   18.396
+   12.417
   ]
  ],
- "Tali|Great Vibes|15|rail|8.1078|0.15": [
+ "Tali|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
   [
    37.467,
-   18.058,
+   12.079,
    36.724,
-   18.396
+   12.417
   ]
  ],
- "Tom|Great Vibes|15.0|flush|7.9578|0.0": [],
- "Tom|Great Vibes|15.0|lift|8.1078|0.15": [
+ "Tali|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
-   23.628,
-   7.983,
-   22.138,
-   8.547
+   37.467,
+   12.079,
+   36.724,
+   12.417
   ]
  ],
- "Tom|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Tom|Great Vibes|15.0|solid|8.1078|0.15": [],
- "Tom|Great Vibes|15|flush|7.9578|0.0": [],
- "Tom|Great Vibes|15|flush|8.1078|0.15": [],
- "Tom|Great Vibes|15|lift|8.1078|0.15": [
+ "Tali|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
   [
-   23.628,
-   7.983,
-   22.138,
-   8.547
+   37.467,
+   12.079,
+   36.724,
+   12.417
   ]
  ],
- "Tom|Great Vibes|15|rail|7.9828|0.15": [],
- "Tom|Great Vibes|15|rail|8.1078|0.15": [],
- "Tom|Great Vibes|15|solid|8.1078|0.15": [],
- "Tom|Pacifico|15.0|lift|9.6701|0.15": [],
- "Tom|Pacifico|15.0|rail|9.6701|0.15": [],
- "Tom|Pacifico|15.0|solid|9.6701|0.15": [],
- "Tom|Pacifico|15|flush|9.5202|0.0": [],
- "Tom|Pacifico|15|rail|9.5202|0.0": [],
- "Valentin|Great Vibes|15.0|rail|8.1078|0.15": [
+ "Tom|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [],
+ "Tom|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Tom|Great Vibes|15.0|lift|8.1078|0.15|default|d5ef03d047": [],
+ "Tom|Great Vibes|15.0|rail|8.1078|0.15|default|d5ef03d047": [],
+ "Tom|Great Vibes|15.0|solid|8.1078|0.15|default|d5ef03d047": [],
+ "Tom|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [],
+ "Tom|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Tom|Pacifico|15.0|lift|9.6701|0.15|default|d5ef03d047": [],
+ "Tom|Pacifico|15.0|rail|9.6701|0.15|default|d5ef03d047": [],
+ "Tom|Pacifico|15.0|solid|9.6701|0.15|default|d5ef03d047": [],
+ "Valentin|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
    57.103,
-   16.851,
+   10.892,
    56.925,
-   15.831
+   9.873
   ]
  ],
- "Valentin|Great Vibes|15|rail|8.1078|0.15": [
+ "Valentin|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
   [
    57.103,
-   16.851,
+   10.892,
    56.925,
-   15.831
+   9.873
   ]
  ],
- "Vero|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Vero|Great Vibes|15|rail|8.1078|0.15": [],
- "Vicki|Great Vibes|15.0|rail|8.1078|0.15": [
+ "Valentin|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   57.103,
+   10.892,
+   56.925,
+   9.873
+  ]
+ ],
+ "Valentin|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   57.103,
+   10.892,
+   56.925,
+   9.873
+  ]
+ ],
+ "Vero|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [],
+ "Vero|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Vero|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [],
+ "Vero|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [],
+ "Vicki|Great Vibes|15.0|lift|8.1078|0.15|0.4|d5ef03d047": [
   [
    28.687,
-   16.851,
+   10.892,
    28.508,
-   15.831
+   9.873
   ],
   [
    45.333,
-   16.851,
+   10.892,
    45.154,
-   15.831
+   9.873
   ]
  ],
- "Vicki|Great Vibes|15|rail|8.1078|0.15": [
+ "Vicki|Great Vibes|15.0|lift|8.1078|0.15|3.0|d5ef03d047": [
   [
    28.687,
-   16.851,
+   10.892,
    28.508,
-   15.831
+   9.873
   ],
   [
    45.333,
-   16.851,
+   10.892,
    45.154,
-   15.831
+   9.873
   ]
  ],
- "Zoe|Great Vibes|15.0|lift|8.1078|0.15": [
+ "Vicki|Great Vibes|15|lift|8.1078|0.15|0.4|d5ef03d047": [
+  [
+   28.687,
+   10.892,
+   28.508,
+   9.873
+  ],
+  [
+   45.333,
+   10.892,
+   45.154,
+   9.873
+  ]
+ ],
+ "Vicki|Great Vibes|15|lift|8.1078|0.15|3.0|d5ef03d047": [
+  [
+   28.687,
+   10.892,
+   28.508,
+   9.873
+  ],
+  [
+   45.333,
+   10.892,
+   45.154,
+   9.873
+  ]
+ ],
+ "Zoe|Great Vibes|15.0|lift|8.1078|0.15|default|d5ef03d047": [
   [
    25.638,
-   6.79,
+   5.39,
    24.814,
-   5.828
+   4.428
   ]
  ],
- "Zoe|Great Vibes|15.0|rail|8.1078|0.15": [],
- "Zoe|Great Vibes|15.0|solid|8.1078|0.15": [],
- "Zoe|Pacifico|15.0|lift|9.6701|0.15": [],
- "Zoe|Pacifico|15.0|rail|9.6701|0.15": [],
- "Zoe|Pacifico|15.0|solid|9.6701|0.15": []
+ "Zoe|Great Vibes|15.0|rail|8.1078|0.15|default|d5ef03d047": [],
+ "Zoe|Great Vibes|15.0|solid|8.1078|0.15|default|d5ef03d047": [],
+ "Zoe|Pacifico|15.0|lift|9.6701|0.15|default|d5ef03d047": [],
+ "Zoe|Pacifico|15.0|rail|9.6701|0.15|default|d5ef03d047": [],
+ "Zoe|Pacifico|15.0|solid|9.6701|0.15|default|d5ef03d047": []
 }

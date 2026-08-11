@@ -55,8 +55,22 @@ def stl_bbox(path):
     return min(xs), min(ys), max(xs), max(ys)
 
 
+def model_sig():
+    """Short hash of nametag.scad.
+
+    The cached values are geometry -- ink extents, strut endpoints in tag
+    coordinates -- so ANY change to the model can invalidate them. Keying on
+    the file's contents over-invalidates and costs a few seconds; the
+    alternative cost us struts that no longer reached their letters, which
+    renders perfectly and prints as loose dots.
+    """
+    import hashlib
+    with open(os.path.join(HERE, "nametag.scad"), "rb") as fh:
+        return hashlib.sha1(fh.read()).hexdigest()[:10]
+
+
 def key(name, font, size, bold, spacing):
-    return f"{name}|{font}|{size}|{bold}|{spacing}"
+    return f"{name}|{font}|{size}|{bold}|{spacing}|{model_sig()}"
 
 
 def measure(name, font="Great Vibes", size=15, bold=0.0, spacing=1.0, cache=None):

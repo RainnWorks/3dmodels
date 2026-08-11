@@ -101,8 +101,28 @@ def island_struts(stl, min_gap=0.05):
     return out
 
 
+def bite():
+    """The bite the struts were computed at -- it moves the letters, so it
+    moves the struts."""
+    return os.environ.get("BITE", "default")
+
+
+def model_sig():
+    """Short hash of nametag.scad.
+
+    The cached values are geometry -- ink extents, strut endpoints in tag
+    coordinates -- so ANY change to the model can invalidate them. Keying on
+    the file's contents over-invalidates and costs a few seconds; the
+    alternative cost us struts that no longer reached their letters, which
+    renders perfectly and prints as loose dots.
+    """
+    import hashlib
+    with open(os.path.join(HERE, "nametag.scad"), "rb") as fh:
+        return hashlib.sha1(fh.read()).hexdigest()[:10]
+
+
 def key(name, font, size, style, set_drop, bold):
-    return f"{name}|{font}|{size}|{style}|{set_drop}|{bold}"
+    return f"{name}|{font}|{size}|{style}|{set_drop}|{bold}|{bite()}|{model_sig()}"
 
 
 def render_body(out, name, ink, font, size, style, set_drop, bold, struts=None):
@@ -110,6 +130,7 @@ def render_body(out, name, ink, font, size, style, set_drop, bold, struts=None):
             "-D", f'render_part="body"', "-D", f'font="{font}"',
             "-D", f"txt_size={size}", "-D", f'style="{style}"',
             "-D", f"set_drop={set_drop}", "-D", f"bold={bold}"]
+           + (["-D", f"bite={os.environ['BITE']}"] if "BITE" in os.environ else [])
            + measure.scad_args(name, ink)
            + (["-D", f"struts={json.dumps(struts)}"] if struts else [])
            + [MODEL])

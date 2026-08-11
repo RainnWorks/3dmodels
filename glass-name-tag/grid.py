@@ -23,7 +23,8 @@ def main():
     font = os.environ.get("FONT", "Great Vibes")
     size = float(os.environ.get("SIZE", 15))
     bold = float(os.environ.get("BOLD", 0.15))
-    style = os.environ.get("STYLE", "rail")
+    style = os.environ.get("STYLE", "lift")
+    extra = (["-D", f"bite={os.environ['BITE']}"] if "BITE" in os.environ else [])
     names = [l.strip() for l in open(os.path.join(HERE, "names.txt")) if l.strip()]
 
     ic, bc = measure.load_cache(), bridges.load_cache()
@@ -33,8 +34,9 @@ def main():
     print(f"rendering {len(names)} names, {font} {size:g}mm style={style}")
     cells = []
     for n in names:
-        p = os.path.join(compare.PREV, f"_g_{style}_{n}.png")
-        compare.tag_png(p, n, font, size, style, set_drop, bold, ic, bc, w=760, h=250)
+        p = os.path.join(compare.PREV, f"_g_{style}{os.environ.get('BITE','')}_{n}.png")
+        compare.tag_png(p, n, font, size, style, set_drop, bold, ic, bc,
+                        w=760, h=250, extra=extra)
         cells.append((n, p))
 
     imgs = [Image.open(p) for _, p in cells]
@@ -44,7 +46,8 @@ def main():
     sh = Image.new("RGB", (cw * COLS, hdr + ch * rows), (250, 250, 250))
     d = ImageDraw.Draw(sh)
     d.rectangle([0, 0, sh.width, hdr], fill=(24, 26, 30))
-    d.text((16, 18), f"{font} {size:g}mm  bold +{bold}  style={style}   "
+    d.text((16, 18), f"{font} {size:g}mm  bold +{bold}  style={style}"
+                     f"{'  bite=' + os.environ['BITE'] + 'mm' if 'BITE' in os.environ else ''}   "
                      f"{len(names)} names, shared baseline {set_drop:.2f}mm",
            font=compare.label_font(26), fill=(240, 240, 240))
     fl = compare.label_font(20)
@@ -54,7 +57,8 @@ def main():
         sh.paste(im, (x, y))
         d.text((x + 12, y + 8), cells[i][0], font=fl, fill=(120, 140, 170))
         d.rectangle([x, y, x + cw - 1, y + ch - 1], outline=(225, 225, 225))
-    out = os.path.join(compare.PREV, f"all_{style}.png")
+    tagname = style + (f"_bite{os.environ['BITE']}" if "BITE" in os.environ else "")
+    out = os.path.join(compare.PREV, f"all_{tagname}.png")
     sh.save(out)
     measure.save_cache(ic)
     bridges.save_cache(bc)

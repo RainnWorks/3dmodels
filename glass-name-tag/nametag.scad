@@ -70,9 +70,14 @@ set_drop    = -1;
 //            fully visible above a bar that sits at the bottom. The cost is
 //            that the name rides at a different height on each tag, because
 //            that height IS the name's descent -- see README.
-style       = "rail";               // [rail, lift, window, solid, flush]
+style       = "lift";               // [lift, rail, window, solid, flush]
 // clear air kept between the lowest ink and the glass face (mm)
 glass_gap   = 0.4;                  // [0:0.1:2]
+// How deep the letters sink INTO the bar, for style="lift" (mm). This is the
+// whole strength/looks trade in one number: at 0 the bar only just touches the
+// deepest tail and the name hangs off one small joint, and at the name's full
+// descent the bar reaches the baseline and swallows the tails entirely.
+bite        = 0.4;                  // [0:0.1:10]
 // bridge floating islands (script "i" dots) to their stem (mm)
 connect     = 0.0;                  // [0:0.05:2]
 
@@ -129,7 +134,10 @@ swish_rise  = 4;                    // [0:0.5:8]
 swish_exit  = 0;                    // [0:5:60]
 
 /* [Print] */
-thick       = 2.0;                  // [1:0.2:4]
+// 2.6, not 2.0: the weld cross-section holding a name onto its bar scales
+// linearly with thickness, so this is 30% more material at every joint for no
+// change to the silhouette.
+thick       = 2.6;                  // [1:0.2:4]
 
 /* [Hidden] */
 render_part = "tag";
@@ -161,7 +169,7 @@ drop        = measured ? ink_drop : metric_drop;
 // it is also why the name rides higher on a name with deeper tails.
 place_drop  = (style == "lift" || set_drop < 0) ? drop : set_drop;
 base_y      = (style == "flush") ? spine_w - weld
-            : (style == "lift")  ? drop + spine_w - weld
+            : (style == "lift")  ? drop + glass_gap
             :                      place_drop + glass_gap;
 
 // A rail only makes sense if there is room for one under the baseline. Short
@@ -178,7 +186,11 @@ txt_w       = (ink_x1 >= 0) ? (ink_x1 - ink_x0) : metric_w;
 
 // --- the spine --------------------------------------------------------------
 // "solid" grows the bar all the way to the baseline; the others keep it thin.
-bar_w       = (eff_style == "solid") ? base_y + weld : spine_w;
+// The bar must be at least as deep as the clip's stroke, or the clip's outer
+// leg stands proud of the bar it is supposed to grow out of.
+bar_w       = (eff_style == "solid") ? base_y + weld
+            : (eff_style == "lift")  ? max(bite + glass_gap, swish_w)
+            :                          spine_w;
 // The top edge of whatever bar actually carries the letters. For "rail" that
 // is the rail at the baseline; for the others it is the low bar. This is the
 // plane a name would break off along, so it is where weld.py probes.

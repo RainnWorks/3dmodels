@@ -4,6 +4,7 @@
 #  Usage:
 #    make            # measure + previews + the plates
 #    make plates     # just the build plates (export/plate*.3mf) -- the deliverable
+#    make tags       # every name as its own STL, at each bite setting
 #    make grid       # the all-names contact sheet
 #    make renders    # the style / font comparison sheets
 #    make test       # geometry tests -- placement, grip, one-piece, glass clearance
@@ -27,7 +28,7 @@ EXPDIR  := export
 FLAGS := --enable=textmetrics
 
 .DEFAULT_GOAL := all
-.PHONY: all plates grid renders test measure weld one clean open
+.PHONY: all plates grid renders test measure weld tags one clean open
 
 all: grid plates
 
@@ -56,6 +57,11 @@ measure:
 # it off the mesh rather than assert it.
 weld:
 	@python3 weld.py
+
+# Every name as its own STL, at each bite setting, into export/bite<X>/.
+# Verified as they are written: one body, and clear of the glass.
+tags:
+	@python3 tags.py
 
 # make one N=Grace
 N ?= Grace
