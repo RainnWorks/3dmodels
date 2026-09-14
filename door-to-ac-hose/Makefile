@@ -17,9 +17,9 @@ PREVDIR := previews
 EXPDIR  := export
 
 # Printable parts (get STL + 3MF). Accessories + the fit-test coupon.
-PARTS := body cap cap_out net_out widener collet_nut test
+PARTS := body cap cap_out net_out widener collet_nut spanner spanner_w test
 # Everything that gets a PNG preview (parts + the multi-part views).
-VIEWS := body cap cap_out net_out widener collet_nut test assembly section section_zoom clamp_section
+VIEWS := body cap cap_out net_out widener collet_nut spanner spanner_w test assembly section section_zoom clamp_section
 
 # --- render settings ---------------------------------------------------------
 COLOR := --colorscheme=Tomorrow
@@ -30,7 +30,7 @@ STLS     := $(addprefix $(EXPDIR)/,$(addsuffix .stl,$(PARTS)))
 TMFS     := $(addprefix $(EXPDIR)/,$(addsuffix .3mf,$(PARTS)))
 
 .DEFAULT_GOAL := all
-.PHONY: all renders exports clean open $(PARTS)
+.PHONY: all renders exports customer clean open $(PARTS)
 
 all: renders exports
 renders: $(PREVIEWS)
@@ -70,6 +70,30 @@ $(EXPDIR)/%.stl: $(SCAD) | $(EXPDIR)
 
 $(EXPDIR)/%.3mf: $(SCAD) | $(EXPDIR)
 	$(OSCAD) -o $@ -D 'render_part="$*"' $(SCAD)
+
+# --- customer variant --------------------------------------------------------
+# One customer, one door thickness, one folder -- WITHOUT touching the defaults
+# in bulkhead.scad (door_thickness there is still the untested TODO placeholder).
+#
+#     make customer DOOR=20      -> export/customer-20mm/{stl,3mf} + previews
+#
+# Only `body` actually changes with DOOR (barrel_len = door_thickness +
+# inside_thread_len); the accessories are emitted unchanged so a customer gets a
+# complete, self-contained kit in one folder.
+DOOR      ?= 20
+CUSTDIR   := $(EXPDIR)/customer-$(DOOR)mm
+CUSTPARTS := body cap widener collet_nut cap_out net_out spanner spanner_w
+CUSTD     := -D 'door_thickness=$(DOOR)'
+
+customer: $(SCAD)
+	mkdir -p $(CUSTDIR)
+	for p in $(CUSTPARTS); do \
+	    $(OSCAD) -o $(CUSTDIR)/$$p.stl -D "render_part=\"$$p\"" $(CUSTD) $(SCAD) || exit 1; \
+	    $(OSCAD) -o $(CUSTDIR)/$$p.3mf -D "render_part=\"$$p\"" $(CUSTD) $(SCAD) || exit 1; \
+	done
+	$(OSCAD) -o $(CUSTDIR)/body.png $(COLOR) $(ISO) -D 'render_part="body"' $(CUSTD) $(SCAD)
+	$(OSCAD) -o $(CUSTDIR)/section.png $(COLOR) --projection=ortho --imgsize=900,820 \
+	    --camera=0,0,20,90,0,0,0 --viewall --autocenter -D 'render_part="section"' $(CUSTD) $(SCAD)
 
 # --- housekeeping ------------------------------------------------------------
 $(PREVDIR) $(EXPDIR):
