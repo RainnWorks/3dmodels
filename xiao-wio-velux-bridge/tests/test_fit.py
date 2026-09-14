@@ -31,6 +31,7 @@ P = {name: scalar(name) for name in (
     "usb_open_w", "usb_open_h", "usb_open_raise", "wio_button_access_d",
     "lid_clip_length", "lid_clip_w", "lid_clip_wall",
     "lid_clip_clearance", "lid_clip_hook_depth", "lid_clip_pocket_top_gap",
+    "rear_logo_w", "rear_logo_depth",
 )}
 P["inner_x"] = P["case_x"] - 2 * P["wall"]
 P["inner_y"] = P["case_y"] - 2 * P["wall"]
@@ -162,6 +163,25 @@ class AntennaFitTests(unittest.TestCase):
 
 
 class MechanicalFeatureTests(unittest.TestCase):
+    def test_rear_logo_is_large_but_stays_on_the_flat_wall(self):
+        self.assertTrue((ROOT / "assets" / "rainn-logo-single-color.svg").is_file())
+        flat_rear_width = P["case_x"] - 2 * P["corner_r"]
+        self.assertGreaterEqual(P["rear_logo_w"], 18.0)
+        self.assertLessEqual(P["rear_logo_w"], flat_rear_width - 1.0)
+        logo_h = P["rear_logo_w"] * 446 / 560
+        self.assertLessEqual(logo_h, P["base_h"] - 2.0)
+        self.assertGreaterEqual(P["rear_logo_depth"], 0.4)
+        self.assertLess(P["rear_logo_depth"], P["wall"])
+
+        # Check the physical recess on the exported rear wall; this catches the
+        # SVG px-to-mm conversion that a parameter-only assertion would miss.
+        base = trimesh.load_mesh(ROOT / "export" / "base.stl", process=False)
+        recess_y = P["case_y"] / 2 - P["rear_logo_depth"]
+        recess = base.vertices[np.isclose(base.vertices[:, 1], recess_y, atol=0.005)]
+        self.assertTrue(len(recess), "RW recess missing from exported rear wall")
+        self.assertGreaterEqual(np.ptp(recess[:, 0]), P["rear_logo_w"] * 0.95)
+        self.assertGreaterEqual(np.ptp(recess[:, 2]), logo_h * 0.95)
+
     def test_header_pattern_matches_xiao_2_by_7_grid(self):
         self.assertEqual(P["header_pins_per_row"], 7)
         self.assertAlmostEqual(P["header_pitch"], 2.54)

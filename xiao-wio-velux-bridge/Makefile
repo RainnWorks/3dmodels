@@ -11,7 +11,7 @@ VALIDATION_RENDER := scripts/render_validation.py
 PYTHON := python3
 
 PARTS := base lid fit_test
-VIEWS := assembly layout top bottom base lid fit_test
+VIEWS := assembly layout top bottom rear base lid fit_test
 
 PREVIEWS := $(addprefix $(PREVDIR)/,$(addsuffix .png,$(VIEWS)))
 STLS := $(addprefix $(EXPDIR)/,$(addsuffix .stl,$(PARTS)))

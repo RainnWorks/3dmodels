@@ -155,6 +155,11 @@ def main():
         base.apply_transform(trimesh.transformations.rotation_matrix(np.pi, [1, 0, 0]))
         items = [(base, blue)]
         caption = "BOTTOM · clean outer face and four straight-through vents"
+    elif args.view == "rear":
+        base = trimesh.load_mesh(os.path.join(exports, "base.stl"))
+        base.apply_transform(trimesh.transformations.rotation_matrix(np.pi, [0, 0, 1]))
+        items = [(base, blue)]
+        caption = "REAR · large recessed RW mark opposite the USB-C opening"
     elif args.view == "fit_test":
         items = [(trimesh.load_mesh(os.path.join(exports, "fit_test.stl")), blue)]
         caption = "FIT TEST · complete 2×7 XIAO locator with deeper pin sockets"

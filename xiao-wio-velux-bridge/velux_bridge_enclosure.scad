@@ -41,6 +41,8 @@ lid_clip_hook_depth = 0.55;
 lid_clip_pocket_top_gap = 3.5; // solid wall above recess creates the snap shoulder
 lid_pry_notch_w = 5.0;    // opening along the long lid edge
 lid_pry_notch_depth = 3.0; // crosses the 2 mm wall and reaches behind it
+rear_logo_w = 21.0;       // large RW mark across the rear flat wall
+rear_logo_depth = 0.55;   // recessed for a clean, support-free vertical wall
 
 /* [Electronics -- official STEP envelopes] */
 wio_x = 17.7801;
@@ -312,6 +314,23 @@ module lid_clip_pockets() {
             cube([pocket_depth+eps,lid_clip_w+0.4,pocket_top-pocket_bottom]);
 }
 
+module rear_logo_cut() {
+    // The rear is the end opposite the standard USB-C opening. The source logo
+    // has a 560 x 446 viewBox; centring it here uses most of the genuinely flat
+    // 23 mm-wide rear face without entering the rounded corner zones. OpenSCAD
+    // imports SVG CSS pixels at 96 DPI, so convert the viewBox units to mm
+    // before applying the requested physical width.
+    svg_mm_per_px = 25.4/96;
+    svg_w = 560*svg_mm_per_px;
+    svg_h = 446*svg_mm_per_px;
+    translate([0,case_y/2+eps,base_h/2])
+        rotate([90,0,0])
+            linear_extrude(height=rear_logo_depth+eps)
+                scale([rear_logo_w/svg_w,rear_logo_w/svg_w])
+                    translate([-svg_w/2,-svg_h/2])
+                        import("assets/rainn-logo-single-color.svg");
+}
+
 module base() {
     union() {
         difference() {
@@ -322,6 +341,7 @@ module base() {
             horizontal_ventilation_cuts(-eps,floor_t+2*eps);
             antenna_max_height_cuts();
             lid_clip_pockets();
+            rear_logo_cut();
         }
         board_locator();
         captive_plug_strain_shoulders();
