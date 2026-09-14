@@ -28,7 +28,9 @@ P = {name: scalar(name) for name in (
     "lora_ant_l", "lora_ant_w", "lora_ant_t", "wifi_ant_y",
     "lora_ant_y", "antenna_lid_clearance", "coax_channel_clearance",
     "header_pitch", "header_row_spacing", "header_pins_per_row",
-    "usb_open_w", "usb_open_h", "wio_button_access_d",
+    "usb_open_w", "usb_open_h", "usb_open_raise", "wio_button_access_d",
+    "lid_clip_length", "lid_clip_w", "lid_clip_wall",
+    "lid_clip_clearance", "lid_clip_hook_depth", "lid_clip_pocket_top_gap",
 )}
 P["inner_x"] = P["case_x"] - 2 * P["wall"]
 P["inner_y"] = P["case_y"] - 2 * P["wall"]
@@ -179,6 +181,62 @@ class MechanicalFeatureTests(unittest.TestCase):
         aperture = min(loops, key=lambda line: np.ptp(line[:, 0]))
         self.assertAlmostEqual(np.ptp(aperture[:, 0]), P["usb_open_w"], delta=0.03)
         self.assertAlmostEqual(np.ptp(aperture[:, 2]), P["usb_open_h"], delta=0.03)
+
+    def test_usb_aperture_includes_measured_pin_spacer_correction(self):
+        self.assertAlmostEqual(P["usb_open_raise"], 3.0)
+        base = trimesh.load_mesh(ROOT / "export" / "base.stl")
+        section = base.section(plane_origin=[0, -P["case_y"] / 2 + 0.01, 0],
+                               plane_normal=[0, 1, 0])
+        aperture = min(section.discrete, key=lambda line: np.ptp(line[:, 0]))
+        actual_centre_z = (aperture[:, 2].min() + aperture[:, 2].max()) / 2
+        # usb_open_z is the aperture's lower edge; rounded_front_opening adds
+        # half its height when centring the rounded rectangle.
+        expected_centre_z = (
+            P["device_floor_z"] + 0.1 + P["usb_open_raise"] + P["usb_open_h"] / 2
+        )
+        self.assertAlmostEqual(actual_centre_z, expected_centre_z, delta=0.03)
+
+    def test_lid_clips_are_printable_and_snap_below_a_real_shoulder(self):
+        self.assertGreaterEqual(P["lid_clip_length"], 5.0)
+        self.assertGreaterEqual(P["lid_clip_w"], 4.0)
+        self.assertGreaterEqual(P["lid_clip_wall"], 0.7)
+        self.assertGreaterEqual(P["lid_clip_hook_depth"], 0.5)
+        self.assertGreaterEqual(P["lid_clip_pocket_top_gap"], 1.5)
+
+        for folder in ("export", "export-captive-usb"):
+            lid = trimesh.load_mesh(ROOT / folder / "lid.stl")
+            vertices = lid.vertices
+            # Four external arms must extend beyond the 31 mm lid plate and
+            # substantially deeper than the short internal alignment skirt.
+            for y in (-9.0, 9.0):
+                zone = vertices[
+                    (np.abs(vertices[:, 1] - y) <= P["lid_clip_w"] / 2 + 0.1)
+                    & (vertices[:, 2] > P["lid_t"] + P["lid_skirt_depth"])
+                ]
+                self.assertLessEqual(zone[:, 0].min(), -P["case_x"] / 2 - 0.5)
+                self.assertGreaterEqual(zone[:, 0].max(), P["case_x"] / 2 + 0.5)
+                self.assertGreaterEqual(zone[:, 2].max() - P["lid_t"],
+                                        P["lid_clip_length"] - 0.05)
+
+        # The matching base pocket ends well below the top rim, leaving solid
+        # material for the hook to flex over and capture beneath.
+        pocket_top = P["base_h"] - P["lid_clip_pocket_top_gap"]
+        self.assertLess(pocket_top, P["base_h"] - 1.0)
+        base = trimesh.load_mesh(ROOT / "export" / "base.stl")
+        expected_pocket_floor_x = (
+            P["case_x"] / 2 - (P["lid_clip_hook_depth"] + 0.15)
+        )
+        expected_pocket_bottom = P["base_h"] - P["lid_clip_length"] - 0.1
+        for y in (-9.0, 9.0):
+            for side in (-1.0, 1.0):
+                vertices = base.vertices
+                recess_wall = vertices[
+                    (np.abs(vertices[:, 1] - y) <= P["lid_clip_w"] / 2 + 0.3)
+                    & (np.abs(vertices[:, 0] - side * expected_pocket_floor_x) <= 0.03)
+                ]
+                self.assertTrue(len(recess_wall), "clip pocket missing from exported base")
+                self.assertLessEqual(recess_wall[:, 2].min(), expected_pocket_bottom + 0.03)
+                self.assertGreaterEqual(recess_wall[:, 2].max(), pocket_top - 0.03)
 
     def test_button_access_is_paperclip_sized(self):
         self.assertGreaterEqual(P["wio_button_access_d"], 1.5)

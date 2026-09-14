@@ -141,10 +141,10 @@ def main():
     labels = None
     if args.view == "base":
         items = [(trimesh.load_mesh(os.path.join(exports, "base.stl")), blue)]
-        caption = "BASE · four floor slots are vents; side walls have no release gaps"
+        caption = "BASE · four clip recesses end below a solid snap-over shoulder"
     elif args.view == "lid":
         items = [(trimesh.load_mesh(os.path.join(exports, "lid.stl")), lid_blue)]
-        caption = "LID · 2 mm paperclip button access, plain roof, one pry slot per side"
+        caption = "LID · four deep printable flex clips, plus one pry slot per side"
     elif args.view == "top":
         lid = trimesh.load_mesh(os.path.join(exports, "lid.stl"))
         lid.apply_transform(trimesh.transformations.rotation_matrix(np.pi, [1, 0, 0]))

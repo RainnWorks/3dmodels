@@ -30,11 +30,15 @@ floor_t = 2.0;            // [1.4:0.2:3]
 corner_r = 4.0;           // [1:0.5:8]
 inner_corner_r = 0.5;     // maximises the genuinely flat antenna wall
 lid_fit_clearance = 0.30; // clearance per side; increase if the lid is tight
-lid_skirt_depth = 1.2;    // clears the full-height Wi-Fi antenna
+lid_skirt_depth = 1.2;    // alignment skirt; clears the full-height Wi-Fi antenna
 lid_skirt_wall = 1.2;     // [0.8:0.1:2]
 lid_lead_in = 0.35;       // taper at the skirt's insertion edge
-lid_detent_depth = 0.45;  // printed snap bump beyond the skirt
-lid_detent_interference = 0.15;
+lid_clip_length = 6.0;    // external flex arm below the closed lid
+lid_clip_w = 5.0;         // enough width to survive normal FDM printing
+lid_clip_wall = 0.7;      // printable but flexible at this arm length
+lid_clip_clearance = 0.25; // arm-to-base clearance before the hook
+lid_clip_hook_depth = 0.55;
+lid_clip_pocket_top_gap = 3.5; // solid wall above recess creates the snap shoulder
 lid_pry_notch_w = 5.0;    // opening along the long lid edge
 lid_pry_notch_depth = 3.0; // crosses the 2 mm wall and reaches behind it
 
@@ -99,7 +103,8 @@ coax_channel_clearance = 2.2;
 usb_open_w = 9.4;         // 8.94 mm nominal shell + 0.23 mm clearance per side
 usb_open_h = 4.6;         // 4.20 mm nominal shell + 0.20 mm clearance per side
 usb_open_r = 1.3;
-usb_open_z = device_floor_z + 0.1;
+usb_open_raise = 3.0;     // measured correction for the installed pin spacers
+usb_open_z = device_floor_z + 0.1 + usb_open_raise;
 captive_cable_slot_w = 4.5;
 captive_cable_slot_h = 4.5;
 captive_cable_z = device_floor_z + 2.5;
@@ -294,14 +299,17 @@ module captive_plug_strain_shoulders() {
     }
 }
 
-module lid_detent_pockets() {
-    pocket_depth = lid_detent_depth + lid_fit_clearance - lid_detent_interference;
-    pocket_z = base_h-lid_skirt_depth+0.05;
-    pocket_h = 1.65;
+module lid_clip_pockets() {
+    // These recesses are deliberately bounded by solid wall at the top. The
+    // external lid clips must flex over that shoulder before their hooks can
+    // snap into the recesses; an open-topped notch cannot retain the lid.
+    pocket_depth = lid_clip_hook_depth + 0.15;
+    pocket_bottom = base_h-lid_clip_length-0.1;
+    pocket_top = base_h-lid_clip_pocket_top_gap;
     for (xsign=[-1,1], y=[-9,9])
-        translate([xsign > 0 ? inner_x/2-eps : -inner_x/2-pocket_depth,
-                   y-2,pocket_z])
-            cube([pocket_depth+eps,4,pocket_h]);
+        translate([xsign > 0 ? case_x/2-pocket_depth : -case_x/2-eps,
+                   y-(lid_clip_w+0.4)/2,pocket_bottom])
+            cube([pocket_depth+eps,lid_clip_w+0.4,pocket_top-pocket_bottom]);
 }
 
 module bottom_marking_cuts() {
@@ -324,7 +332,7 @@ module base() {
             usb_cut();
             horizontal_ventilation_cuts(-eps,floor_t+2*eps);
             antenna_max_height_cuts();
-            lid_detent_pockets();
+            lid_clip_pockets();
             bottom_marking_cuts();
         }
         board_locator();
@@ -337,31 +345,46 @@ module base() {
 }
 
 // --- printable lid ----------------------------------------------------------
-module lid_detents() {
-    // Four shallow diamond-section bumps give a positive click. Their lower
-    // faces grow outward at 45 degrees in the lid's print orientation, so no
-    // bump begins as a floating horizontal ledge.
-    z0 = lid_t + 0.40; // keeps the complete wedge >=0.3 mm above the Wi-Fi FPC
-    local_edge = lid_outer_x/2 - lid_lead_in*((z0+0.35-lid_t)/lid_skirt_depth);
-    outer_edge = lid_outer_x/2 + lid_detent_depth;
-    ramp_h = outer_edge-local_edge+0.08;
-    for (xsign=[-1,1], y=[-9,9]) {
-        // Lower self-supporting build-up.
-        hull() {
-            translate([xsign*local_edge-0.05,y-1.5,
-                       z0-ramp_h])
-                cube([0.10,3,0.10]);
-            translate([xsign*outer_edge-0.05,y-1.5,z0])
-                cube([0.10,3,0.10]);
-        }
-        // Upper lead-out ramp, which also eases lid insertion.
-        hull() {
-            translate([xsign*outer_edge-0.05,y-1.5,z0+0.08])
-                cube([0.10,3,0.10]);
-            translate([xsign*local_edge-0.05,y-1.5,z0+ramp_h])
-                cube([0.10,3,0.08]);
-        }
+module one_lid_snap_clip(y) {
+    arm_inner_x = case_x/2 + lid_clip_clearance;
+    hook_peak_z = lid_t + lid_clip_length - 1.3;
+    hook_ramp_h = 1.2;
+
+    // A local printable ear joins the outside arm to the lid plate. The arm is
+    // outside the base wall, so making it genuinely deep cannot collide with
+    // either of the full-height side-mounted antennas.
+    translate([case_x/2-0.2,y-lid_clip_w/2,0])
+        cube([arm_inner_x+lid_clip_wall-(case_x/2-0.2),lid_clip_w,lid_t+eps]);
+    translate([arm_inner_x,y-lid_clip_w/2,lid_t-eps])
+        cube([lid_clip_wall,lid_clip_w,lid_clip_length+eps]);
+
+    // A diamond-section inward hook: both faces are self-supporting in the
+    // lid's exterior-face-down print orientation. Its free-end ramp pushes the
+    // arm outward during insertion; it then snaps under the base's solid rim.
+    hull() {
+        translate([arm_inner_x-eps,y-lid_clip_w/2,
+                   hook_peak_z-hook_ramp_h])
+            cube([eps*2,lid_clip_w,0.10]);
+        translate([arm_inner_x-lid_clip_hook_depth,y-lid_clip_w/2,
+                   hook_peak_z])
+            cube([lid_clip_hook_depth+eps,lid_clip_w,0.10]);
     }
+    hull() {
+        translate([arm_inner_x-lid_clip_hook_depth,y-lid_clip_w/2,
+                   hook_peak_z])
+            cube([lid_clip_hook_depth+eps,lid_clip_w,0.10]);
+        translate([arm_inner_x-eps,y-lid_clip_w/2,
+                   hook_peak_z+hook_ramp_h])
+            cube([eps*2,lid_clip_w,0.10]);
+    }
+}
+
+module lid_snap_clips() {
+    for (xsign=[-1,1], y=[-9,9])
+        if (xsign > 0)
+            one_lid_snap_clip(y);
+        else
+            mirror([1,0,0]) one_lid_snap_clip(y);
 }
 
 module top_marking_cuts() {
@@ -407,13 +430,13 @@ module lid() {
         union() {
             rounded_box([case_x,case_y,lid_t],corner_r);
 
-            // Tapered leading edge self-centres before the detents engage.
+            // Tapered leading edge self-centres before the snap clips engage.
             translate([0,0,lid_t])
                 tapered_rounded_frame([lid_outer_x,lid_outer_y],
                               [lid_outer_x-2*lid_skirt_wall,lid_outer_y-2*lid_skirt_wall],
                               lid_skirt_depth,max(0.8,corner_r-wall-lid_fit_clearance),
                               lid_lead_in);
-            lid_detents();
+            lid_snap_clips();
             captive_cable_slot_tongue();
         }
         top_marking_cuts();

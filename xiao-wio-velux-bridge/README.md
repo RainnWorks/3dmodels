@@ -84,7 +84,7 @@ bay for the unused length of both supplied leads.
    separate PCB clips to engage. The service loops should settle below/behind
    the board.
 7. Confirm neither cable lies across the upper rim or lid skirt. Centre the lid
-   using its tapered lead-in and press until all four detents click.
+   using its tapered lead-in and press until all four external clips click.
 
 To reopen it, use either of the two square tool slots—one in each long edge of
 the lid plate. Each 5 × 3 mm slot crosses the complete 2 mm base-wall thickness
@@ -100,8 +100,10 @@ There is **no additional bill of materials**: no screws, nuts, magnets, foam tap
 or bought fasteners. Board retention and lid retention are printed into the two
 parts; the antenna adhesive is already part of the supplied antennas.
 
-The lid detents use self-supporting wedge profiles rather than horizontal
-undersides. The lid has a positive four-detent snap, two small edge pry notches
+Four substantial external flex clips hold the lid on. Each has a 6 mm long,
+5 mm wide printable arm and a self-supporting diamond-section hook. The matching
+recess in the base ends 3.5 mm below its top, leaving a solid shoulder for the
+hook to flex over and snap beneath. The lid also has two small edge pry notches
 and a tapered insertion edge. A recessed Rainn Works mark keeps the enclosure
 purpose-neutral. The mark is recessed—not raised—so the exterior-face-down lid has no
 logo overhang or isolated first-layer islands. For best RF performance, do not
@@ -112,7 +114,8 @@ Ventilation is provided by four straight-through slots in the base and four in
 the lid. There are no ventilation openings in the side walls and no horizontal
 ventilation ceilings for the printer to bridge.
 
-The 2 mm circular lid opening provides paperclip access to the Wio-SX1262 user button. The lid
+The standard USB-C opening is raised 3 mm from the original board-envelope
+position to account for the fitted pin spacers. The 2 mm circular lid opening provides paperclip access to the Wio-SX1262 user button. The lid
 interior is otherwise plain apart from its perimeter skirt, snap features and
 ventilation. There are no protruding antenna-position dots: one shallow recessed
 line on each side wall marks the maximum safe antenna height.
