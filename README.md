@@ -1,0 +1,66 @@
+# RainnWorks 3D models
+
+Parametric, printable designs built primarily in OpenSCAD. Each project folder
+contains its source, printable exports, build instructions, and further design
+notes.
+
+## [Cake topper generator](cake-topper/)
+
+A customisable three-line birthday topper with a large age-number inlay and two
+integrated cake posts.
+
+| Perspective | Front |
+|---|---|
+| ![Exploded perspective of the cake topper](cake-topper/previews/iso.png) | ![Front view of the personalised cake topper](cake-topper/previews/topper.png) |
+
+## [Portable-AC door bulkhead](door-to-ac-hose/)
+
+A modular, threaded door fitting for a portable-air-conditioner hose, with
+interchangeable inside clamps and outside caps, nets, and hose accessories.
+
+| Complete assembly | Section view |
+|---|---|
+| ![Exploded portable-AC bulkhead assembly](door-to-ac-hose/previews/assembly.png) | ![Section through the fitted door bulkhead](door-to-ac-hose/previews/section.png) |
+
+## [Play-Doh pot organiser](playdoh-organiser/)
+
+Stackable trays which hold Play-Doh pots by their body lips while preserving
+the pots' natural lid-to-base nesting.
+
+| Loaded tower | Single tray |
+|---|---|
+| ![Three stacked organiser trays loaded with Play-Doh pots](playdoh-organiser/listing/1_tower.png) | ![Single Play-Doh organiser tray](playdoh-organiser/listing/2_tray.png) |
+
+## [Ruffle piping nozzle](ruffle-nozzle/)
+
+A printable ruffle nozzle based on the Birkmann #122, plus a two-part threaded
+coupler for changing tips without emptying the piping bag.
+
+| Complete set | Coupler assembly |
+|---|---|
+| ![Ruffle nozzle, sleeve, and retaining ring](ruffle-nozzle/previews/all.png) | ![Assembled ruffle nozzle and coupler](ruffle-nozzle/previews/assembly.png) |
+
+## [Van air-filter cap](van-airfilter-cap/)
+
+A tapered press-fit weather cap with lower-side diamond ventilation, designed
+to protect a horizontally mounted van air filter from rain.
+
+| Installed | Filter fit |
+|---|---|
+| ![Weather cap shown in its installed orientation](van-airfilter-cap/previews/inuse.png) | ![Weather cap fitted over the air filter](van-airfilter-cap/previews/on_filter.png) |
+
+## [XIAO + Wio-SX1262 enclosure](xiao-wio-velux-bridge/)
+
+A compact, support-free enclosure for a Seeed Studio XIAO ESP32-S3 and
+Wio-SX1262 radio board, with protected mounting space for both supplied FPC
+antennas. Standard and captive short-USB versions are included.
+
+| Standard USB | Captive USB |
+|---|---|
+| ![Exploded standard-USB radio enclosure](xiao-wio-velux-bridge/previews/assembly.png) | ![Exploded captive-USB radio enclosure](xiao-wio-velux-bridge/previews/captive_usb_assembly.png) |
+
+## Building the models
+
+Open the linked project README for model-specific dimensions, print orientation,
+assembly instructions, and build targets. Generated STL and 3MF files are kept
+alongside the source where applicable.
