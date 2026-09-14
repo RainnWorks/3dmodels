@@ -23,7 +23,7 @@ function captive_usb() = !is_undef(usb_mode) && usb_mode == "captive";
 /* [Enclosure] */
 case_x = 31;              // [29:1:45]
 case_y = 46;              // [44:1:70]
-base_h = 21.5;            // [20:0.5:30]
+base_h = 24.0;            // +2.5 mm roof height; board and USB stay fixed
 lid_t = 2.0;              // [1.2:0.2:3]
 wall = 2.0;               // [1.4:0.2:3]
 floor_t = 2.0;            // [1.4:0.2:3]
@@ -33,17 +33,19 @@ lid_fit_clearance = 0.30; // clearance per side; increase if the lid is tight
 lid_skirt_depth = 1.2;    // alignment skirt; clears the full-height Wi-Fi antenna
 lid_skirt_wall = 1.2;     // [0.8:0.1:2]
 lid_lead_in = 0.35;       // taper at the skirt's insertion edge
-lid_clip_length = 6.0;    // internal flex arm extending from the centring lip
-lid_clip_w = 5.0;         // full-width tongue: no narrow 2.9 mm failure section
-lid_clip_wall = 0.7;      // low-force flex section preserves antenna clearance
-lid_clip_root_w = 8.5;    // broad sideways flare; adds no depth toward antennas
+lid_clip_length = 7.5;    // longer tongue lowers bending stress during insertion
+lid_clip_w = 7.0;         // broad paired tabs; added case height clears the PCB
+lid_clip_wall = 1.5;      // load-bearing thickness in the direction of flex
+lid_clip_wall_clearance = 0.10; // complete tongue remains inside the base cavity
+lid_clip_root_w = 10.0;   // broad sideways flare at the layer-critical root
 lid_clip_root_h = 1.8;    // long tapered transition into the flexible section
-lid_clip_clearance = 0.30; // arm-to-base clearance before the hook
-lid_clip_hook_depth = 0.50; // 0.20 mm insertion deflection with existing base
-lid_clip_pocket_w = 5.4;  // 0.2 mm clearance on each side of the wider tongue
-lid_clip_pocket_depth = 0.70;
-lid_clip_pocket_top_gap = 3.5; // solid wall above recess creates the snap shoulder
-lid_clip_x = 9.45;        // widened inward; outer edges remain at x = +/-11.95
+lid_clip_hook_depth = 0.55; // +0.30 mm retention; 0.45 mm insertion deflection
+lid_clip_hook_ramp_h = 1.2;
+lid_clip_hook_peak_offset = 1.3; // hook peak above the tongue's free end
+lid_clip_pocket_w = 7.4;  // 0.2 mm clearance on each side of the tongue
+lid_clip_pocket_depth = 0.50; // hook enters wall 0.45 mm; 0.05 mm radial clearance
+lid_clip_pocket_ramp_h = 1.13; // matched diamond + about 0.15 mm vertical clearance
+lid_clip_x = 9.4;         // keeps the former x=12.9 outer edge
 lid_pry_notch_w = 5.0;    // opening along the long lid edge
 lid_pry_notch_depth = 3.0; // crosses the 2 mm wall and reaches behind it
 rear_logo_w = 21.0;       // large RW mark across the rear flat wall
@@ -63,7 +65,7 @@ device_h = 9.1;           // measured: lower-PCB underside to tallest SX1262 par
 device_clearance = 0.45;  // around each board edge
 usb_board_forward = 0.5;  // move the complete locator toward the USB/front wall
 device_center_y = (captive_usb() ? 8.0 : -8.0) - usb_board_forward;
-device_floor_z = base_h-device_h-0.5; // tallest component sits 0.5 mm below roof
+device_floor_z = 11.9;    // frozen: do not move the seated board or USB aperture
 
 /* [Installed XIAO pin headers] */
 header_pitch = 2.54;
@@ -76,7 +78,7 @@ header_relief_h = 0.8;
 
 /* [Wio button] */
 wio_button_x = 0;          // relative to board centre; measure if not central
-wio_button_y = 0;
+wio_button_y = -2.0;       // measured correction: 2 mm toward the USB/front edge
 wio_button_access_d = 2.0; // paperclip access, not a finger opening
 
 /* [Supplied Wi-Fi antenna -- official datasheet] */
@@ -86,7 +88,7 @@ wifi_ant_t = 1.8;         // maximum including release paper
 wifi_cable_len = 65;
 wifi_cable_d = 1.13;
 wifi_ant_x = -(case_x/2-wall);
-wifi_ant_y = 1.0;
+wifi_ant_y = 0.0;         // centred to clear equal-length clips at both ends
 wifi_ant_z = floor_t + wifi_ant_w/2 + 0.4;
 
 /* [Supplied LoRa antenna -- official Seeed comparison] */
@@ -113,6 +115,13 @@ usb_open_h = 4.6;         // 4.20 mm nominal shell + 0.20 mm clearance per side
 usb_open_r = 1.3;
 usb_open_raise = 3.0;     // measured correction for the installed pin spacers
 usb_open_z = device_floor_z + 0.1 + usb_open_raise;
+usb_overmold_recess_depth = 1.2; // leaves 0.8 mm of the 2 mm front wall
+usb_overmold_inner_w = 12.6; // clears measured 12 mm cable jacket at full depth
+usb_overmold_inner_h = 8.4;  // clears measured 7-8 mm cable jacket
+usb_overmold_outer_w = 15.0;
+usb_overmold_outer_h = 10.8; // 1.2 mm rise over 1.2 mm depth: support-free roof
+usb_overmold_inner_r = 2.6;
+usb_overmold_outer_r = 3.8;
 captive_cable_slot_w = 4.5;
 captive_cable_slot_h = 4.5;
 captive_cable_z = device_floor_z + 2.5;
@@ -227,6 +236,28 @@ module rounded_front_opening(x,z,w,h,r) {
                 rounded_rect_2d([w,h],r);
 }
 
+module rounded_front_slice(y,z,w,h,r) {
+    translate([0,y,z])
+        rotate([90,0,0])
+            linear_extrude(height=2*eps)
+                rounded_rect_2d([w,h],r);
+}
+
+module usb_overmold_recess() {
+    // A deep rounded socket lets a 12 x 8 mm cable overmould enter 1.2 mm into
+    // the wall. The upper transition rises at 45 degrees, so the floor-down
+    // print never has to bridge a horizontal recess ceiling.
+    centre_z = usb_open_z+usb_open_h/2;
+    hull() {
+        rounded_front_slice(-case_y/2+eps,centre_z,
+                            usb_overmold_outer_w,usb_overmold_outer_h,
+                            usb_overmold_outer_r);
+        rounded_front_slice(-case_y/2+usb_overmold_recess_depth,centre_z,
+                            usb_overmold_inner_w,usb_overmold_inner_h,
+                            usb_overmold_inner_r);
+    }
+}
+
 module horizontal_ventilation_cuts(z,h) {
     // Four straight-through slots form bottom-to-top airflow. Because their
     // walls follow Z, neither the floor-down base nor face-down lid bridges a
@@ -255,8 +286,10 @@ module usb_cut() {
                    captive_cable_z-captive_cable_slot_h/2])
             cube([captive_cable_slot_w,3*wall,
                   base_h-(captive_cable_z-captive_cable_slot_h/2)+eps]);
-    else
+    else {
         rounded_front_opening(0,usb_open_z,usb_open_w,usb_open_h,usb_open_r);
+        usb_overmold_recess();
+    }
 }
 
 module header_socket_rails() {
@@ -307,18 +340,35 @@ module captive_plug_strain_shoulders() {
     }
 }
 
+module one_lid_clip_pocket(x) {
+    // A slightly oversized negative of the hook's diamond where it crosses
+    // the inner wall. Matching sloped faces retain the lid without the vertical
+    // travel allowed by the former tall rectangular recess.
+    peak_z = base_h-lid_clip_length+lid_clip_hook_peak_offset;
+    slice_h = 0.04;
+    hull() {
+        translate([x-lid_clip_pocket_w/2,inner_y/2-eps,
+                   peak_z-lid_clip_pocket_ramp_h-slice_h/2])
+            cube([lid_clip_pocket_w,2*eps,slice_h]);
+        translate([x-lid_clip_pocket_w/2,inner_y/2-eps,
+                   peak_z-slice_h/2])
+            cube([lid_clip_pocket_w,lid_clip_pocket_depth+eps,slice_h]);
+    }
+    hull() {
+        translate([x-lid_clip_pocket_w/2,inner_y/2-eps,
+                   peak_z-slice_h/2])
+            cube([lid_clip_pocket_w,lid_clip_pocket_depth+eps,slice_h]);
+        translate([x-lid_clip_pocket_w/2,inner_y/2-eps,
+                   peak_z+lid_clip_pocket_ramp_h-slice_h/2])
+            cube([lid_clip_pocket_w,2*eps,slice_h]);
+    }
+}
+
 module lid_clip_pockets() {
-    // These recesses are deliberately bounded by solid wall at the top. The
-    // internal lid clips must flex over that shoulder before their hooks can
-    // snap into the recesses; an open-topped notch cannot retain the lid.
-    pocket_depth = lid_clip_pocket_depth;
-    pocket_bottom = base_h-lid_clip_length-0.1;
-    pocket_top = base_h-lid_clip_pocket_top_gap;
-    for (ysign=[-1,1], x=[-lid_clip_x,lid_clip_x])
-        translate([x-lid_clip_pocket_w/2,
-                   ysign > 0 ? inner_y/2-eps : -inner_y/2-pocket_depth,
-                   pocket_bottom])
-            cube([lid_clip_pocket_w,pocket_depth+eps,pocket_top-pocket_bottom]);
+    for (x=[-lid_clip_x,lid_clip_x]) {
+        one_lid_clip_pocket(x);
+        mirror([0,1,0]) one_lid_clip_pocket(x);
+    }
 }
 
 module rear_logo_cut() {
@@ -362,25 +412,24 @@ module base() {
 
 // --- printable lid ----------------------------------------------------------
 module one_internal_lid_snap_clip(x) {
-    arm_outer_y = inner_y/2-lid_clip_clearance;
-    hook_peak_z = lid_t + lid_clip_length - 1.3;
-    hook_ramp_h = 1.2;
+    arm_outer_y = inner_y/2-lid_clip_wall_clearance;
+    arm_inner_y = arm_outer_y-lid_clip_wall;
+    hook_peak_z = lid_t + lid_clip_length - lid_clip_hook_peak_offset;
+    hook_ramp_h = lid_clip_hook_ramp_h;
 
-    // This is a local downward continuation of the short-end centring lip. It
-    // is connected only at the lid end, so the 6 mm tongue can flex inward.
-    // Nothing projects beyond the lid's normal rounded-box silhouette.
-    translate([x-lid_clip_w/2,arm_outer_y-lid_clip_wall,lid_t-eps])
+    // The full 1.5 mm member spans the complete depth of the short-end centring
+    // lip, then continues below it inside the cavity. Only its hook projects
+    // into the base wall; there is no full-height channel in the base.
+    translate([x-lid_clip_w/2,arm_inner_y,lid_t-eps])
         cube([lid_clip_w,lid_clip_wall,lid_clip_length+eps]);
 
-    // More than triple the old root cross-section by flaring sideways along
-    // the lip, never deeper into the antenna bay. The outer edge stays fixed
-    // and the flare grows toward the lid centre. Hook position and depth remain
-    // unchanged, so this reinforcement fits every previously printed base.
+    // The sideways flare distributes peak bending load across more layer area
+    // at the lid. It retains the same full-depth Y section as the whole tongue.
     root_x = x > 0 ? x+lid_clip_w/2-lid_clip_root_w : x-lid_clip_w/2;
     hull() {
-        translate([root_x,arm_outer_y-lid_clip_wall,lid_t-eps])
+        translate([root_x,arm_inner_y,lid_t-eps])
             cube([lid_clip_root_w,lid_clip_wall,0.10]);
-        translate([x-lid_clip_w/2,arm_outer_y-lid_clip_wall,
+        translate([x-lid_clip_w/2,arm_inner_y,
                    lid_t+lid_clip_root_h])
             cube([lid_clip_w,lid_clip_wall,0.10]);
     }

@@ -15,7 +15,7 @@ SCAD_TEXT = SCAD.read_text()
 
 
 def scalar(name):
-    match = re.search(rf"(?m)^{re.escape(name)}\s*=\s*([0-9]+(?:\.[0-9]+)?)\s*;", SCAD_TEXT)
+    match = re.search(rf"(?m)^{re.escape(name)}\s*=\s*(-?[0-9]+(?:\.[0-9]+)?)\s*;", SCAD_TEXT)
     if not match:
         raise AssertionError(f"Cannot read numeric SCAD parameter {name}")
     return float(match.group(1))
@@ -23,22 +23,25 @@ def scalar(name):
 
 P = {name: scalar(name) for name in (
     "case_x", "case_y", "base_h", "lid_t", "wall", "floor_t", "corner_r",
-    "inner_corner_r", "lid_skirt_depth", "device_x", "device_y",
+    "inner_corner_r", "lid_fit_clearance", "lid_skirt_depth", "lid_skirt_wall",
+    "device_x", "device_y", "device_floor_z",
     "device_h", "wifi_ant_l", "wifi_ant_w", "wifi_ant_t",
     "lora_ant_l", "lora_ant_w", "lora_ant_t", "wifi_ant_y",
     "lora_ant_y", "antenna_lid_clearance", "coax_channel_clearance",
     "header_pitch", "header_row_spacing", "header_pins_per_row",
-    "usb_open_w", "usb_open_h", "usb_open_raise", "wio_button_access_d",
+    "usb_open_w", "usb_open_h", "usb_open_raise",
+    "usb_overmold_recess_depth", "usb_overmold_inner_w", "usb_overmold_inner_h",
+    "usb_overmold_outer_w", "usb_overmold_outer_h", "wio_button_x", "wio_button_y",
+    "wio_button_access_d",
     "lid_clip_length", "lid_clip_w", "lid_clip_wall",
-    "lid_clip_root_w", "lid_clip_root_h", "lid_clip_clearance",
-    "lid_clip_hook_depth", "lid_clip_pocket_w", "lid_clip_pocket_depth",
-    "lid_clip_pocket_top_gap",
+    "lid_clip_root_w", "lid_clip_root_h", "lid_clip_wall_clearance",
+    "lid_clip_hook_depth", "lid_clip_hook_ramp_h", "lid_clip_hook_peak_offset",
+    "lid_clip_pocket_w", "lid_clip_pocket_depth", "lid_clip_pocket_ramp_h",
     "lid_clip_x", "usb_board_forward",
     "rear_logo_w", "rear_logo_depth",
 )}
 P["inner_x"] = P["case_x"] - 2 * P["wall"]
 P["inner_y"] = P["case_y"] - 2 * P["wall"]
-P["device_floor_z"] = P["base_h"] - P["device_h"] - 0.5
 P["antenna_max_z"] = P["base_h"] - P["lid_skirt_depth"] - P["antenna_lid_clearance"]
 
 
@@ -71,6 +74,21 @@ def box_corners(x_bounds, y_bounds, z_bounds):
     ])
 
 
+def centred_usb_loop(section, expected_centre_z):
+    """Select the x-centred USB contour, ignoring nearby clip-pocket loops."""
+    candidates = [
+        line for line in section.discrete
+        if line[:, 0].min() <= 0 <= line[:, 0].max()
+    ]
+    if not candidates:
+        raise AssertionError("Centred USB contour missing")
+    return min(
+        candidates,
+        key=lambda line: abs((line[:, 2].min() + line[:, 2].max()) / 2
+                             - expected_centre_z),
+    )
+
+
 class ReferenceModelTests(unittest.TestCase):
     def test_official_seeed_model_dimensions_have_not_changed(self):
         xiao = trimesh.load_mesh(ROOT / "references" / "XIAO-ESP32S3.stl", process=False)
@@ -100,6 +118,17 @@ class ReferenceModelTests(unittest.TestCase):
                 self.assertLessEqual(worst, 1e-6, f"{name} intersects a side wall")
                 self.assertGreaterEqual(vertices[:, 2].min(), P["floor_t"])
                 self.assertLessEqual(vertices[:, 2].max(), P["base_h"] - 0.5 + 1e-6)
+
+    def test_official_wio_top_has_three_mm_to_fitted_lid(self):
+        """Check the real reference mesh against the lid, not only the envelope maths."""
+        for centre_y in (-8.0 - P["usb_board_forward"],
+                         8.0 - P["usb_board_forward"]):
+            wio_bottom = P["device_floor_z"] + P["device_h"] - 7.30000
+            wio = placed_official_mesh(
+                "Wio-SX1262_for_XIAO.stl", [0, 1, 2], centre_y, wio_bottom
+            )
+            actual_clearance = P["base_h"] - wio[:, 2].max()
+            self.assertAlmostEqual(actual_clearance, 3.0, delta=0.002)
 
 
 class AntennaFitTests(unittest.TestCase):
@@ -206,48 +235,110 @@ class MechanicalFeatureTests(unittest.TestCase):
         self.assertGreaterEqual(P["usb_open_w"] - 8.94, 0.4)
         self.assertGreaterEqual(P["usb_open_h"] - 4.20, 0.4 - 1e-9)
         base = trimesh.load_mesh(ROOT / "export" / "base.stl")
-        section = base.section(plane_origin=[0, -P["case_y"] / 2 + 0.01, 0],
+        section = base.section(plane_origin=[0, -P["case_y"] / 2 + P["wall"] - 0.01, 0],
                                plane_normal=[0, 1, 0])
         self.assertIsNotNone(section)
-        loops = section.discrete
-        aperture = min(loops, key=lambda line: np.ptp(line[:, 0]))
+        expected_centre_z = (
+            P["device_floor_z"] + 0.1 + P["usb_open_raise"] + P["usb_open_h"] / 2
+        )
+        aperture = centred_usb_loop(section, expected_centre_z)
         self.assertAlmostEqual(np.ptp(aperture[:, 0]), P["usb_open_w"], delta=0.03)
         self.assertAlmostEqual(np.ptp(aperture[:, 2]), P["usb_open_h"], delta=0.03)
 
     def test_usb_aperture_includes_measured_pin_spacer_correction(self):
         self.assertAlmostEqual(P["usb_open_raise"], 3.0)
         base = trimesh.load_mesh(ROOT / "export" / "base.stl")
-        section = base.section(plane_origin=[0, -P["case_y"] / 2 + 0.01, 0],
+        section = base.section(plane_origin=[0, -P["case_y"] / 2 + P["wall"] - 0.01, 0],
                                plane_normal=[0, 1, 0])
-        aperture = min(section.discrete, key=lambda line: np.ptp(line[:, 0]))
-        actual_centre_z = (aperture[:, 2].min() + aperture[:, 2].max()) / 2
         # usb_open_z is the aperture's lower edge; rounded_front_opening adds
         # half its height when centring the rounded rectangle.
         expected_centre_z = (
             P["device_floor_z"] + 0.1 + P["usb_open_raise"] + P["usb_open_h"] / 2
         )
+        aperture = centred_usb_loop(section, expected_centre_z)
+        actual_centre_z = (aperture[:, 2].min() + aperture[:, 2].max()) / 2
         self.assertAlmostEqual(actual_centre_z, expected_centre_z, delta=0.03)
+        self.assertAlmostEqual(actual_centre_z, 17.3, delta=0.03)
+
+    def test_usb_overmold_recess_is_deep_tapered_and_printable(self):
+        self.assertGreaterEqual(P["usb_overmold_inner_w"], 12.4)
+        self.assertGreaterEqual(P["usb_overmold_inner_h"], 8.2)
+        self.assertGreaterEqual(P["wall"] - P["usb_overmold_recess_depth"], 0.8)
+        roof_rise = (P["usb_overmold_outer_h"] - P["usb_overmold_inner_h"]) / 2
+        self.assertGreaterEqual(roof_rise, P["usb_overmold_recess_depth"])
+
+        base = trimesh.load_mesh(ROOT / "export" / "base.stl")
+        centre_z = P["device_floor_z"] + 0.1 + P["usb_open_raise"] + P["usb_open_h"] / 2
+        samples = (
+            (-P["case_y"] / 2 + 0.01,
+             P["usb_overmold_outer_w"], P["usb_overmold_outer_h"]),
+            (-P["case_y"] / 2 + P["usb_overmold_recess_depth"] - 0.01,
+             P["usb_overmold_inner_w"], P["usb_overmold_inner_h"]),
+        )
+        for y, expected_w, expected_h in samples:
+            section = base.section(plane_origin=[0, y, 0], plane_normal=[0, 1, 0])
+            self.assertIsNotNone(section)
+            opening = min(section.discrete, key=lambda line: np.ptp(line[:, 0]))
+            self.assertAlmostEqual(np.ptp(opening[:, 0]), expected_w, delta=0.08)
+            self.assertAlmostEqual(np.ptp(opening[:, 2]), expected_h, delta=0.08)
+            actual_z = (opening[:, 2].min() + opening[:, 2].max()) / 2
+            self.assertAlmostEqual(actual_z, centre_z, delta=0.03)
+
+    def test_case_height_increases_without_moving_board(self):
+        self.assertAlmostEqual(P["base_h"], 24.0)
+        self.assertAlmostEqual(P["device_floor_z"], 11.9)
+        roof_clearance = P["base_h"] - (P["device_floor_z"] + P["device_h"])
+        self.assertGreaterEqual(roof_clearance, 3.0 - 1e-9)
 
     def test_lid_clips_are_printable_and_snap_below_a_real_shoulder(self):
-        self.assertGreaterEqual(P["lid_clip_length"], 5.0)
-        self.assertGreaterEqual(P["lid_clip_w"], 5.0)
-        self.assertGreaterEqual(P["lid_clip_wall"], 0.7)
-        self.assertGreaterEqual(P["lid_clip_root_w"], 8.0)
+        self.assertGreaterEqual(P["lid_clip_length"], 7.0)
+        self.assertGreaterEqual(P["lid_clip_w"], 7.0)
+        self.assertGreaterEqual(P["lid_clip_wall"], 1.5)
+        self.assertGreaterEqual(P["lid_clip_root_w"], 10.0)
         self.assertGreaterEqual(P["lid_clip_root_h"], 1.5)
+        lip_inner_y = (
+            P["inner_y"] / 2 - P["lid_fit_clearance"] - P["lid_skirt_wall"]
+        )
+        lip_outer_y = P["inner_y"] / 2 - P["lid_fit_clearance"]
+        arm_outer_y = P["inner_y"] / 2 - P["lid_clip_wall_clearance"]
+        arm_inner_y = arm_outer_y - P["lid_clip_wall"]
+        self.assertLessEqual(arm_inner_y, lip_inner_y)
+        self.assertGreaterEqual(arm_outer_y, lip_outer_y)
         self.assertGreaterEqual(
             P["lid_clip_root_w"] * P["lid_clip_wall"],
             3 * 2.8 * 0.7,
         )
-        self.assertGreaterEqual(P["lid_clip_hook_depth"], 0.45)
-        self.assertGreaterEqual(P["lid_clip_pocket_top_gap"], 1.5)
+        self.assertAlmostEqual(P["lid_clip_hook_depth"], 0.55)
         self.assertGreaterEqual(P["lid_clip_pocket_w"] - P["lid_clip_w"], 0.2)
-        self.assertGreaterEqual(
-            P["lid_clip_pocket_depth"] - P["lid_clip_hook_depth"], 0.15
+        snap_deflection = P["lid_clip_hook_depth"] - P["lid_clip_wall_clearance"]
+        self.assertGreaterEqual(snap_deflection, 0.4)
+        self.assertLessEqual(snap_deflection, 0.5)
+        # Small-deflection cantilever estimate: surface strain ~= 1.5*t*d/L^2.
+        # The deeper retention nose raises the calculated flex demand, but the
+        # full-depth 1.5 mm tongue and 10 mm root keep it below 2%.
+        estimated_surface_strain = (
+            1.5 * P["lid_clip_wall"] * snap_deflection / P["lid_clip_length"] ** 2
         )
+        self.assertLessEqual(estimated_surface_strain, 0.02)
+        hook_wall_half_height = (
+            P["lid_clip_hook_ramp_h"] * snap_deflection / P["lid_clip_hook_depth"]
+        )
+        vertical_clearance = P["lid_clip_pocket_ramp_h"] - hook_wall_half_height
+        self.assertGreaterEqual(P["lid_clip_pocket_depth"] - snap_deflection, 0.04)
+        self.assertGreaterEqual(vertical_clearance, 0.1)
+        self.assertLessEqual(vertical_clearance, 0.2)
 
         for folder in ("export", "export-captive-usb"):
             lid = trimesh.load_mesh(ROOT / folder / "lid.stl")
             vertices = lid.vertices
+            hook_peak_z = (
+                P["lid_t"] + P["lid_clip_length"]
+                - P["lid_clip_hook_peak_offset"]
+            )
+            expected_hook_tip_y = (
+                P["inner_y"] / 2 - P["lid_clip_wall_clearance"]
+                + P["lid_clip_hook_depth"]
+            )
             # The outside remains the original rounded box: all four long arms
             # live inside it and extend well below the short alignment skirt.
             np.testing.assert_allclose(lid.extents[:2],
@@ -262,33 +353,38 @@ class MechanicalFeatureTests(unittest.TestCase):
                     self.assertTrue(len(zone), "internal lid clip missing")
                     self.assertGreaterEqual(zone[:, 2].max() - P["lid_t"],
                                             P["lid_clip_length"] - 0.05)
+                    peak = zone[np.abs(zone[:, 2] - hook_peak_z) <= 0.08]
+                    self.assertTrue(len(peak), "lid hook peak missing")
+                    actual_hook_tip_y = np.max(peak[:, 1] * ysign)
+                    self.assertAlmostEqual(actual_hook_tip_y,
+                                           expected_hook_tip_y, delta=0.03)
 
-        # The complete tongues are widened toward the centre. Their outer edges
-        # stay fixed, so neither full-height side antenna loses clearance.
+        # The added case height puts the broad tabs above the XIAO side edges;
+        # the Wio ends remain longitudinally clear of the tongues.
         clip_inner_y = (
-            P["inner_y"] / 2 - P["lid_clip_clearance"] - P["lid_clip_wall"]
+            P["inner_y"] / 2 - P["lid_clip_wall_clearance"] - P["lid_clip_wall"]
         )
-        board_centres = (-8.0 - P["usb_board_forward"],
-                         8.0 - P["usb_board_forward"])
-        board_end_y = max(abs(c + sy * P["device_y"] / 2)
-                          for c in board_centres for sy in (-1, 1))
-        self.assertGreaterEqual(clip_inner_y - board_end_y, 0.15)
+        fitted_clip_bottom = P["base_h"] - P["lid_clip_length"]
+        xiao_side_top = P["device_floor_z"] + 3.25
+        self.assertGreaterEqual(fitted_clip_bottom - xiao_side_top, 1.0)
+        wio_end_y = 8.5 + 10.71990204
+        self.assertGreaterEqual(clip_inner_y - wio_end_y, 0.15)
         wifi_rear_y = P["wifi_ant_y"] + P["wifi_ant_l"] / 2
         self.assertGreaterEqual(clip_inner_y - wifi_rear_y, 0.25)
-        lora_inner_x = P["inner_x"] / 2 - P["lora_ant_t"]
         clip_outer_x = P["lid_clip_x"] + P["lid_clip_w"] / 2
-        self.assertGreaterEqual(lora_inner_x - clip_outer_x, 0.5)
-        self.assertAlmostEqual(clip_outer_x, 11.95)
+        self.assertLessEqual(clip_outer_x, P["inner_x"] / 2 - P["inner_corner_r"])
+        lora_top = P["floor_t"] + 1.0 + P["lora_ant_w"]
+        self.assertGreaterEqual(fitted_clip_bottom - lora_top, 3.5)
 
-        # The matching base pocket ends well below the top rim, leaving solid
-        # material for the hook to flex over and capture beneath.
-        pocket_top = P["base_h"] - P["lid_clip_pocket_top_gap"]
-        self.assertLess(pocket_top, P["base_h"] - 1.0)
+        # The pocket is a close diamond negative rather than a tall slot. Its
+        # deepest line shares the fitted hook peak height, limiting vertical play.
         base = trimesh.load_mesh(ROOT / "export" / "base.stl")
         expected_pocket_floor_y = (
             P["inner_y"] / 2 + P["lid_clip_pocket_depth"]
         )
-        expected_pocket_bottom = P["base_h"] - P["lid_clip_length"] - 0.1
+        expected_peak_z = (
+            P["base_h"] - P["lid_clip_length"] + P["lid_clip_hook_peak_offset"]
+        )
         for x in (-P["lid_clip_x"], P["lid_clip_x"]):
             for side in (-1.0, 1.0):
                 vertices = base.vertices
@@ -297,12 +393,36 @@ class MechanicalFeatureTests(unittest.TestCase):
                     & (np.abs(vertices[:, 1] - side * expected_pocket_floor_y) <= 0.03)
                 ]
                 self.assertTrue(len(recess_wall), "clip pocket missing from exported base")
-                self.assertLessEqual(recess_wall[:, 2].min(), expected_pocket_bottom + 0.03)
-                self.assertGreaterEqual(recess_wall[:, 2].max(), pocket_top - 0.03)
+                self.assertAlmostEqual(recess_wall[:, 2].mean(), expected_peak_z, delta=0.04)
+                self.assertLessEqual(np.ptp(recess_wall[:, 2]), 0.08)
 
     def test_button_access_is_paperclip_sized(self):
         self.assertGreaterEqual(P["wio_button_access_d"], 1.5)
         self.assertLessEqual(P["wio_button_access_d"], 2.0)
+        self.assertAlmostEqual(P["wio_button_y"], -2.0)
+
+        # Confirm the exported hole—not only its source parameter—moves with
+        # the button while accounting for the lid's fitted Y-axis reversal.
+        for folder, device_centre_y in (
+            ("export", -8.0 - P["usb_board_forward"]),
+            ("export-captive-usb", 8.0 - P["usb_board_forward"]),
+        ):
+            lid = trimesh.load_mesh(ROOT / folder / "lid.stl", process=False)
+            section = lid.section(plane_origin=[0, 0, P["lid_t"] / 2],
+                                  plane_normal=[0, 0, 1])
+            self.assertIsNotNone(section)
+            holes = [
+                line for line in section.discrete
+                if np.allclose(np.ptp(line[:, :2], axis=0),
+                               P["wio_button_access_d"], atol=0.03)
+            ]
+            self.assertEqual(len(holes), 1, "paperclip button opening missing")
+            hole = holes[0]
+            actual_centre = (hole[:, :2].min(axis=0) + hole[:, :2].max(axis=0)) / 2
+            expected_centre = np.array([
+                P["wio_button_x"], -(device_centre_y + P["wio_button_y"])
+            ])
+            np.testing.assert_allclose(actual_centre, expected_centre, atol=0.03)
 
     def test_all_printable_stls_are_single_watertight_bodies(self):
         paths = [

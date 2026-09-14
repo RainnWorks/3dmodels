@@ -148,8 +148,9 @@ def render(output, variant):
     draw.rectangle((q0[0], q1[1], q1[0], q0[1]), fill="#ff8b3d")
     dimension(draw, side(-15.0, p["floor_t"]), side(-15.0, p["antenna_max_z"]),
               "17.9 mm flat height", font["small"])
+    roof_gap = p["base_h"] - (p["device_floor_z"] + p["device_h"])
     dimension(draw, side(3.5, p["device_floor_z"] + p["device_h"]), side(3.5, p["base_h"]),
-              "0.50 mm roof gap", font["small"], colour="#68d7ff")
+              f"{roof_gap:.2f} mm roof gap", font["small"], colour="#68d7ff")
     draw.text((755, 680), "Actual snap-to-Wi-Fi clearance: 0.371 mm", font=font["small"], fill="#55e398")
     draw.text((755, 704), "Rigid geometry: official Seeed STL vertices", font=font["small"], fill="#9fb2c0")
 

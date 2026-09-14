@@ -42,7 +42,9 @@ The XIAO's already-soldered header pins locate the board in two printed socket
 rails. Their geometry follows the standard XIAO footprint: two rows of seven,
 2.54 mm pitch, and 15.24 mm row spacing. The deep sockets and end shelves locate
 the assembly without separate PCB hooks, lid pillars, screws, or bought
-fasteners. The plain internal roof sits 0.5 mm above the tallest radio component.
+fasteners. The board and USB opening retain their physically tested heights;
+the taller shell now places the plain internal roof 3 mm above the measured
+tallest radio component.
 
 ## Manufacturer dimensions used
 
@@ -59,7 +61,7 @@ caliper measurements of the assembled unit supersede their separate heights:
 the tallest SX1262 component. The configured plan envelope is **17.9 × 22.6
 mm**.
 
-Default enclosure size: **31 × 46 × 23.5 mm** including the lid. The extra four
+Default enclosure size: **31 × 46 × 26 mm** including the lid. The extra four
 millimetres of width are intentional: beside the board they form cable channels
 wide enough for the 1.13 mm coax, and behind the board they create a service-loop
 bay for the unused length of both supplied leads.
@@ -83,12 +85,12 @@ bay for the unused length of both supplied leads.
    never pull or press through the cable itself.
 6. Lower the USB-C end toward its opening, align both rows of header pins with
    the printed sockets, then press the board onto both end shelves. The deeper
-   sockets place the measured 9.1 mm stack 0.5 mm below the internal roof and
+   sockets place the measured 9.1 mm stack 3.0 mm below the internal roof and
    provide more than the requested additional 2 mm of pin depth. There are no
    separate PCB clips to engage. The service loops should settle below/behind
    the board.
 7. Confirm neither cable lies across the upper rim or lid skirt. Centre the lid
-   using its tapered lead-in and press until all four external clips click.
+   using its tapered lead-in and press until all four internal clips click.
 
 To reopen it, use either of the two square tool slots—one in each long edge of
 the lid plate. Each 5 × 3 mm slot crosses the complete 2 mm base-wall thickness
@@ -105,17 +107,22 @@ or bought fasteners. Board retention and lid retention are printed into the two
 parts; the antenna adhesive is already part of the supplied antennas.
 
 Four internal flex clips hold the lid on without changing its clean rounded-box
-silhouette. Each is a full 5 mm-wide, 6 mm downward continuation of the
-centring lip, with a printable diamond-section hook. There is no longer a
-narrow 2.9 mm section anywhere along the flexible rectangle. At the vulnerable lid junction, each tongue
-flares sideways into an 8.5 mm tapered root—more than three times the original
-root cross-section—before narrowing to a low-force 0.7 mm flexible arm. The
-flare adds no depth toward either antenna. The matching 5.4 mm recess in
-the base ends 3.5 mm below its top, leaving a solid shoulder for the hook to
-flex over and snap beneath. The two side pry slots lift one side at a time,
+silhouette. Each is a 7 mm-wide, 1.5 mm-thick member which spans the complete
+depth of the centring lip and continues 7.5 mm below the lid. There is no
+0.7 mm-thick section left anywhere along the flexible rectangle. At the
+layer-critical lid junction, each tongue flares sideways into a 10 mm tapered
+root, providing over five times the original nominal root cross-section. The
+clips sit wholly inside the base cavity; only their printable diamond-section
+hooks enter four 7.4 mm-wide pockets shaped as slightly oversized diamond
+negatives. Approximately 0.15 mm vertical profile clearance prevents perceptible
+up/down lid travel while remaining printable. The hook now projects 0.55 mm,
+requiring approximately 0.45 mm insertion deflection and giving 0.30 mm more
+engagement than the first printed revision. The corresponding simple cantilever
+estimate is roughly 1.8% surface strain. The full-depth tongue and broad tapered
+root distribute that higher flex demand. The two side pry slots lift one side at a time,
 releasing that side's front and rear clips together. The lid also has a tapered
 insertion edge. The lid and underside are deliberately plain.
-Because the complete tongues and recesses are wider, this revision must be
+Because the complete tongues and recesses are larger and relocated, this revision must be
 printed as a matched lid-and-base pair; its lid does not fit the earlier narrow
 base pockets.
 A large 21 mm-wide recessed RW mark uses most of the flat rear wall opposite
@@ -130,7 +137,13 @@ ventilation ceilings for the printer to bridge.
 The standard USB-C opening is raised 3 mm from the original board-envelope
 position to account for the fitted pin spacers. The complete board locator is
 also shifted 0.5 mm toward the USB wall for closer connector alignment. The
-2 mm circular lid opening provides paperclip access to the Wio-SX1262 user button. The lid
+opening itself remains fixed at its tested 17.3 mm centre height. Around it, a
+rounded external pocket accepts a cable overmould up to 12 × 8 mm and lets it
+enter 1.2 mm into the 2 mm wall. The deepest profile is 12.6 × 8.4 mm; a larger
+15 × 10.8 mm outer profile creates a support-free 45-degree upper transition
+while retaining 0.8 mm wall thickness at the pocket floor. The
+2 mm circular lid opening, offset 2 mm toward the USB/front edge from the board
+centre, provides paperclip access to the Wio-SX1262 user button. The lid
 interior is otherwise plain apart from its perimeter skirt, snap features and
 ventilation. There are no protruding antenna-position dots: one shallow recessed
 line on each side wall marks the maximum safe antenna height.

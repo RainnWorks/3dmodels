@@ -141,7 +141,7 @@ def main():
     labels = None
     if args.view == "base":
         items = [(trimesh.load_mesh(os.path.join(exports, "base.stl")), blue)]
-        caption = "BASE · four clip recesses end below a solid snap-over shoulder"
+        caption = "BASE · four close-fitting diamond pockets match the lid hooks"
     elif args.view == "lid":
         items = [(trimesh.load_mesh(os.path.join(exports, "lid.stl")), lid_blue)]
         caption = "LID · four sideways-reinforced internal clips; clean exterior"
@@ -164,7 +164,7 @@ def main():
         base = trimesh.load_mesh(os.path.join(exports, "base.stl"))
         lid = trimesh.load_mesh(os.path.join(exports, "lid.stl"))
         lid.apply_transform(trimesh.transformations.rotation_matrix(np.pi, [1, 0, 0]))
-        lid.apply_translation([0, 0, 23.5])
+        lid.apply_translation([0, 0, 26.0])
         items = [(base, blue), (lid, lid_blue)]
         caption = "CLOSED · uninterrupted rounded-box exterior; all four clips are internal"
     elif args.view == "fit_test":
@@ -180,20 +180,20 @@ def main():
         ]
         variant_name = "CAPTIVE USB" if captive else "STANDARD USB"
         caption = f"{variant_name} · this base and this lid are one matched pair"
-        labels = [(f"{variant_name} BASE", (base_x, 0, 25)),
+        labels = [(f"{variant_name} BASE", (base_x, 0, 28)),
                   (f"{variant_name} LID", (lid_x, 0, 8))]
     else:
         spread = 23 if args.view == "layout" else 0
         base_y = 0 if args.view == "layout" else -30
         lid_y = 0 if args.view == "layout" else 31
         base_x, lid_x = -spread, spread
-        device_y = 8 if captive else -8
+        device_y = 7.5 if captive else -8.5
         items = [
             (moved(trimesh.load_mesh(os.path.join(exports, "base.stl")), (base_x, base_y, 0)), blue),
             (moved(trimesh.load_mesh(os.path.join(exports, "lid.stl")), (lid_x, lid_y, 0)), lid_blue),
             (box((17.9, 22.6, 9.1), (base_x, base_y + device_y, 16.45)), pcb),
             (box((1, 40, 7), (base_x + 13.0, base_y, 6.5)), lora),
-            (box((1.8, 37.4, 17.5), (base_x - 12.6, base_y + 1, 11.15)), wifi),
+            (box((1.8, 37.4, 17.5), (base_x - 12.6, base_y, 11.15)), wifi),
         ]
         if captive:
             items.extend([
@@ -210,11 +210,11 @@ def main():
             caption = "CAPTIVE USB · rear board, internal plug and split cable entry"
         else:
             items.extend([
-                (box((8.94, 4.5, 4.2), (base_x, base_y - 21.5, 14.26)), silver),
+                (box((8.94, 4.5, 4.2), (base_x, base_y - 21.5, 17.3)), silver),
                 (cable([(base_x + 12.5, base_y + 20, 6.5), (base_x + 11, base_y + 17, 6),
                         (base_x + 7, base_y + 14, 7), (base_x + 7, base_y + 8, 11),
                         (base_x + 6, base_y + 3, 15)]), black),
-                (cable([(base_x - 11.7, base_y + 19.7, 11.2), (base_x - 11, base_y + 17, 9),
+                (cable([(base_x - 11.7, base_y + 18.7, 11.2), (base_x - 11, base_y + 17, 9),
                         (base_x - 7, base_y + 14, 7), (base_x - 7, base_y + 8, 10),
                         (base_x - 6, base_y + 3, 13)]), black),
             ])
