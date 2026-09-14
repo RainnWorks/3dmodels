@@ -144,7 +144,7 @@ def main():
         caption = "BASE · four clip recesses end below a solid snap-over shoulder"
     elif args.view == "lid":
         items = [(trimesh.load_mesh(os.path.join(exports, "lid.stl")), lid_blue)]
-        caption = "LID · four internal lip clips; exterior remains a clean rounded box"
+        caption = "LID · four sideways-reinforced internal clips; clean exterior"
     elif args.view == "top":
         lid = trimesh.load_mesh(os.path.join(exports, "lid.stl"))
         lid.apply_transform(trimesh.transformations.rotation_matrix(np.pi, [1, 0, 0]))

@@ -34,10 +34,14 @@ lid_skirt_depth = 1.2;    // alignment skirt; clears the full-height Wi-Fi anten
 lid_skirt_wall = 1.2;     // [0.8:0.1:2]
 lid_lead_in = 0.35;       // taper at the skirt's insertion edge
 lid_clip_length = 6.0;    // internal flex arm extending from the centring lip
-lid_clip_w = 2.8;         // printable tongue, kept outside the PCB envelope
-lid_clip_wall = 0.7;      // printable but flexible at this arm length
+lid_clip_w = 2.9;         // fits existing 3.2 mm base pocket with side clearance
+lid_clip_wall = 0.7;      // low-force flex section preserves antenna clearance
+lid_clip_root_w = 8.5;    // broad sideways flare; adds no depth toward antennas
+lid_clip_root_h = 1.8;    // long tapered transition into the flexible section
 lid_clip_clearance = 0.30; // arm-to-base clearance before the hook
-lid_clip_hook_depth = 0.55;
+lid_clip_hook_depth = 0.50; // 0.20 mm insertion deflection with existing base
+lid_clip_pocket_w = 3.2;  // frozen for compatibility with already-printed bases
+lid_clip_pocket_depth = 0.70;
 lid_clip_pocket_top_gap = 3.5; // solid wall above recess creates the snap shoulder
 lid_clip_x = 10.5;        // left/right placement on the two short-end lips
 lid_pry_notch_w = 5.0;    // opening along the long lid edge
@@ -57,7 +61,8 @@ device_y = 22.6;
 board_stack_pcb_h = 6.2;  // measured: lower-PCB underside to upper-PCB top
 device_h = 9.1;           // measured: lower-PCB underside to tallest SX1262 part
 device_clearance = 0.45;  // around each board edge
-device_center_y = captive_usb() ? 8.0 : -8.0;
+usb_board_forward = 0.5;  // move the complete locator toward the USB/front wall
+device_center_y = (captive_usb() ? 8.0 : -8.0) - usb_board_forward;
 device_floor_z = base_h-device_h-0.5; // tallest component sits 0.5 mm below roof
 
 /* [Installed XIAO pin headers] */
@@ -306,14 +311,14 @@ module lid_clip_pockets() {
     // These recesses are deliberately bounded by solid wall at the top. The
     // internal lid clips must flex over that shoulder before their hooks can
     // snap into the recesses; an open-topped notch cannot retain the lid.
-    pocket_depth = lid_clip_hook_depth + 0.15;
+    pocket_depth = lid_clip_pocket_depth;
     pocket_bottom = base_h-lid_clip_length-0.1;
     pocket_top = base_h-lid_clip_pocket_top_gap;
     for (ysign=[-1,1], x=[-lid_clip_x,lid_clip_x])
-        translate([x-(lid_clip_w+0.4)/2,
+        translate([x-lid_clip_pocket_w/2,
                    ysign > 0 ? inner_y/2-eps : -inner_y/2-pocket_depth,
                    pocket_bottom])
-            cube([lid_clip_w+0.4,pocket_depth+eps,pocket_top-pocket_bottom]);
+            cube([lid_clip_pocket_w,pocket_depth+eps,pocket_top-pocket_bottom]);
 }
 
 module rear_logo_cut() {
@@ -366,6 +371,19 @@ module one_internal_lid_snap_clip(x) {
     // Nothing projects beyond the lid's normal rounded-box silhouette.
     translate([x-lid_clip_w/2,arm_outer_y-lid_clip_wall,lid_t-eps])
         cube([lid_clip_w,lid_clip_wall,lid_clip_length+eps]);
+
+    // More than triple the old root cross-section by flaring sideways along
+    // the lip, never deeper into the antenna bay. The outer edge stays fixed
+    // and the flare grows toward the lid centre. Hook position and depth remain
+    // unchanged, so this reinforcement fits every previously printed base.
+    root_x = x > 0 ? x+lid_clip_w/2-lid_clip_root_w : x-lid_clip_w/2;
+    hull() {
+        translate([root_x,arm_outer_y-lid_clip_wall,lid_t-eps])
+            cube([lid_clip_root_w,lid_clip_wall,0.10]);
+        translate([x-lid_clip_w/2,arm_outer_y-lid_clip_wall,
+                   lid_t+lid_clip_root_h])
+            cube([lid_clip_w,lid_clip_wall,0.10]);
+    }
 
     // A diamond-section outward hook: both faces are self-supporting in the
     // lid's exterior-face-down print orientation. The free-end ramp pushes the

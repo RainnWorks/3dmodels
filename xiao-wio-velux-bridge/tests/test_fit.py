@@ -30,8 +30,10 @@ P = {name: scalar(name) for name in (
     "header_pitch", "header_row_spacing", "header_pins_per_row",
     "usb_open_w", "usb_open_h", "usb_open_raise", "wio_button_access_d",
     "lid_clip_length", "lid_clip_w", "lid_clip_wall",
-    "lid_clip_clearance", "lid_clip_hook_depth", "lid_clip_pocket_top_gap",
-    "lid_clip_x",
+    "lid_clip_root_w", "lid_clip_root_h", "lid_clip_clearance",
+    "lid_clip_hook_depth", "lid_clip_pocket_w", "lid_clip_pocket_depth",
+    "lid_clip_pocket_top_gap",
+    "lid_clip_x", "usb_board_forward",
     "rear_logo_w", "rear_logo_depth",
 )}
 P["inner_x"] = P["case_x"] - 2 * P["wall"]
@@ -78,7 +80,9 @@ class ReferenceModelTests(unittest.TestCase):
 
     def test_official_boards_fit_inside_shell_in_both_layouts(self):
         # XIAO CAD axes are length, height, width. Wio axes already match XYZ.
-        for centre_y in (-8.0, 8.0):
+        self.assertAlmostEqual(P["usb_board_forward"], 0.5)
+        for centre_y in (-8.0 - P["usb_board_forward"],
+                         8.0 - P["usb_board_forward"]):
             xiao = placed_official_mesh(
                 "XIAO-ESP32S3.stl", [2, 0, 1], centre_y, P["device_floor_z"]
             )
@@ -228,8 +232,18 @@ class MechanicalFeatureTests(unittest.TestCase):
         self.assertGreaterEqual(P["lid_clip_length"], 5.0)
         self.assertGreaterEqual(P["lid_clip_w"], 2.4)
         self.assertGreaterEqual(P["lid_clip_wall"], 0.7)
-        self.assertGreaterEqual(P["lid_clip_hook_depth"], 0.5)
+        self.assertGreaterEqual(P["lid_clip_root_w"], 8.0)
+        self.assertGreaterEqual(P["lid_clip_root_h"], 1.5)
+        self.assertGreaterEqual(
+            P["lid_clip_root_w"] * P["lid_clip_wall"],
+            3 * 2.8 * 0.7,
+        )
+        self.assertGreaterEqual(P["lid_clip_hook_depth"], 0.45)
         self.assertGreaterEqual(P["lid_clip_pocket_top_gap"], 1.5)
+        self.assertGreaterEqual(P["lid_clip_pocket_w"] - P["lid_clip_w"], 0.2)
+        self.assertGreaterEqual(
+            P["lid_clip_pocket_depth"] - P["lid_clip_hook_depth"], 0.15
+        )
 
         for folder in ("export", "export-captive-usb"):
             lid = trimesh.load_mesh(ROOT / folder / "lid.stl")
@@ -270,14 +284,14 @@ class MechanicalFeatureTests(unittest.TestCase):
         self.assertLess(pocket_top, P["base_h"] - 1.0)
         base = trimesh.load_mesh(ROOT / "export" / "base.stl")
         expected_pocket_floor_y = (
-            P["inner_y"] / 2 + P["lid_clip_hook_depth"] + 0.15
+            P["inner_y"] / 2 + P["lid_clip_pocket_depth"]
         )
         expected_pocket_bottom = P["base_h"] - P["lid_clip_length"] - 0.1
         for x in (-P["lid_clip_x"], P["lid_clip_x"]):
             for side in (-1.0, 1.0):
                 vertices = base.vertices
                 recess_wall = vertices[
-                    (np.abs(vertices[:, 0] - x) <= P["lid_clip_w"] / 2 + 0.3)
+                    (np.abs(vertices[:, 0] - x) <= P["lid_clip_pocket_w"] / 2 + 0.1)
                     & (np.abs(vertices[:, 1] - side * expected_pocket_floor_y) <= 0.03)
                 ]
                 self.assertTrue(len(recess_wall), "clip pocket missing from exported base")

@@ -106,11 +106,14 @@ parts; the antenna adhesive is already part of the supplied antennas.
 
 Four internal flex clips hold the lid on without changing its clean rounded-box
 silhouette. Each is a 6 mm downward continuation of the centring lip, with a
-printable diamond-section hook. The matching recess in the base ends 3.5 mm
-below its top, leaving a solid shoulder for the hook to flex over and snap
-beneath. The two side pry slots lift one side at a time, releasing that side's
-front and rear clips together. The lid also has a tapered insertion edge. The
-lid and underside are deliberately plain.
+printable diamond-section hook. At the vulnerable lid junction, each tongue
+flares sideways into an 8.5 mm tapered root—more than three times the original
+root cross-section—before narrowing to a low-force 0.7 mm flexible arm. The
+flare adds no depth toward either antenna. The matching recess in
+the base ends 3.5 mm below its top, leaving a solid shoulder for the hook to
+flex over and snap beneath. The two side pry slots lift one side at a time,
+releasing that side's front and rear clips together. The lid also has a tapered
+insertion edge. The lid and underside are deliberately plain.
 A large 21 mm-wide recessed RW mark uses most of the flat rear wall opposite
 the USB-C opening; the earlier tiny surface markings remain removed. For best
 RF performance, do not place either antenna side directly against metal or a
@@ -121,7 +124,9 @@ the lid. There are no ventilation openings in the side walls and no horizontal
 ventilation ceilings for the printer to bridge.
 
 The standard USB-C opening is raised 3 mm from the original board-envelope
-position to account for the fitted pin spacers. The 2 mm circular lid opening provides paperclip access to the Wio-SX1262 user button. The lid
+position to account for the fitted pin spacers. The complete board locator is
+also shifted 0.5 mm toward the USB wall for closer connector alignment. The
+2 mm circular lid opening provides paperclip access to the Wio-SX1262 user button. The lid
 interior is otherwise plain apart from its perimeter skirt, snap features and
 ventilation. There are no protruding antenna-position dots: one shallow recessed
 line on each side wall marks the maximum safe antenna height.
