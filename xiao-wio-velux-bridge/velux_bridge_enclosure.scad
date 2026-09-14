@@ -317,18 +317,19 @@ module lid_clip_pockets() {
 module rear_logo_cut() {
     // The rear is the end opposite the standard USB-C opening. The source logo
     // has a 560 x 446 viewBox; centring it here uses most of the genuinely flat
-    // 23 mm-wide rear face without entering the rounded corner zones. OpenSCAD
-    // imports SVG CSS pixels at 96 DPI, so convert the viewBox units to mm
-    // before applying the requested physical width.
-    svg_mm_per_px = 25.4/96;
+    // 23 mm-wide rear face without entering the rounded corner zones. This
+    // OpenSCAD build imports SVG CSS pixels at 72 DPI, so convert the viewBox
+    // units to mm before applying the requested physical width.
+    svg_mm_per_px = 25.4/72;
     svg_w = 560*svg_mm_per_px;
     svg_h = 446*svg_mm_per_px;
     translate([0,case_y/2+eps,base_h/2])
         rotate([90,0,0])
             linear_extrude(height=rear_logo_depth+eps)
                 scale([rear_logo_w/svg_w,rear_logo_w/svg_w])
-                    translate([-svg_w/2,-svg_h/2])
-                        import("assets/rainn-logo-single-color.svg");
+                    mirror([1,0,0]) // reads correctly from outside the rear wall
+                        translate([-svg_w/2,-svg_h/2])
+                            import("assets/rainn-logo-single-color.svg");
 }
 
 module base() {

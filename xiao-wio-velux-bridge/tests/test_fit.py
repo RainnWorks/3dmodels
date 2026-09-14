@@ -172,6 +172,8 @@ class MechanicalFeatureTests(unittest.TestCase):
         self.assertLessEqual(logo_h, P["base_h"] - 2.0)
         self.assertGreaterEqual(P["rear_logo_depth"], 0.4)
         self.assertLess(P["rear_logo_depth"], P["wall"])
+        self.assertIn("svg_mm_per_px = 25.4/72;", SCAD_TEXT)
+        self.assertIn("mirror([1,0,0]) // reads correctly", SCAD_TEXT)
 
         # Check the physical recess on the exported rear wall; this catches the
         # SVG px-to-mm conversion that a parameter-only assertion would miss.
@@ -179,8 +181,13 @@ class MechanicalFeatureTests(unittest.TestCase):
         recess_y = P["case_y"] / 2 - P["rear_logo_depth"]
         recess = base.vertices[np.isclose(base.vertices[:, 1], recess_y, atol=0.005)]
         self.assertTrue(len(recess), "RW recess missing from exported rear wall")
-        self.assertGreaterEqual(np.ptp(recess[:, 0]), P["rear_logo_w"] * 0.95)
-        self.assertGreaterEqual(np.ptp(recess[:, 2]), logo_h * 0.95)
+        expected_x = (-P["rear_logo_w"] / 2, P["rear_logo_w"] / 2)
+        expected_z = (P["base_h"] / 2 - logo_h / 2,
+                      P["base_h"] / 2 + logo_h / 2)
+        for value in expected_x:
+            self.assertLess(np.min(np.abs(recess[:, 0] - value)), 0.03)
+        for value in expected_z:
+            self.assertLess(np.min(np.abs(recess[:, 2] - value)), 0.03)
 
     def test_header_pattern_matches_xiao_2_by_7_grid(self):
         self.assertEqual(P["header_pins_per_row"], 7)
