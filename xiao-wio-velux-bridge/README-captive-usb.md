@@ -50,12 +50,14 @@ two `captive_cable_slot_*` parameters in the shared SCAD source if needed.
    closes the installation slot, then engage all four internal lid clips.
 
 Print the base on its floor and the lid exactly as exported, with the broad,
-smooth exterior face against the build plate. Four 6 mm internal flex clips
-extend from the centring lip; each has an 8.5 mm sideways-flared tapered root
+smooth exterior face against the build plate. Four full 5 mm-wide, 6 mm internal
+flex clips extend from the centring lip; there is no narrow section left in the
+flexible rectangle. Each has an 8.5 mm sideways-flared tapered root
 and a 0.7 mm flex section. The flare adds no depth toward either antenna. Their
 self-supporting diamond-section hooks need no support material.
 Matching base recesses sit below a solid upper shoulder, giving a real snap fit
 without anything protruding from the closed enclosure.
+This revision's wider clips require its matching newly exported base.
 
 To remove the lid, put a thin flat screwdriver or similar metal tool into either
 5 × 3 mm square slot in the long edge of the lid plate. Each slot reaches across

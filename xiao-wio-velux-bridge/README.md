@@ -105,15 +105,19 @@ or bought fasteners. Board retention and lid retention are printed into the two
 parts; the antenna adhesive is already part of the supplied antennas.
 
 Four internal flex clips hold the lid on without changing its clean rounded-box
-silhouette. Each is a 6 mm downward continuation of the centring lip, with a
-printable diamond-section hook. At the vulnerable lid junction, each tongue
+silhouette. Each is a full 5 mm-wide, 6 mm downward continuation of the
+centring lip, with a printable diamond-section hook. There is no longer a
+narrow 2.9 mm section anywhere along the flexible rectangle. At the vulnerable lid junction, each tongue
 flares sideways into an 8.5 mm tapered root—more than three times the original
 root cross-section—before narrowing to a low-force 0.7 mm flexible arm. The
-flare adds no depth toward either antenna. The matching recess in
+flare adds no depth toward either antenna. The matching 5.4 mm recess in
 the base ends 3.5 mm below its top, leaving a solid shoulder for the hook to
 flex over and snap beneath. The two side pry slots lift one side at a time,
 releasing that side's front and rear clips together. The lid also has a tapered
 insertion edge. The lid and underside are deliberately plain.
+Because the complete tongues and recesses are wider, this revision must be
+printed as a matched lid-and-base pair; its lid does not fit the earlier narrow
+base pockets.
 A large 21 mm-wide recessed RW mark uses most of the flat rear wall opposite
 the USB-C opening; the earlier tiny surface markings remain removed. For best
 RF performance, do not place either antenna side directly against metal or a

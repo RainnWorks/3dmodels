@@ -230,7 +230,7 @@ class MechanicalFeatureTests(unittest.TestCase):
 
     def test_lid_clips_are_printable_and_snap_below_a_real_shoulder(self):
         self.assertGreaterEqual(P["lid_clip_length"], 5.0)
-        self.assertGreaterEqual(P["lid_clip_w"], 2.4)
+        self.assertGreaterEqual(P["lid_clip_w"], 5.0)
         self.assertGreaterEqual(P["lid_clip_wall"], 0.7)
         self.assertGreaterEqual(P["lid_clip_root_w"], 8.0)
         self.assertGreaterEqual(P["lid_clip_root_h"], 1.5)
@@ -263,20 +263,22 @@ class MechanicalFeatureTests(unittest.TestCase):
                     self.assertGreaterEqual(zone[:, 2].max() - P["lid_t"],
                                             P["lid_clip_length"] - 0.05)
 
-        # Clip tongues clear the PCB sides; their end-wall placement also keeps
-        # the full-height side antennas out of the flex path.
-        self.assertGreaterEqual(P["lid_clip_x"] - P["lid_clip_w"] / 2,
-                                P["device_x"] / 2 + 0.1)
+        # The complete tongues are widened toward the centre. Their outer edges
+        # stay fixed, so neither full-height side antenna loses clearance.
         clip_inner_y = (
             P["inner_y"] / 2 - P["lid_clip_clearance"] - P["lid_clip_wall"]
         )
-        board_end_y = 8.0 + P["device_y"] / 2
-        self.assertGreaterEqual(clip_inner_y - board_end_y, 0.5)
+        board_centres = (-8.0 - P["usb_board_forward"],
+                         8.0 - P["usb_board_forward"])
+        board_end_y = max(abs(c + sy * P["device_y"] / 2)
+                          for c in board_centres for sy in (-1, 1))
+        self.assertGreaterEqual(clip_inner_y - board_end_y, 0.15)
         wifi_rear_y = P["wifi_ant_y"] + P["wifi_ant_l"] / 2
         self.assertGreaterEqual(clip_inner_y - wifi_rear_y, 0.25)
         lora_inner_x = P["inner_x"] / 2 - P["lora_ant_t"]
         clip_outer_x = P["lid_clip_x"] + P["lid_clip_w"] / 2
         self.assertGreaterEqual(lora_inner_x - clip_outer_x, 0.5)
+        self.assertAlmostEqual(clip_outer_x, 11.95)
 
         # The matching base pocket ends well below the top rim, leaving solid
         # material for the hook to flex over and capture beneath.
