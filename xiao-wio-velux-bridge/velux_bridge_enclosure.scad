@@ -222,7 +222,7 @@ module rounded_front_opening(x,z,w,h,r) {
 module horizontal_ventilation_cuts(z,h) {
     // Four straight-through slots form bottom-to-top airflow. Because their
     // walls follow Z, neither the floor-down base nor face-down lid bridges a
-    // ventilation ceiling. They also sit outside the central markings.
+    // ventilation ceiling.
     for (x=[-vent_slot_x,vent_slot_x], y=[-vent_slot_y,vent_slot_y])
         translate([x-vent_slot_w/2,y-vent_slot_l/2,z])
             cube([vent_slot_w,vent_slot_l,h]);
@@ -312,17 +312,6 @@ module lid_clip_pockets() {
             cube([pocket_depth+eps,lid_clip_w+0.4,pocket_top-pocket_bottom]);
 }
 
-module bottom_marking_cuts() {
-    // Both lines run along the 46 mm axis. Mirrored because the lettering is
-    // read from the exterior (-Z) face.
-    translate([-3.2,0,-eps]) linear_extrude(height=0.55+eps)
-        mirror([1,0,0]) rotate([0,0,90]) text("XIAO ESP32-S3",size=2.15,halign="center",valign="center",
-                             font="Liberation Sans:style=Bold");
-    translate([3.2,0,-eps]) linear_extrude(height=0.55+eps)
-        mirror([1,0,0]) rotate([0,0,90]) text("WIO-SX1262",size=2.15,halign="center",valign="center",
-                             font="Liberation Sans:style=Bold");
-}
-
 module base() {
     union() {
         difference() {
@@ -333,7 +322,6 @@ module base() {
             horizontal_ventilation_cuts(-eps,floor_t+2*eps);
             antenna_max_height_cuts();
             lid_clip_pockets();
-            bottom_marking_cuts();
         }
         board_locator();
         captive_plug_strain_shoulders();
@@ -387,15 +375,6 @@ module lid_snap_clips() {
             mirror([1,0,0]) one_lid_snap_clip(y);
 }
 
-module top_marking_cuts() {
-    // Recessed rather than raised so the lid still prints exterior-face down;
-    // the purpose-neutral Rainn mark sits opposite the paperclip button hole.
-    // Debossing creates no unsupported logo geometry in the print orientation.
-    translate([0,device_center_y,-eps]) linear_extrude(height=0.55+eps)
-        mirror([1,0,0]) rotate([0,0,90]) scale([9.5/560,9.5/560])
-            translate([-280,-223]) import("assets/rainn-logo-single-color.svg");
-}
-
 module captive_cable_slot_tongue() {
     if (captive_usb()) {
         tongue_w = captive_cable_slot_w-2*captive_tongue_clearance;
@@ -439,7 +418,6 @@ module lid() {
             lid_snap_clips();
             captive_cable_slot_tongue();
         }
-        top_marking_cuts();
         horizontal_ventilation_cuts(-eps,lid_t+2*eps);
         wio_button_access_cut();
         lid_pry_notches();

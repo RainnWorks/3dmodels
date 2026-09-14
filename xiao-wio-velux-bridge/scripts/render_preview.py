@@ -149,12 +149,12 @@ def main():
         lid = trimesh.load_mesh(os.path.join(exports, "lid.stl"))
         lid.apply_transform(trimesh.transformations.rotation_matrix(np.pi, [1, 0, 0]))
         items = [(lid, lid_blue)]
-        caption = "TOP · button and straight Rainn mark balance opposite ends"
+        caption = "TOP · clean outer face with 2 mm paperclip button access"
     elif args.view == "bottom":
         base = trimesh.load_mesh(os.path.join(exports, "base.stl"))
         base.apply_transform(trimesh.transformations.rotation_matrix(np.pi, [1, 0, 0]))
         items = [(base, blue)]
-        caption = "BOTTOM · recessed board identification"
+        caption = "BOTTOM · clean outer face and four straight-through vents"
     elif args.view == "fit_test":
         items = [(trimesh.load_mesh(os.path.join(exports, "fit_test.stl")), blue)]
         caption = "FIT TEST · complete 2×7 XIAO locator with deeper pin sockets"

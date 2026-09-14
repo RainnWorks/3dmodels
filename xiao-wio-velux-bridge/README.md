@@ -104,11 +104,11 @@ Four substantial external flex clips hold the lid on. Each has a 6 mm long,
 5 mm wide printable arm and a self-supporting diamond-section hook. The matching
 recess in the base ends 3.5 mm below its top, leaving a solid shoulder for the
 hook to flex over and snap beneath. The lid also has two small edge pry notches
-and a tapered insertion edge. A recessed Rainn Works mark keeps the enclosure
-purpose-neutral. The mark is recessed—not raised—so the exterior-face-down lid has no
-logo overhang or isolated first-layer islands. For best RF performance, do not
-place either antenna side directly against metal or a wall; bottom-down on a
-shelf is a good default orientation.
+and a tapered insertion edge. Both outside faces are deliberately plain: the
+small logo and board-name lettering were removed because they were not legible
+at the printed size. For best RF performance, do not place either antenna side
+directly against metal or a wall; bottom-down on a shelf is a good default
+orientation.
 
 Ventilation is provided by four straight-through slots in the base and four in
 the lid. There are no ventilation openings in the side walls and no horizontal
