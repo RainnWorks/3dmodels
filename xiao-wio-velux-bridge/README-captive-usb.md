@@ -47,12 +47,13 @@ two `captive_cable_slot_*` parameters in the shared SCAD source if needed.
 7. Lower all fourteen header pins into the deeper printed sockets until the
    board reaches both end shelves. There are no separate PCB clips to engage.
 8. Check that no cable crosses the rim. Fit the lid so its long front tongue
-   closes the installation slot, then engage all four external lid clips.
+   closes the installation slot, then engage all four internal lid clips.
 
 Print the base on its floor and the lid exactly as exported, with the broad,
-smooth exterior face against the build plate. Four 6 mm external flex clips
-use self-supporting diamond-section hooks and need no support material. Their
-matching base recesses sit below a solid upper shoulder, giving a real snap fit.
+smooth exterior face against the build plate. Four 6 mm internal flex clips
+extend from the centring lip; their self-supporting diamond-section hooks need
+no support material. Matching base recesses sit below a solid upper shoulder,
+giving a real snap fit without anything protruding from the closed enclosure.
 
 To remove the lid, put a thin flat screwdriver or similar metal tool into either
 5 × 3 mm square slot in the long edge of the lid plate. Each slot reaches across

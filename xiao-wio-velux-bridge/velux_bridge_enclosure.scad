@@ -33,16 +33,17 @@ lid_fit_clearance = 0.30; // clearance per side; increase if the lid is tight
 lid_skirt_depth = 1.2;    // alignment skirt; clears the full-height Wi-Fi antenna
 lid_skirt_wall = 1.2;     // [0.8:0.1:2]
 lid_lead_in = 0.35;       // taper at the skirt's insertion edge
-lid_clip_length = 6.0;    // external flex arm below the closed lid
-lid_clip_w = 5.0;         // enough width to survive normal FDM printing
+lid_clip_length = 6.0;    // internal flex arm extending from the centring lip
+lid_clip_w = 2.8;         // printable tongue, kept outside the PCB envelope
 lid_clip_wall = 0.7;      // printable but flexible at this arm length
-lid_clip_clearance = 0.25; // arm-to-base clearance before the hook
+lid_clip_clearance = 0.30; // arm-to-base clearance before the hook
 lid_clip_hook_depth = 0.55;
 lid_clip_pocket_top_gap = 3.5; // solid wall above recess creates the snap shoulder
+lid_clip_x = 10.5;        // left/right placement on the two short-end lips
 lid_pry_notch_w = 5.0;    // opening along the long lid edge
 lid_pry_notch_depth = 3.0; // crosses the 2 mm wall and reaches behind it
 rear_logo_w = 21.0;       // large RW mark across the rear flat wall
-rear_logo_depth = 0.55;   // recessed for a clean, support-free vertical wall
+rear_logo_depth = 0.40;   // recessed for a clean, support-free vertical wall
 
 /* [Electronics -- official STEP envelopes] */
 wio_x = 17.7801;
@@ -303,15 +304,16 @@ module captive_plug_strain_shoulders() {
 
 module lid_clip_pockets() {
     // These recesses are deliberately bounded by solid wall at the top. The
-    // external lid clips must flex over that shoulder before their hooks can
+    // internal lid clips must flex over that shoulder before their hooks can
     // snap into the recesses; an open-topped notch cannot retain the lid.
     pocket_depth = lid_clip_hook_depth + 0.15;
     pocket_bottom = base_h-lid_clip_length-0.1;
     pocket_top = base_h-lid_clip_pocket_top_gap;
-    for (xsign=[-1,1], y=[-9,9])
-        translate([xsign > 0 ? case_x/2-pocket_depth : -case_x/2-eps,
-                   y-(lid_clip_w+0.4)/2,pocket_bottom])
-            cube([pocket_depth+eps,lid_clip_w+0.4,pocket_top-pocket_bottom]);
+    for (ysign=[-1,1], x=[-lid_clip_x,lid_clip_x])
+        translate([x-(lid_clip_w+0.4)/2,
+                   ysign > 0 ? inner_y/2-eps : -inner_y/2-pocket_depth,
+                   pocket_bottom])
+            cube([lid_clip_w+0.4,pocket_depth+eps,pocket_top-pocket_bottom]);
 }
 
 module rear_logo_cut() {
@@ -354,46 +356,44 @@ module base() {
 }
 
 // --- printable lid ----------------------------------------------------------
-module one_lid_snap_clip(y) {
-    arm_inner_x = case_x/2 + lid_clip_clearance;
+module one_internal_lid_snap_clip(x) {
+    arm_outer_y = inner_y/2-lid_clip_clearance;
     hook_peak_z = lid_t + lid_clip_length - 1.3;
     hook_ramp_h = 1.2;
 
-    // A local printable ear joins the outside arm to the lid plate. The arm is
-    // outside the base wall, so making it genuinely deep cannot collide with
-    // either of the full-height side-mounted antennas.
-    translate([case_x/2-0.2,y-lid_clip_w/2,0])
-        cube([arm_inner_x+lid_clip_wall-(case_x/2-0.2),lid_clip_w,lid_t+eps]);
-    translate([arm_inner_x,y-lid_clip_w/2,lid_t-eps])
-        cube([lid_clip_wall,lid_clip_w,lid_clip_length+eps]);
+    // This is a local downward continuation of the short-end centring lip. It
+    // is connected only at the lid end, so the 6 mm tongue can flex inward.
+    // Nothing projects beyond the lid's normal rounded-box silhouette.
+    translate([x-lid_clip_w/2,arm_outer_y-lid_clip_wall,lid_t-eps])
+        cube([lid_clip_w,lid_clip_wall,lid_clip_length+eps]);
 
-    // A diamond-section inward hook: both faces are self-supporting in the
-    // lid's exterior-face-down print orientation. Its free-end ramp pushes the
-    // arm outward during insertion; it then snaps under the base's solid rim.
+    // A diamond-section outward hook: both faces are self-supporting in the
+    // lid's exterior-face-down print orientation. The free-end ramp pushes the
+    // tongue inward during insertion; it then springs into the internal pocket.
     hull() {
-        translate([arm_inner_x-eps,y-lid_clip_w/2,
+        translate([x-lid_clip_w/2,arm_outer_y-eps,
                    hook_peak_z-hook_ramp_h])
-            cube([eps*2,lid_clip_w,0.10]);
-        translate([arm_inner_x-lid_clip_hook_depth,y-lid_clip_w/2,
+            cube([lid_clip_w,eps*2,0.10]);
+        translate([x-lid_clip_w/2,arm_outer_y,
                    hook_peak_z])
-            cube([lid_clip_hook_depth+eps,lid_clip_w,0.10]);
+            cube([lid_clip_w,lid_clip_hook_depth+eps,0.10]);
     }
     hull() {
-        translate([arm_inner_x-lid_clip_hook_depth,y-lid_clip_w/2,
+        translate([x-lid_clip_w/2,arm_outer_y,
                    hook_peak_z])
-            cube([lid_clip_hook_depth+eps,lid_clip_w,0.10]);
-        translate([arm_inner_x-eps,y-lid_clip_w/2,
+            cube([lid_clip_w,lid_clip_hook_depth+eps,0.10]);
+        translate([x-lid_clip_w/2,arm_outer_y-eps,
                    hook_peak_z+hook_ramp_h])
-            cube([eps*2,lid_clip_w,0.10]);
+            cube([lid_clip_w,eps*2,0.10]);
     }
 }
 
 module lid_snap_clips() {
-    for (xsign=[-1,1], y=[-9,9])
-        if (xsign > 0)
-            one_lid_snap_clip(y);
+    for (ysign=[-1,1], x=[-lid_clip_x,lid_clip_x])
+        if (ysign > 0)
+            one_internal_lid_snap_clip(x);
         else
-            mirror([1,0,0]) one_lid_snap_clip(y);
+            mirror([0,1,0]) one_internal_lid_snap_clip(x);
 }
 
 module captive_cable_slot_tongue() {

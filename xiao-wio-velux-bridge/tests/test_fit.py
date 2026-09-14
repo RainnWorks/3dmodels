@@ -31,6 +31,7 @@ P = {name: scalar(name) for name in (
     "usb_open_w", "usb_open_h", "usb_open_raise", "wio_button_access_d",
     "lid_clip_length", "lid_clip_w", "lid_clip_wall",
     "lid_clip_clearance", "lid_clip_hook_depth", "lid_clip_pocket_top_gap",
+    "lid_clip_x",
     "rear_logo_w", "rear_logo_depth",
 )}
 P["inner_x"] = P["case_x"] - 2 * P["wall"]
@@ -225,7 +226,7 @@ class MechanicalFeatureTests(unittest.TestCase):
 
     def test_lid_clips_are_printable_and_snap_below_a_real_shoulder(self):
         self.assertGreaterEqual(P["lid_clip_length"], 5.0)
-        self.assertGreaterEqual(P["lid_clip_w"], 4.0)
+        self.assertGreaterEqual(P["lid_clip_w"], 2.4)
         self.assertGreaterEqual(P["lid_clip_wall"], 0.7)
         self.assertGreaterEqual(P["lid_clip_hook_depth"], 0.5)
         self.assertGreaterEqual(P["lid_clip_pocket_top_gap"], 1.5)
@@ -233,33 +234,51 @@ class MechanicalFeatureTests(unittest.TestCase):
         for folder in ("export", "export-captive-usb"):
             lid = trimesh.load_mesh(ROOT / folder / "lid.stl")
             vertices = lid.vertices
-            # Four external arms must extend beyond the 31 mm lid plate and
-            # substantially deeper than the short internal alignment skirt.
-            for y in (-9.0, 9.0):
-                zone = vertices[
-                    (np.abs(vertices[:, 1] - y) <= P["lid_clip_w"] / 2 + 0.1)
-                    & (vertices[:, 2] > P["lid_t"] + P["lid_skirt_depth"])
-                ]
-                self.assertLessEqual(zone[:, 0].min(), -P["case_x"] / 2 - 0.5)
-                self.assertGreaterEqual(zone[:, 0].max(), P["case_x"] / 2 + 0.5)
-                self.assertGreaterEqual(zone[:, 2].max() - P["lid_t"],
-                                        P["lid_clip_length"] - 0.05)
+            # The outside remains the original rounded box: all four long arms
+            # live inside it and extend well below the short alignment skirt.
+            np.testing.assert_allclose(lid.extents[:2],
+                                       [P["case_x"], P["case_y"]], atol=0.03)
+            for x in (-P["lid_clip_x"], P["lid_clip_x"]):
+                for ysign in (-1.0, 1.0):
+                    zone = vertices[
+                        (np.abs(vertices[:, 0] - x) <= P["lid_clip_w"] / 2 + 0.1)
+                        & (vertices[:, 1] * ysign > P["inner_y"] / 2 - 1.2)
+                        & (vertices[:, 2] > P["lid_t"] + P["lid_skirt_depth"])
+                    ]
+                    self.assertTrue(len(zone), "internal lid clip missing")
+                    self.assertGreaterEqual(zone[:, 2].max() - P["lid_t"],
+                                            P["lid_clip_length"] - 0.05)
+
+        # Clip tongues clear the PCB sides; their end-wall placement also keeps
+        # the full-height side antennas out of the flex path.
+        self.assertGreaterEqual(P["lid_clip_x"] - P["lid_clip_w"] / 2,
+                                P["device_x"] / 2 + 0.1)
+        clip_inner_y = (
+            P["inner_y"] / 2 - P["lid_clip_clearance"] - P["lid_clip_wall"]
+        )
+        board_end_y = 8.0 + P["device_y"] / 2
+        self.assertGreaterEqual(clip_inner_y - board_end_y, 0.5)
+        wifi_rear_y = P["wifi_ant_y"] + P["wifi_ant_l"] / 2
+        self.assertGreaterEqual(clip_inner_y - wifi_rear_y, 0.25)
+        lora_inner_x = P["inner_x"] / 2 - P["lora_ant_t"]
+        clip_outer_x = P["lid_clip_x"] + P["lid_clip_w"] / 2
+        self.assertGreaterEqual(lora_inner_x - clip_outer_x, 0.5)
 
         # The matching base pocket ends well below the top rim, leaving solid
         # material for the hook to flex over and capture beneath.
         pocket_top = P["base_h"] - P["lid_clip_pocket_top_gap"]
         self.assertLess(pocket_top, P["base_h"] - 1.0)
         base = trimesh.load_mesh(ROOT / "export" / "base.stl")
-        expected_pocket_floor_x = (
-            P["case_x"] / 2 - (P["lid_clip_hook_depth"] + 0.15)
+        expected_pocket_floor_y = (
+            P["inner_y"] / 2 + P["lid_clip_hook_depth"] + 0.15
         )
         expected_pocket_bottom = P["base_h"] - P["lid_clip_length"] - 0.1
-        for y in (-9.0, 9.0):
+        for x in (-P["lid_clip_x"], P["lid_clip_x"]):
             for side in (-1.0, 1.0):
                 vertices = base.vertices
                 recess_wall = vertices[
-                    (np.abs(vertices[:, 1] - y) <= P["lid_clip_w"] / 2 + 0.3)
-                    & (np.abs(vertices[:, 0] - side * expected_pocket_floor_x) <= 0.03)
+                    (np.abs(vertices[:, 0] - x) <= P["lid_clip_w"] / 2 + 0.3)
+                    & (np.abs(vertices[:, 1] - side * expected_pocket_floor_y) <= 0.03)
                 ]
                 self.assertTrue(len(recess_wall), "clip pocket missing from exported base")
                 self.assertLessEqual(recess_wall[:, 2].min(), expected_pocket_bottom + 0.03)

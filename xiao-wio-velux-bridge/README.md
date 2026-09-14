@@ -4,6 +4,8 @@ A compact, support-free enclosure for the assembled **Seeed Studio XIAO
 ESP32-S3 + Wio-SX1262** bridge and the two adhesive FPC antennas supplied with
 the kit.
 
+![Closed enclosure with all clips hidden internally](previews/closed.png)
+
 ## Two separate versions
 
 Do not mix the two base/lid pairs:
@@ -102,11 +104,13 @@ There is **no additional bill of materials**: no screws, nuts, magnets, foam tap
 or bought fasteners. Board retention and lid retention are printed into the two
 parts; the antenna adhesive is already part of the supplied antennas.
 
-Four substantial external flex clips hold the lid on. Each has a 6 mm long,
-5 mm wide printable arm and a self-supporting diamond-section hook. The matching
-recess in the base ends 3.5 mm below its top, leaving a solid shoulder for the
-hook to flex over and snap beneath. The lid also has two small edge pry notches
-and a tapered insertion edge. The lid and underside are deliberately plain.
+Four internal flex clips hold the lid on without changing its clean rounded-box
+silhouette. Each is a 6 mm downward continuation of the centring lip, with a
+printable diamond-section hook. The matching recess in the base ends 3.5 mm
+below its top, leaving a solid shoulder for the hook to flex over and snap
+beneath. The two side pry slots lift one side at a time, releasing that side's
+front and rear clips together. The lid also has a tapered insertion edge. The
+lid and underside are deliberately plain.
 A large 21 mm-wide recessed RW mark uses most of the flat rear wall opposite
 the USB-C opening; the earlier tiny surface markings remain removed. For best
 RF performance, do not place either antenna side directly against metal or a

@@ -144,7 +144,7 @@ def main():
         caption = "BASE · four clip recesses end below a solid snap-over shoulder"
     elif args.view == "lid":
         items = [(trimesh.load_mesh(os.path.join(exports, "lid.stl")), lid_blue)]
-        caption = "LID · four deep printable flex clips, plus one pry slot per side"
+        caption = "LID · four internal lip clips; exterior remains a clean rounded box"
     elif args.view == "top":
         lid = trimesh.load_mesh(os.path.join(exports, "lid.stl"))
         lid.apply_transform(trimesh.transformations.rotation_matrix(np.pi, [1, 0, 0]))
@@ -160,6 +160,13 @@ def main():
         base.apply_transform(trimesh.transformations.rotation_matrix(np.pi, [0, 0, 1]))
         items = [(base, blue)]
         caption = "REAR · large recessed RW mark opposite the USB-C opening"
+    elif args.view == "closed":
+        base = trimesh.load_mesh(os.path.join(exports, "base.stl"))
+        lid = trimesh.load_mesh(os.path.join(exports, "lid.stl"))
+        lid.apply_transform(trimesh.transformations.rotation_matrix(np.pi, [1, 0, 0]))
+        lid.apply_translation([0, 0, 23.5])
+        items = [(base, blue), (lid, lid_blue)]
+        caption = "CLOSED · uninterrupted rounded-box exterior; all four clips are internal"
     elif args.view == "fit_test":
         items = [(trimesh.load_mesh(os.path.join(exports, "fit_test.stl")), blue)]
         caption = "FIT TEST · complete 2×7 XIAO locator with deeper pin sockets"
