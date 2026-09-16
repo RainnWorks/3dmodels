@@ -87,7 +87,9 @@ connect     = 0.0;                  // [0:0.05:2]
 // disc and falls off; a `connect` radius big enough to catch it also fills the
 // counters of "e" and "o", so each one is bridged individually instead.
 struts      = [];
-strut_w     = 0.9;                  // [0.4:0.05:2]
+// One extrusion wide. 0.3 was asked for and does not print -- it is under a
+// single 0.4mm line, so the slicer drops it and the dot comes off.
+strut_w     = 0.45;                 // [0.4:0.05:2]
 // height of the probe strip used to measure the weld (see weld.py)
 weld_probe  = 0.2;
 
