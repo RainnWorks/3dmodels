@@ -1,0 +1,8 @@
+__pycache__/
+# per-tag meshes: rebuilt by `make plates` in seconds
+export/tags/
+# intermediate single-tag cells that the contact sheets are composited from;
+# the sheets themselves are committed
+previews/_*.png
+# 44MB of per-name STLs at each bite setting: regenerate with `python3 tags.py`
+export/bite*/
