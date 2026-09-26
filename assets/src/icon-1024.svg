@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<!-- The RainnWorks monogram, cut into layers the way a printer lays it down. -->
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a70f0"/><stop offset="1" stop-color="#3a4fd6"/></linearGradient>
+<mask id="layers"><rect x="0" y="213.3" width="1024" height="22" fill="white"/><rect x="0" y="242.3" width="1024" height="22" fill="white"/><rect x="0" y="271.3" width="1024" height="22" fill="white"/><rect x="0" y="300.3" width="1024" height="22" fill="white"/><rect x="0" y="329.3" width="1024" height="22" fill="white"/><rect x="0" y="358.3" width="1024" height="22" fill="white"/><rect x="0" y="387.3" width="1024" height="22" fill="white"/><rect x="0" y="416.3" width="1024" height="22" fill="white"/><rect x="0" y="445.3" width="1024" height="22" fill="white"/><rect x="0" y="474.3" width="1024" height="22" fill="white"/><rect x="0" y="503.3" width="1024" height="22" fill="white"/><rect x="0" y="532.3" width="1024" height="22" fill="white"/><rect x="0" y="561.3" width="1024" height="22" fill="white"/><rect x="0" y="590.3" width="1024" height="22" fill="white"/><rect x="0" y="619.3" width="1024" height="22" fill="white"/><rect x="0" y="648.3" width="1024" height="22" fill="white"/><rect x="0" y="677.3" width="1024" height="22" fill="white"/><rect x="0" y="706.3" width="1024" height="22" fill="white"/><rect x="0" y="735.3" width="1024" height="22" fill="white"/></mask>
+</defs>
+<rect width="1024" height="1024" rx="228" fill="url(#bg)"/>
+<g mask="url(#layers)"><path transform="translate(204.0 266.7) scale(1.1)" fill="#ffffff" d="M0 331V0h214c54 0 98 44 98 98 0 27-11 53-30 72l-62 60 51 54 81-81 142 143V136h66v310h-59L352 296l-82 82-139-148 103-104c9-8 14-18 14-29 0-19-15-34-34-34H66v268Z"/></g>
+</svg>

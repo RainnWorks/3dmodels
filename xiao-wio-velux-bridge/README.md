@@ -1,195 +1,153 @@
-# XIAO + Wio-SX1262 Velux bridge enclosure
+<h1 align="center">XIAO + Wio-SX1262 Velux bridge enclosure</h1>
 
-A compact, support-free enclosure for the assembled **Seeed Studio XIAO
-ESP32-S3 + Wio-SX1262** bridge and the two adhesive FPC antennas supplied with
-the kit.
+<p align="center">A support-free, screw-free printed case for a Seeed XIAO ESP32-S3 and Wio-SX1262 radio bridge, with both supplied FPC antennas inside.</p>
 
-![Closed enclosure with all clips hidden internally](previews/closed.png)
+<p align="center"><a href="https://rainn.works/models/xiao-wio-velux-bridge/">Configure and order one</a> · <a href="../">All models</a></p>
 
-## Two separate versions
+![An exploded blue enclosure with the stacked XIAO and Wio boards seated inside and the USB-C socket showing through a recessed front opening, its lid with four internal clips beside it; alongside, the captive-USB version with a short cable laid into its entry slot, and the closed box with its vented lid and tool slots](assets/hero.png)
 
-Do not mix the two base/lid pairs:
+There are two versions, and their bases and lids don't mix:
 
-| Version | What the USB end does | Printable files | Pair preview |
+| Version | What the USB end does | Printable files | Guide |
 |---|---|---|---|
-| Standard USB | Leaves the XIAO USB-C socket accessible through the wall | `export/base.*` and `export/lid.*` | `previews/standard_usb_pair.png` |
-| Captive USB | Holds a short cable's USB-C plug inside the enclosure | `export-captive-usb/base.*` and `export-captive-usb/lid.*` | `previews/captive_usb_pair.png` |
+| Standard USB | Leaves the XIAO's USB-C socket reachable through the wall | `export/base.*`, `export/lid.*` | This README |
+| Captive USB | Holds a short cable's USB-C plug inside the enclosure | `export-captive-usb/base.*`, `export-captive-usb/lid.*` | [README-captive-usb.md](README-captive-usb.md) |
 
-![Standard USB matched pair](previews/standard_usb_pair.png)
+![The standard USB base and lid as a matched pair](previews/standard_usb_pair.png)
 
-![Captive USB matched pair](previews/captive_usb_pair.png)
+## Getting started
 
-![Large recessed RW mark on the rear wall](previews/rear.png)
+1. **Get the files.** `export/base.3mf` and `export/lid.3mf` (STLs alongside). Print `export/fit_test.3mf` first, see step 3. To change anything, open `velux_bridge_enclosure.scad` in OpenSCAD; the parameters are grouped for the Customizer. `render_part` picks what to render: `base`, `lid`, `print_plate` (both), `fit_test`, or the previews `assembly`, `layout` and `cutaway`.
+2. **Set the parameters that matter.** The defaults are what's exported.
 
-![Exploded enclosure](previews/assembly.png)
+   | Parameter | Default | What it does |
+   |---|---|---|
+   | `lid_fit_clearance` | 0.30 | Clearance per side between lid and base. Increase if the lid is tight, reduce if it's loose |
+   | `header_socket_d` | 1.25 | Diameter of the 14 printed pin sockets. Physically tested; change in 0.05 mm steps |
+   | `case_x`, `case_y` | 31, 46 | Outside plan size |
+   | `base_h`, `lid_t` | 24.0, 2.0 | Base height and lid thickness: 26 mm closed |
+   | `wifi_ant_l`, `wifi_ant_w`, `wifi_ant_t` | 37.4, 17.5, 1.8 | Wi-Fi FPC antenna, from Seeed's datasheet |
+   | `lora_ant_l`, `lora_ant_w`, `lora_ant_t` | 40, 7, 1 | LoRa FPC antenna |
+   | `wio_button_x`, `wio_button_y` | 0, -2.0 | Position of the Wio's user button, relative to the board centre, for the lid's paperclip hole |
+   | `wall_mount_ears` | false | Adds two screw ears to the base, with `mount_hole_d` (3.5) holes |
 
-![Standard kit fit validation](previews/fit_validation.png)
+   If your antennas come from a later revision, change the `wifi_ant_*` or `lora_ant_*` values: the height lines and fit assertions update with them. Assertions stop an antenna outline or the board stack from silently exceeding the enclosure.
+3. **Print the fit test.** The header sockets are printer-sensitive. `fit_test` is the complete production board locator: both seven-pin rails, all 14 sockets and both end shelves, on a small plate. Seat the actual assembled board in it before printing the enclosure.
+   - Pins won't enter, or are very tight: increase `header_socket_d` in 0.05 mm steps.
+   - Pins wobble: reduce it in 0.05 mm steps.
+4. **Slice.** No supports. Print `base` floor-down and `lid` with its smooth outside face down. The exported lid is already oriented that way, its broad exterior face at Z = 0; don't use a slicer's automatic orientation. Print the base and lid as a matched pair from the same export: this revision's clips and pockets don't fit earlier bases or lids.
+5. **Assemble.**
+   1. Before removing either adhesive liner, rehearse the complete cable path. Don't crease the coax or force a bend tighter than about **5 mm radius**.
+   2. Stick the **37.4 × 17.5 mm Wi-Fi antenna** to the left wall and the **40 × 7 mm LoRa antenna** to the right wall, viewed from the USB end. Keep the top of each antenna at or below the shallow engraved height line. Put both cable exits toward the closed rear end.
+   3. Arrange the spare lead length as relaxed loops in the rear bay, keeping both cables below the lid skirt. Don't coil or crease the coax tightly.
+   4. Hold the assembled board just above the enclosure and attach both I-PEX plugs. Press vertically on each metal plug cap with a fingertip or plastic tool; never pull or press through the cable itself.
+   5. Lower the USB-C end toward its opening, align both rows of header pins with the printed sockets, and press the board onto both end shelves. There are no PCB clips to engage. The service loops should settle below and behind the board.
+   6. Check neither cable lies across the upper rim or lid skirt. Centre the lid using its tapered lead-in and press until all four internal clips click.
 
-The validation preview is generated by the same suite invoked by `make test`.
-It projects Seeed's official board STL vertices into the configured enclosure,
-draws the full published antenna envelopes, and reports the tested clearances.
-The captive-cable layout has a corresponding
-`previews/fit_validation_captive_usb.png` report.
+**To open it**, use either of the two square tool slots, one in each long edge of the lid plate. Put a thin flat screwdriver or similar tool into the slot, behind the wall at the lid/base seam, and twist gently to lift that side. Each slot releases its side's front and rear clips together.
 
-The antennas mount vertically against **opposite inside side walls**, with their
-broad faces radiating outwards. This keeps them protected, avoids placing either
-antenna directly above the PCB ground plane, and reduces the case footprint to
-almost the antenna envelope. The rounded exterior hides tighter internal corner
-radii, leaving a genuinely flat **41.0 × 17.9 mm** adhesive area on each side
-below the lid keep-out. This excludes the rounded corners entirely.
+**To remove the electronics**, take the lid off, lift the board straight out of the pin sockets, then slide its USB-C connector out of the opening.
 
-The XIAO's already-soldered header pins locate the board in two printed socket
-rails. Their geometry follows the standard XIAO footprint: two rows of seven,
-2.54 mm pitch, and 15.24 mm row spacing. The deep sockets and end shelves locate
-the assembly without separate PCB hooks, lid pillars, screws, or bought
-fasteners. The board and USB opening retain their physically tested heights;
-the taller shell now places the plain internal roof 3 mm above the measured
-tallest radio component.
+For best RF performance, don't place either antenna side directly against metal or a wall. Standing it on its bottom on a shelf is a good default.
 
-## Manufacturer dimensions used
+There's **no additional bill of materials**: no screws, nuts, magnets, foam tape or bought fasteners. Board and lid retention are printed into the two parts, and the antenna adhesive comes on the supplied antennas.
+
+## How it works
+
+![Layout: the board stack in the base with the antennas against opposite side walls, and the lid with its four clips](previews/layout.png)
+
+### Antennas on the side walls
+
+The antennas mount vertically against **opposite inside side walls**, with their broad faces radiating outwards. This keeps them protected, keeps either antenna from sitting directly above the PCB ground plane, and brings the case footprint down to almost the antenna envelope. The rounded exterior (4 mm corners) hides much tighter 0.5 mm internal corners, leaving a genuinely flat **41.0 mm** long adhesive area on each side, about **20.4 mm** tall from the floor to the lid keep-out. The rounded corners are excluded entirely.
+
+The case is 4 mm wider than the board needs, on purpose. Beside the board, the extra width forms cable channels wide enough for the 1.13 mm coax; behind it, a service-loop bay takes the unused length of both supplied leads.
+
+One shallow recessed line on each side wall marks the maximum safe antenna height. There are no protruding antenna-position dots.
+
+### Board location
+
+The XIAO's already-soldered header pins locate the board in two printed socket rails, following the standard XIAO footprint: two rows of seven, 2.54 mm pitch, 15.24 mm row spacing. Each socket has a shallow counterbore so uneven solder fillets don't carry the board. The deep sockets and two end shelves locate the assembly without PCB hooks, lid pillars, screws or bought fasteners, and the lid then retains it.
+
+The board sits at a fixed, physically tested height. The measured 9.1 mm stack ends 3.0 mm below the plain internal roof: the case was made 2.5 mm taller to get there, without moving the board or the USB opening.
+
+### Manufacturer dimensions used
 
 | Part | Body / envelope | Lead |
 |---|---:|---:|
-| XIAO ESP32-S3 | 22.482 × 17.780 × 4.460 mm (USB included) | — |
-| Wio-SX1262 carrier | 21.440 × 17.780 × 7.300 mm | — |
+| XIAO ESP32-S3 | 22.482 × 17.780 × 4.460 mm (USB included) | |
+| Wio-SX1262 carrier | 21.440 × 17.780 × 7.300 mm | |
 | Wi-Fi FPC antenna | 37.4 × 17.5 × ≤1.8 mm | 65 ± 2 mm, Ø1.13 mm |
 | LoRa FPC antenna | 40 × 7 × 1 mm | 50 mm I-PEX lead |
 
-The plan values above were measured from Seeed's official STEP models. Physical
-caliper measurements of the assembled unit supersede their separate heights:
-**6.2 mm** from the lower-PCB underside to the upper-PCB top and **9.1 mm** to
-the tallest SX1262 component. The configured plan envelope is **17.9 × 22.6
-mm**.
+The board figures are measured from Seeed's official STEP models. Caliper measurements of the assembled unit supersede their separate heights: **6.2 mm** from the lower-PCB underside to the upper-PCB top, and **9.1 mm** to the tallest SX1262 component. The configured plan envelope is **17.9 × 22.6 mm**. The default enclosure is **31 × 46 × 26 mm** including the lid.
 
-Default enclosure size: **31 × 46 × 26 mm** including the lid. The extra four
-millimetres of width are intentional: beside the board they form cable channels
-wide enough for the 1.13 mm coax, and behind the board they create a service-loop
-bay for the unused length of both supplied leads.
+See [`references/SOURCES.md`](references/SOURCES.md) for the exact manufacturer links and what was taken from each. Copies of the two official STEP models (and STL conversions) and Seeed's antenna comparison image are kept in `references/` so the design can be audited later.
 
-## Assembly
+### Lid clips
 
-1. Print `base` floor-down and `lid` with its smooth outside face down. Supports
-   are not required. The exported lid is already oriented this way: its broad
-   exterior face is at Z=0 and should sit directly on the build plate; do not
-   use the automatic orientation suggested by a slicer.
-2. Before removing either adhesive liner, rehearse the complete cable path. Do
-   not crease the coax or force a bend tighter than roughly **5 mm radius**.
-3. Stick the **37.4 × 17.5 mm Wi-Fi antenna** to the left wall and the
-   **40 × 7 mm LoRa antenna** to the right wall, viewed from the USB end. Keep
-   the top of each antenna at or below the shallow 0.4 mm engraved height line.
-   Put both cable exits toward the closed/rear end of the enclosure.
-4. Arrange the spare lead length as relaxed loops in the rear bay, keeping both
-   cables below the lid skirt. Do not coil or crease the coax tightly.
-5. Hold the assembled board just above the enclosure and attach both I-PEX plugs.
-   Press vertically on each metal plug cap with a fingertip or plastic tool;
-   never pull or press through the cable itself.
-6. Lower the USB-C end toward its opening, align both rows of header pins with
-   the printed sockets, then press the board onto both end shelves. The deeper
-   sockets place the measured 9.1 mm stack 3.0 mm below the internal roof and
-   provide more than the requested additional 2 mm of pin depth. There are no
-   separate PCB clips to engage. The service loops should settle below/behind
-   the board.
-7. Confirm neither cable lies across the upper rim or lid skirt. Centre the lid
-   using its tapered lead-in and press until all four internal clips click.
+![The closed enclosure: a plain rounded box with vent slots, the button hole and the two tool slots in the lid](previews/closed.png)
 
-To reopen it, use either of the two square tool slots—one in each long edge of
-the lid plate. Each 5 × 3 mm slot crosses the complete 2 mm base-wall thickness
-and reaches 1 mm behind its inner face. Put a thin flat screwdriver or similar
-metal tool behind the wall at the exposed lid/base seam and twist gently to lift
-that side. There are no release cut-outs in the base walls and no rear scoop.
+Four internal flex clips hold the lid on without changing its rounded-box silhouette.
 
-To remove the electronics, remove the lid and lift the board straight out of
-the pin sockets, then slide its USB-C connector through the opening. There are
-no lid-mounted pads or individual PCB clips to release.
+- Each is a 7 mm wide, 1.5 mm thick tongue that spans the full depth of the centring lip and continues 7.5 mm below the lid. There's no thin section left anywhere along it.
+- At the lid, where layer adhesion is weakest, each tongue flares sideways into a 10 mm tapered root, over five times the cross-section of the first design's root.
+- The tongues sit wholly inside the base cavity. Only their diamond-section hooks, which print without support, enter four 7.4 mm wide pockets in the walls, shaped as slightly oversized diamond negatives.
+- About 0.15 mm of vertical clearance in the pocket prevents noticeable up-and-down lid travel while still printing reliably.
+- The hook projects 0.55 mm, needing about 0.45 mm of deflection to insert and giving 0.30 mm more engagement than the first printed revision. The simple cantilever estimate is about 1.8% surface strain, which the full-depth tongue and broad root spread out.
 
-There is **no additional bill of materials**: no screws, nuts, magnets, foam tape
-or bought fasteners. Board retention and lid retention are printed into the two
-parts; the antenna adhesive is already part of the supplied antennas.
+The lid also has a tapered insertion edge. Each 5 × 3 mm tool slot crosses the complete 2 mm base wall and reaches 1 mm behind its inner face, so a blade gets behind the wall rather than just pressing on its edge. There are no release cut-outs in the base walls and no rear scoop.
 
-Four internal flex clips hold the lid on without changing its clean rounded-box
-silhouette. Each is a 7 mm-wide, 1.5 mm-thick member which spans the complete
-depth of the centring lip and continues 7.5 mm below the lid. There is no
-0.7 mm-thick section left anywhere along the flexible rectangle. At the
-layer-critical lid junction, each tongue flares sideways into a 10 mm tapered
-root, providing over five times the original nominal root cross-section. The
-clips sit wholly inside the base cavity; only their printable diamond-section
-hooks enter four 7.4 mm-wide pockets shaped as slightly oversized diamond
-negatives. Approximately 0.15 mm vertical profile clearance prevents perceptible
-up/down lid travel while remaining printable. The hook now projects 0.55 mm,
-requiring approximately 0.45 mm insertion deflection and giving 0.30 mm more
-engagement than the first printed revision. The corresponding simple cantilever
-estimate is roughly 1.8% surface strain. The full-depth tongue and broad tapered
-root distribute that higher flex demand. The two side pry slots lift one side at a time,
-releasing that side's front and rear clips together. The lid also has a tapered
-insertion edge. The lid and underside are deliberately plain.
-Because the complete tongues and recesses are larger and relocated, this revision must be
-printed as a matched lid-and-base pair; its lid does not fit the earlier narrow
-base pockets.
-A large 21 mm-wide recessed RW mark uses most of the flat rear wall opposite
-the USB-C opening; the earlier tiny surface markings remain removed. For best
-RF performance, do not place either antenna side directly against metal or a
-wall; bottom-down on a shelf is a good default orientation.
+### USB-C opening
 
-Ventilation is provided by four straight-through slots in the base and four in
-the lid. There are no ventilation openings in the side walls and no horizontal
-ventilation ceilings for the printer to bridge.
+![The empty base: the USB-C opening inside its rounded overmould pocket, with the two pin-socket rails behind it](previews/base.png)
 
-The standard USB-C opening is raised 3 mm from the original board-envelope
-position to account for the fitted pin spacers. The complete board locator is
-also shifted 0.5 mm toward the USB wall for closer connector alignment. The
-opening itself remains fixed at its tested 17.3 mm centre height. Around it, a
-rounded external pocket accepts a cable overmould up to 12 × 8 mm and lets it
-enter 1.2 mm into the 2 mm wall. The deepest profile is 12.6 × 8.4 mm; a larger
-15 × 10.8 mm outer profile creates a support-free 45-degree upper transition
-while retaining 0.8 mm wall thickness at the pocket floor. The
-2 mm circular lid opening, offset 2 mm toward the USB/front edge from the board
-centre, provides paperclip access to the Wio-SX1262 user button. The lid
-interior is otherwise plain apart from its perimeter skirt, snap features and
-ventilation. There are no protruding antenna-position dots: one shallow recessed
-line on each side wall marks the maximum safe antenna height.
+The USB-C opening is 9.4 × 4.6 mm: the connector's 8.94 × 4.20 mm shell plus about 0.2 mm a side. It's centred 17.3 mm up, 3 mm higher than the original board envelope put it, to account for the fitted pin spacers. The whole board locator also sits 0.5 mm toward the USB wall for closer connector alignment.
 
-The supplied LoRa FPC is described by Seeed as a short-range/test antenna. The
-enclosure accommodates it exactly, but the case cannot improve its RF
-performance. If the Velux link is unreliable, Seeed recommends an external
-868/915 MHz antenna and 120 mm SMA-to-I-PEX pigtail; that would need a different
-lid.
+Around the opening, a rounded external pocket lets a cable overmould up to 12 × 8 mm enter 1.2 mm into the 2 mm wall. The deepest profile is 12.6 × 8.4 mm; a larger 15 × 10.8 mm outer profile gives a 45° upper transition that prints without support, and leaves 0.8 mm of wall at the pocket floor.
 
-## Fit and customisation
+### Everything else
 
-The header sockets are printer-sensitive. Print `fit_test.stl` first; it contains
-the **complete production XIAO locator**: both seven-pin rails, all 14 sockets
-and both end shelves. Seat the actual assembled board in it
-before committing to the full enclosure. The earlier partial lid-corner coupon
-was removed because it could not reproduce the stiffness or catch action of the
-complete lid:
+- **Ventilation** is four straight-through slots in the base floor and four in the lid. There are none in the side walls, and no horizontal vent ceilings for the printer to bridge.
+- **Button access.** A 2 mm hole in the lid, offset 2 mm toward the USB end from the board centre, gives paperclip access to the Wio-SX1262's user button. Otherwise the lid inside is plain apart from its skirt, clips and vents.
+- **Rear mark.** A 21 mm wide RW mark, recessed 0.4 mm, fills most of the flat rear wall opposite the USB opening. It comes from `assets/rainn-logo-single-color.svg`.
 
-- too tight: increase `lid_fit_clearance` from `0.30`;
-- too loose: reduce it;
-- pins will not enter or are excessively tight: increase `header_socket_d` from
-  the physically tested `1.25` default in 0.05 mm steps;
-- pins wobble: reduce `header_socket_d` in 0.05 mm steps;
-- antenna supplied under a later revision: change the `wifi_ant_*` or
-  `lora_ant_*` values—the placement guides and fit assertions update with them.
+![The recessed RW mark on the rear wall](previews/rear.png)
 
-All main dimensions are grouped for OpenSCAD/MakerWorld customisation. Assertions
-stop an antenna outline or board height from silently exceeding the enclosure.
+### Fit validation
 
-## Build
+![Fit validation report: top and side views of the boards and antennas in the enclosure, with the 16 automated checks passing](previews/fit_validation.png)
+
+`make test` runs 16 checks in `tests/test_fit.py` against Seeed's official board meshes and the exported enclosure STLs, not only the parameter maths: the official XIAO and Wio envelopes inside the shell in both layouts, 3.0 mm from the Wio's top to the fitted lid, both full antenna rectangles on the flat walls and clear of the lid and board, the 2 × 7 header grid, the USB-C aperture size and height, the overmould pocket, the lid clips and pockets, the button hole position, the rear logo recess, and every exported STL being one watertight body. The report above is drawn from the same suite; `previews/fit_validation_captive_usb.png` is the captive version's.
+
+## Limits
+
+- **The supplied LoRa antenna is weak.** Seeed describes it as a short-range/test antenna. The enclosure fits it exactly but can't improve its RF performance. If the Velux link is unreliable, Seeed recommends an external 868/915 MHz antenna and a 120 mm SMA-to-I-PEX pigtail, which would need a different lid.
+- **The pin sockets are printer-sensitive.** Print the fit test first and tune `header_socket_d`.
+- **Mixed revisions don't fit.** The base and lid must come from the same export, and the standard and captive pairs don't interchange.
+- **The board stack height is measured, not modelled.** The two STEP models describe the boards separately and overlap at their connector, so the stack height comes from calipers on one assembled unit.
+- **Keep the antennas off metal.** Don't mount it with either antenna side against metal or a wall.
+
+## Build from source
+
+Needs OpenSCAD and Python 3 with numpy, trimesh, Pillow and SciPy (the previews are rendered from the exported STLs by `scripts/render_preview.py`, and the validation reports by `scripts/render_validation.py`).
 
 ```sh
-make            # previews + STL/3MF exports
-make renders    # PNG previews only
-make exports    # printable files only
-make base       # base preview + STL + 3MF
-make lid        # lid preview + STL + 3MF
-make fit_test   # small tolerance coupon
-make test       # verify official board models, antennas, clearances and meshes
-make clean
+make              # previews + STL/3MF exports
+make renders      # PNG previews, pair previews and validation reports
+make exports      # standard printable files only
+make base         # base preview + STL + 3MF
+make lid          # lid preview + STL + 3MF
+make fit_test     # the complete board locator test
+make captive_usb  # captive-USB STL/3MF + its assembly preview
+make test         # verify official board models, antennas, clearances and meshes
+make open         # render and open the assembly preview (macOS)
+make clean        # remove previews/, export/ and export-captive-usb/
 ```
 
-## Sources
+The Makefile is set up for one Mac: `OSCAD` points at `/Applications/OpenSCAD.app` run under Rosetta (`arch -x86_64`), because the arm64 build aborts on that host. Elsewhere, override it, e.g. `make OSCAD=openscad`. `scripts/render_validation.py` also loads Arial from macOS's `/System/Library/Fonts`.
 
-See [`references/SOURCES.md`](references/SOURCES.md) for the exact manufacturer
-links and what was taken from each file. Copies of the two official STEP models
-and the antenna comparison image are retained in `references/` so the design can
-be audited later.
+`make test` depends on the standard and captive exports and the validation reports, so it rebuilds any that are out of date before running `python3 -m unittest discover -s tests -v`.
+
+## Licence
+
+[CC BY-NC-SA 4.0](../LICENSE). Free to print, remix and share with credit, not for profit. Selling prints or remixes needs a partnership with RainnWorks: [support@rainn.works](mailto:support@rainn.works?subject=Selling%20RainnWorks%20models).
