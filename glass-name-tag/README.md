@@ -153,9 +153,9 @@ length off the mesh and fails below 10mm.
 
 ![clip on a rim](previews/section.png)
 
-## Licence, and why this one is not published
+## Licence
 
-The MakerWorld model this follows is under a Standard Digital File License,
-which forbids sharing derivatives or remixes. The geometry here is written from
-scratch and printing a set for a family wedding is fine, but unlike the other
-models in this repo **this one should not be uploaded to MakerWorld**.
+An original design, written from scratch. It solves the same everyday problem
+as a popular MakerWorld name tag (a name that clips onto a glass), but none of
+that model's geometry or code is used here. It is licensed like the rest of
+this repo: CC BY-NC-SA 4.0, see the [root README](../README.md#licence).

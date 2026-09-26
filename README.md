@@ -59,6 +59,27 @@ antennas. Standard and captive short-USB versions are included.
 |---|---|
 | ![Exploded standard-USB radio enclosure](xiao-wio-velux-bridge/previews/assembly.png) | ![Exploded captive-USB radio enclosure](xiao-wio-velux-bridge/previews/captive_usb_assembly.png) |
 
+## Print them yourself, or order one
+
+Every model here is free to print for yourself. Open a model's folder, set its
+parameters in [OpenSCAD](https://openscad.org) (or MakerWorld's parametric
+maker) and print it.
+
+Or configure it in the browser at **[rainn.works/models](https://rainn.works/models/)**
+and order it printed from RainnWorks. Ordering sends us your exact settings by
+email. We ship worldwide and agree shipping and cost with you before anything is
+printed.
+
+## Licence
+
+[CC BY-NC-SA 4.0](LICENSE). You may print, remix and share these models for
+free, with credit to RainnWorks, as long as it is not for profit and remixes
+use the same licence.
+
+**Selling prints or remixes needs a partnership with RainnWorks.** Email
+[support@rainn.works](mailto:support@rainn.works?subject=Selling%20RainnWorks%20models)
+and let's talk.
+
 ## Building the models
 
 Open the linked project README for model-specific dimensions, print orientation,
